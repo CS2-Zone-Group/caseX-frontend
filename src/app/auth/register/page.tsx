@@ -6,10 +6,11 @@ import Link from 'next/link';
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
   const { setAuth } = useAuthStore();
   const [formData, setFormData] = useState({
+    username: '',
     email: '',
     password: '',
   });
@@ -22,11 +23,11 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { data } = await api.post('/auth/login', formData);
+      const { data } = await api.post('/auth/register', formData);
       setAuth(data.user, data.access_token);
       router.push('/marketplace');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Email yoki parol noto\'g\'ri');
+      setError(err.response?.data?.message || 'Ro\'yxatdan o\'tishda xatolik');
     } finally {
       setLoading(false);
     }
@@ -42,12 +43,12 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="text-center text-3xl font-bold">
-            Tizimga kirish
+            Ro'yxatdan o'tish
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
             Yoki{' '}
-            <Link href="/auth/register" className="text-primary-600 hover:text-primary-500">
-              ro'yxatdan o'ting
+            <Link href="/auth/login" className="text-primary-600 hover:text-primary-500">
+              tizimga kiring
             </Link>
           </p>
         </div>
@@ -60,6 +61,23 @@ export default function LoginPage() {
           )}
 
           <div className="space-y-4">
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium mb-2">
+                Username
+              </label>
+              <input
+                id="username"
+                type="text"
+                required
+                minLength={3}
+                maxLength={20}
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800"
+                placeholder="john_doe"
+              />
+            </div>
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium mb-2">
                 Email
@@ -83,11 +101,13 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 required
+                minLength={6}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800"
                 placeholder="••••••••"
               />
+              <p className="mt-1 text-xs text-gray-500">Kamida 6 ta belgi</p>
             </div>
           </div>
 
@@ -96,7 +116,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Yuklanmoqda...' : 'Kirish'}
+            {loading ? 'Yuklanmoqda...' : 'Ro\'yxatdan o\'tish'}
           </button>
 
           <div className="relative">

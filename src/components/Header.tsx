@@ -1,10 +1,19 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
+import { useCartStore } from '@/store/cartStore';
 
 export default function Header() {
   const { user, logout } = useAuthStore();
+  const { itemCount, fetchCart } = useCartStore();
+
+  useEffect(() => {
+    if (user) {
+      fetchCart();
+    }
+  }, [user, fetchCart]);
 
   return (
     <header className="border-b border-gray-200 dark:border-gray-800">
@@ -20,12 +29,20 @@ export default function Header() {
           
           {user ? (
             <>
-              <Link href="/profile" className="hover:text-primary-600">
-                Profil
+              <Link href="/inventory" className="hover:text-primary-600">
+                Inventorim
+              </Link>
+              <Link href="/cart" className="hover:text-primary-600 relative">
+                Savat
+                {itemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {itemCount}
+                  </span>
+                )}
               </Link>
               <div className="flex items-center gap-4">
-                <span className="text-sm">
-                  {user.balance.toFixed(2)} so'm
+                <span className="text-sm font-medium">
+                  {user.balance?.toFixed(2) || '0.00'} so'm
                 </span>
                 <button
                   onClick={logout}
