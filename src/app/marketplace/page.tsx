@@ -5,6 +5,9 @@ import Header from '@/components/Header';
 import api from '@/lib/api';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
+import { useSettingsStore } from '@/store/settingsStore';
+import { translations } from '@/lib/translations';
+import { formatPrice } from '@/lib/currency';
 
 interface Skin {
   id: string;
@@ -19,6 +22,8 @@ interface Skin {
 export default function MarketplacePage() {
   const { user } = useAuthStore();
   const { addToCart } = useCartStore();
+  const { language, currency } = useSettingsStore();
+  const t = translations[language];
   const [skins, setSkins] = useState<Skin[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({

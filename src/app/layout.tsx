@@ -13,10 +13,29 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { theme } = useSettingsStore();
+
   useEffect(() => {
     useAuthStore.persist.rehydrate();
     useSettingsStore.persist.rehydrate();
-  }, []);
+    
+    // Apply theme after rehydration
+    const applyTheme = (theme: 'light' | 'dark' | 'system') => {
+      const root = window.document.documentElement;
+      root.classList.remove('light', 'dark');
+
+      if (theme === 'system') {
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light';
+        root.classList.add(systemTheme);
+      } else {
+        root.classList.add(theme);
+      }
+    };
+
+    applyTheme(theme);
+  }, [theme]);
 
   return (
     <html lang="uz">
