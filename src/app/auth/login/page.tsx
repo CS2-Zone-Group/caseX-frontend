@@ -10,7 +10,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { setAuth } = useAuthStore();
   const [formData, setFormData] = useState({
-    email: '',
+    identifier: '',
     password: '',
   });
   const [error, setError] = useState('');
@@ -61,17 +61,17 @@ export default function LoginPage() {
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">
-                Email
+              <label htmlFor="identifier" className="block text-sm font-medium mb-2">
+                Email yoki Username
               </label>
               <input
-                id="email"
-                type="email"
+                id="identifier"
+                type="text"
                 required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                value={formData.identifier}
+                onChange={(e) => setFormData({ ...formData, identifier: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800"
-                placeholder="john@example.com"
+                placeholder="john@example.com yoki username"
               />
             </div>
 

@@ -16,6 +16,8 @@ export default function RegisterPage() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [message, setMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,8 +26,16 @@ export default function RegisterPage() {
 
     try {
       const { data } = await api.post('/auth/register', formData);
-      setAuth(data.user, data.access_token);
-      router.push('/marketplace');
+      
+      if (data.access_token) {
+        // Agar token qaytsa (email verification yo'q)
+        setAuth(data.user, data.access_token);
+        router.push('/marketplace');
+      } else {
+        // Email verification kerak
+        setSuccess(true);
+        setMessage(data.message || 'Email manzilingizga tasdiqlash havolasi yuborildi');
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Ro\'yxatdan o\'tishda xatolik');
     } finally {
@@ -53,12 +63,28 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded">
-              {error}
+        {success ? (
+          <div className="text-center space-y-4">
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-600 dark:text-green-400 px-4 py-3 rounded">
+              {message}
             </div>
-          )}
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Email manzilingizni tekshiring va tasdiqlash havolasini bosing.
+            </p>
+            <Link
+              href="/auth/login"
+              className="inline-block px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            >
+              Login sahifasiga o'tish
+            </Link>
+          </div>
+        ) : (
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            {error && (
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded">
+                {error}
+              </div>
+            )}
 
           <div className="space-y-4">
             <div>
@@ -136,6 +162,7 @@ export default function RegisterPage() {
             <span>Steam orqali kirish</span>
           </button>
         </form>
+        )}
       </div>
     </div>
   );
