@@ -2,7 +2,20 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['steamcdn-a.akamaihd.net', 'community.cloudflare.steamstatic.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'steamcdn-a.akamaihd.net',
+      },
+      {
+        protocol: 'https',
+        hostname: 'community.cloudflare.steamstatic.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.steamstatic.com',
+      },
+    ],
   },
 }
 

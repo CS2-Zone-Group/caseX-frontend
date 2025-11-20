@@ -1,7 +1,9 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useSettingsStore, Theme, Language, Currency } from '@/store/settingsStore';
 import { translations } from '@/lib/translations';
+import { fetchExchangeRates } from '@/lib/currency';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -11,6 +13,26 @@ interface SettingsModalProps {
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const { theme, language, currency, setTheme, setLanguage, setCurrency } = useSettingsStore();
   const t = translations[language];
+  const [rates, setRates] = useState({ UZS: 1, USD: 12750, RUB: 127 });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      loadRates();
+    }
+  }, [isOpen]);
+
+  const loadRates = async () => {
+    setLoading(true);
+    try {
+      const newRates = await fetchExchangeRates();
+      setRates(newRates);
+    } catch (error) {
+      console.error('Failed to load rates:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -77,10 +99,17 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
           {/* Currency */}
           <div>
-            <label className="block text-sm font-medium mb-2">
-              {language === 'uz' ? 'Valyuta' : language === 'ru' ? 'Валюта' : 'Currency'}
-            </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="flex justify-between items-center mb-2">
+              <label className="block text-sm font-medium">
+                {language === 'uz' ? 'Valyuta' : language === 'ru' ? 'Валюта' : 'Currency'}
+              </label>
+              {loading && (
+                <span className="text-xs text-gray-500">
+                  {language === 'uz' ? 'Yangilanmoqda...' : language === 'ru' ? 'Обновление...' : 'Updating...'}
+                </span>
+              )}
+            </div>
+            <div className="grid grid-cols-3 gap-2 mb-3">
               {(['UZS', 'USD', 'RUB'] as Currency[]).map((curr) => (
                 <button
                   key={curr}
@@ -94,6 +123,29 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   {curr}
                 </button>
               ))}
+            </div>
+            {/* Exchange Rates */}
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 space-y-1">
+              <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+                {language === 'uz' ? 'Joriy kurslar (CBU):' : language === 'ru' ? 'Текущие курсы (ЦБУ):' : 'Current rates (CBU):'}
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="font-medium">1 USD</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  {rates.USD.toLocaleString('uz-UZ')} so'm
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="font-medium">1 RUB</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  {rates.RUB.toLocaleString('uz-UZ')} so'm
+                </span>
+              </div>
+              <div className="text-xs text-gray-500 mt-2 text-center">
+                {language === 'uz' ? 'Asosiy valyuta: UZS (O\'zbek so\'mi)' : 
+                 language === 'ru' ? 'Базовая валюта: UZS (Узбекский сум)' : 
+                 'Base currency: UZS (Uzbek Som)'}
+              </div>
             </div>
           </div>
         </div>
