@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import { useCartStore } from '@/store/cartStore';
@@ -15,14 +15,21 @@ export default function CartPage() {
   const { items, total, loading, fetchCart, removeFromCart, clearCart } = useCartStore();
   const { language, currency } = useSettingsStore();
   const t = translations[language];
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+    
     if (!user) {
       router.push('/auth/login');
       return;
     }
     fetchCart();
-  }, [user, router, fetchCart]);
+  }, [user, router, fetchCart, isHydrated]);
 
   if (loading) {
     return (

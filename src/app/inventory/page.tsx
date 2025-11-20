@@ -31,14 +31,21 @@ export default function InventoryPage() {
   const [loading, setLoading] = useState(true);
   const [listingId, setListingId] = useState<string | null>(null);
   const [listPrice, setListPrice] = useState('');
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+    
     if (!user) {
       router.push('/auth/login');
       return;
     }
     fetchInventory();
-  }, [user, router]);
+  }, [user, router, isHydrated]);
 
   const fetchInventory = async () => {
     try {

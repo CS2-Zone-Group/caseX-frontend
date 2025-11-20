@@ -9,11 +9,19 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'steamcommunity-a.akamaihd.net',
+      },
+      {
+        protocol: 'https',
         hostname: 'community.cloudflare.steamstatic.com',
       },
       {
         protocol: 'https',
         hostname: '**.steamstatic.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.akamaihd.net',
       },
     ],
   },
