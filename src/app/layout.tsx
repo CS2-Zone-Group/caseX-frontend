@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { useAuthStore } from '@/store/authStore';
+import { useSettingsStore } from '@/store/settingsStore';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
@@ -14,6 +15,7 @@ export default function RootLayout({
 }) {
   useEffect(() => {
     useAuthStore.persist.rehydrate();
+    useSettingsStore.persist.rehydrate();
   }, []);
 
   return (
