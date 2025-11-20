@@ -161,13 +161,13 @@ export default function MarketplacePage() {
                 </p>
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-bold text-primary-600">
-                    {skin.price.toFixed(2)} so'm
+                    {formatPrice(Number(skin.price), currency)}
                   </span>
                   <button
                     onClick={() => handleAddToCart(skin.id)}
                     className="px-4 py-2 bg-primary-600 text-white text-sm rounded hover:bg-primary-700"
                   >
-                    Cartga
+                    {t.addToCart}
                   </button>
                 </div>
               </div>

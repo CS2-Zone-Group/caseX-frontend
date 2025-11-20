@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import { useAuthStore } from '@/store/authStore';
+import { useSettingsStore } from '@/store/settingsStore';
+import { translations } from '@/lib/translations';
+import { formatPrice } from '@/lib/currency';
 import api from '@/lib/api';
 
 interface InventoryItem {
@@ -22,6 +25,8 @@ interface InventoryItem {
 export default function InventoryPage() {
   const router = useRouter();
   const { user } = useAuthStore();
+  const { language, currency } = useSettingsStore();
+  const t = translations[language];
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [listingId, setListingId] = useState<string | null>(null);
