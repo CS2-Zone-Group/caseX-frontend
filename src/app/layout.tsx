@@ -1,22 +1,24 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
+'use client';
 
-const inter = Inter({ subsets: ['latin', 'cyrillic'] })
+import { useEffect } from 'react';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { useAuthStore } from '@/store/authStore';
 
-export const metadata: Metadata = {
-  title: 'CaseX - CS2 Skins Marketplace',
-  description: "O'zbekiston uchun CS2 skinlari marketplace",
-}
+const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
+  useEffect(() => {
+    useAuthStore.persist.rehydrate();
+  }, []);
+
   return (
     <html lang="uz">
       <body className={inter.className}>{children}</body>
     </html>
-  )
+  );
 }
