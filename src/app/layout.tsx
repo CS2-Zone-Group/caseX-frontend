@@ -35,6 +35,11 @@ export default function RootLayout({
     };
 
     applyTheme(theme);
+    
+    // Fetch exchange rates
+    import('@/lib/currency').then(({ fetchExchangeRates }) => {
+      fetchExchangeRates().catch(console.error);
+    });
   }, [theme]);
 
   return (
