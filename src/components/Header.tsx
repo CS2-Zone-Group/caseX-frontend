@@ -42,7 +42,7 @@ export default function Header() {
               </Link>
               <div className="flex items-center gap-4">
                 <span className="text-sm font-medium">
-                  {user.balance?.toFixed(2) || '0.00'} so'm
+                  {typeof user.balance === 'number' ? user.balance.toFixed(2) : '0.00'} so'm
                 </span>
                 <button
                   onClick={logout}
