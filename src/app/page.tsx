@@ -3,81 +3,16 @@
 import Link from 'next/link';
 import { useSettingsStore } from '@/store/settingsStore';
 import { translations } from '@/lib/translations';
-import { useState } from 'react';
+import Navbar from '@/components/Navbar';
 
 export default function Home() {
   const { language, setLanguage } = useSettingsStore();
   const t = translations[language];
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-50 border-b border-gray-200 dark:border-gray-800">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-600 to-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">C</span>
-              </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-blue-600 bg-clip-text text-transparent">
-                CaseX
-              </span>
-            </Link>
-
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center gap-6">
-              <a href="#features" className="hover:text-primary-600 transition">
-                {language === 'uz' ? 'Xususiyatlar' : language === 'ru' ? 'Особенности' : 'Features'}
-              </a>
-              <a href="#about" className="hover:text-primary-600 transition">
-                {language === 'uz' ? 'Biz haqimizda' : language === 'ru' ? 'О нас' : 'About'}
-              </a>
-              <Link href="/marketplace" className="hover:text-primary-600 transition">
-                {t.marketplace}
-              </Link>
-              <Link 
-                href="/auth/login"
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
-              >
-                {t.login}
-              </Link>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden mt-4 pb-4 space-y-2">
-              <a href="#features" className="block py-2 hover:text-primary-600">
-                {language === 'uz' ? 'Xususiyatlar' : language === 'ru' ? 'Особенности' : 'Features'}
-              </a>
-              <a href="#about" className="block py-2 hover:text-primary-600">
-                {language === 'uz' ? 'Biz haqimizda' : language === 'ru' ? 'О нас' : 'About'}
-              </a>
-              <Link href="/marketplace" className="block py-2 hover:text-primary-600">
-                {t.marketplace}
-              </Link>
-              <Link 
-                href="/auth/login"
-                className="block px-4 py-2 bg-primary-600 text-white rounded-lg text-center"
-              >
-                {t.login}
-              </Link>
-            </div>
-          )}
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4">

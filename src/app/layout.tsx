@@ -13,14 +13,14 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { theme } = useSettingsStore();
-
   useEffect(() => {
+    // Rehydrate stores
     useAuthStore.persist.rehydrate();
     useSettingsStore.persist.rehydrate();
     
-    // Apply theme after rehydration
-    const applyTheme = (theme: 'light' | 'dark' | 'system') => {
+    // Apply theme after rehydration with a small delay to prevent hydration mismatch
+    const applyTheme = () => {
+      const { theme } = useSettingsStore.getState();
       const root = window.document.documentElement;
       root.classList.remove('light', 'dark');
 
@@ -34,17 +34,20 @@ export default function RootLayout({
       }
     };
 
-    applyTheme(theme);
+    // Use setTimeout to prevent hydration mismatch
+    setTimeout(applyTheme, 0);
     
     // Fetch exchange rates
-    import('@/lib/currency').then(({ fetchExchangeRates }) => {
-      fetchExchangeRates().catch(console.error);
+    import('@/lib/currency').then(({ getExchangeRates }) => {
+      getExchangeRates().catch(console.error);
     });
-  }, [theme]);
+  }, []);
 
   return (
-    <html lang="uz">
-      <body className={inter.className}>{children}</body>
+    <html lang="uz" className="dark">
+      <body className={inter.className} suppressHydrationWarning={true}>
+        {children}
+      </body>
     </html>
   );
 }

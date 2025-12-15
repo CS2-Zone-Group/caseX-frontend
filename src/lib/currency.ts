@@ -1,82 +1,114 @@
-import { Currency } from '@/store/settingsStore';
+export type Currency = 'USD' | 'UZS' | 'RUB';
 
-// Exchange rates (UZS to other currencies)
-// Updated: 2024-11-20
-// Source: cbu.uz (Central Bank of Uzbekistan)
-const exchangeRates = {
-  UZS: 1,
-  USD: 12750, // 1 USD = 12,750 UZS (CBU rate)
-  RUB: 127,   // 1 RUB = 127 UZS (CBU rate)
-};
+interface ExchangeRates {
+  USD: number;
+  UZS: number;
+  RUB: number;
+}
 
-const currencySymbols = {
-  UZS: 'so\'m',
-  USD: '$',
-  RUB: '₽',
-};
+let cachedRates: ExchangeRates | null = null;
+let lastFetch = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-// Cache for exchange rates
-let ratesCache: { rates: typeof exchangeRates; timestamp: number } | null = null;
-const CACHE_DURATION = 3600000; // 1 hour
+export async function getExchangeRates(): Promise<ExchangeRates> {
+  const now = Date.now();
+  
+  // Return cached rates if still valid
+  if (cachedRates && (now - lastFetch) < CACHE_DURATION) {
+    return cachedRates;
+  }
 
-/**
- * Fetch real-time exchange rates from CBU API
- * API: https://cbu.uz/uz/arkhiv-kursov-valyut/json/
- */
-export async function fetchExchangeRates(): Promise<typeof exchangeRates> {
   try {
-    // Check cache
-    if (ratesCache && Date.now() - ratesCache.timestamp < CACHE_DURATION) {
-      return ratesCache.rates;
+    // Fetch from CBU.uz API with CORS proxy or use fallback
+    const response = await fetch('https://cbu.uz/uz/arkhiv-kursov-valyut/json/', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-
-    const response = await fetch('https://cbu.uz/uz/arkhiv-kursov-valyut/json/');
+    
     const data = await response.json();
-
+    
     // Find USD and RUB rates
     const usdRate = data.find((item: any) => item.Ccy === 'USD');
     const rubRate = data.find((item: any) => item.Ccy === 'RUB');
-
-    const newRates = {
-      UZS: 1,
-      USD: usdRate ? parseFloat(usdRate.Rate) : exchangeRates.USD,
-      RUB: rubRate ? parseFloat(rubRate.Rate) : exchangeRates.RUB,
+    
+    const rates: ExchangeRates = {
+      USD: 1, // Base currency
+      UZS: parseFloat(usdRate?.Rate?.replace(',', '.') || '12500'), // Handle comma decimal separator
+      RUB: parseFloat(rubRate?.Rate?.replace(',', '.') || '130') // Handle comma decimal separator
     };
-
-    // Update cache
-    ratesCache = {
-      rates: newRates,
-      timestamp: Date.now(),
-    };
-
-    return newRates;
+    
+    cachedRates = rates;
+    lastFetch = now;
+    
+    return rates;
   } catch (error) {
-    console.error('Failed to fetch exchange rates:', error);
-    // Return default rates on error
-    return exchangeRates;
+    console.error('Failed to fetch exchange rates from CBU.uz, using fallback rates:', error);
+    
+    // Return fallback rates
+    const fallbackRates = {
+      USD: 1,
+      UZS: 12500, // Approximate rate
+      RUB: 130    // Approximate rate
+    };
+    
+    cachedRates = fallbackRates;
+    lastFetch = now;
+    
+    return fallbackRates;
   }
 }
 
-/**
- * Format price with currency conversion
- */
-export function formatPrice(priceInUZS: number, currency: Currency): string {
-  const rates = ratesCache?.rates || exchangeRates;
-  const convertedPrice = priceInUZS / rates[currency];
-  const symbol = currencySymbols[currency];
+export async function convertCurrency(
+  amount: number, 
+  fromCurrency: Currency, 
+  toCurrency: Currency
+): Promise<number> {
+  if (fromCurrency === toCurrency) return amount;
   
-  if (currency === 'UZS') {
-    return `${convertedPrice.toLocaleString('uz-UZ', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ${symbol}`;
+  const rates = await getExchangeRates();
+  
+  // Convert to USD first, then to target currency
+  let usdAmount = amount;
+  if (fromCurrency !== 'USD') {
+    usdAmount = amount / rates[fromCurrency];
   }
   
-  return `${symbol}${convertedPrice.toFixed(2)}`;
+  if (toCurrency === 'USD') {
+    return usdAmount;
+  }
+  
+  return usdAmount * rates[toCurrency];
+}
+
+export function formatPrice(amount: number, currency: Currency): string {
+  // Format number with space as thousand separator
+  const formatNumber = (num: number, decimals: number = 2) => {
+    return num.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  };
+
+  switch (currency) {
+    case 'USD':
+      return `$${formatNumber(amount, 2)}`;
+    case 'UZS':
+      return `${formatNumber(amount, 0)} so'm`;
+    case 'RUB':
+      return `${formatNumber(amount, 2)} ₽`;
+    default:
+      return `$${formatNumber(amount, 2)}`;
+  }
 }
 
 export function getCurrencySymbol(currency: Currency): string {
-  return currencySymbols[currency];
-}
-
-// Initialize rates on module load (client-side only)
-if (typeof window !== 'undefined') {
-  fetchExchangeRates().catch(console.error);
+  switch (currency) {
+    case 'USD': return '$';
+    case 'UZS': return 'so\'m';
+    case 'RUB': return '₽';
+    default: return '$';
+  }
 }

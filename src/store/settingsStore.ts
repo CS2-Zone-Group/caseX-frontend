@@ -50,8 +50,4 @@ function applyTheme(theme: Theme) {
   }
 }
 
-// Initialize theme on load
-if (typeof window !== 'undefined') {
-  const store = useSettingsStore.getState();
-  applyTheme(store.theme);
-}
+// Theme will be initialized in layout.tsx to prevent hydration mismatch

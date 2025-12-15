@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/Header';
+import Navbar from '@/components/Navbar';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -33,19 +33,19 @@ export default function CartPage() {
 
   if (loading) {
     return (
-      <>
-        <Header />
-        <div className="container mx-auto px-4 py-8 text-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8 pt-20 text-center">
           Yuklanmoqda...
         </div>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      <Header />
-      <main className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <Navbar />
+      <main className="container mx-auto px-4 py-8 pt-20">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">{t.cartTitle}</h1>
           {items.length > 0 && (
@@ -125,6 +125,6 @@ export default function CartPage() {
           </div>
         )}
       </main>
-    </>
+    </div>
   );
 }
