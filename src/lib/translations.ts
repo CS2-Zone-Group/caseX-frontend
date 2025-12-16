@@ -101,6 +101,16 @@ export const translations = {
     weaponType: 'Qurol turi',
     exterior: 'Holat',
     resetFilters: 'Filtrlarni tozalash',
+    
+    // Marketplace specific
+    marketplacePrice: 'Marketplace narxi',
+    searchSkins: 'Skinlarni qidirish...',
+    sortNewest: 'Saralash: Yangi',
+    priceHighToLow: 'Narx: Yuqoridan pastga',
+    priceLowToHigh: 'Narx: Pastdan yuqoriga',
+    nameAtoZ: 'Nom: A-Z',
+    itemsFound: 'ta skin topildi',
+    tryDifferentFilters: 'Boshqa filtrlarni sinab ko\'ring',
   },
   ru: {
     // Navigation
@@ -204,6 +214,16 @@ export const translations = {
     weaponType: 'Тип оружия',
     exterior: 'Состояние',
     resetFilters: 'Сбросить фильтры',
+    
+    // Marketplace specific
+    marketplacePrice: 'Цена маркетплейса для',
+    searchSkins: 'Поиск скинов...',
+    sortNewest: 'Сортировка: Новые',
+    priceHighToLow: 'Цена: По убыванию',
+    priceLowToHigh: 'Цена: По возрастанию',
+    nameAtoZ: 'Имя: A-Z',
+    itemsFound: 'скинов найдено',
+    tryDifferentFilters: 'Попробуйте другие фильтры',
   },
   en: {
     // Navigation
@@ -307,6 +327,16 @@ export const translations = {
     weaponType: 'Weapon Type',
     exterior: 'Exterior',
     resetFilters: 'Reset Filters',
+    
+    // Marketplace specific
+    marketplacePrice: 'Marketplace price for',
+    searchSkins: 'Search skins...',
+    sortNewest: 'Sort: Newest',
+    priceHighToLow: 'Price: High to Low',
+    priceLowToHigh: 'Price: Low to High',
+    nameAtoZ: 'Name: A-Z',
+    itemsFound: 'skins found',
+    tryDifferentFilters: 'Try different filters',
   },
 };
 
