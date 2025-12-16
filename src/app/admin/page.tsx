@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useLanguage } from '@/contexts/LanguageContext';
-import api from '@/lib/api';
 
 interface DashboardStats {
   totalSkins: number;
@@ -15,74 +13,30 @@ interface DashboardStats {
 }
 
 export default function AdminDashboard() {
-  const { language } = useLanguage();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const translations = {
-    en: {
-      title: 'Admin Dashboard',
-      totalSkins: 'Total Skins',
-      totalUsers: 'Total Users',
-      totalOrders: 'Total Orders',
-      totalRevenue: 'Total Revenue',
-      recentOrders: 'Recent Orders',
-      popularSkins: 'Popular Skins',
-      viewAll: 'View All',
-      steamImport: 'Steam Import',
-      importDescription: 'Import skins from Steam Market',
-      manageUsers: 'Manage Users',
-      usersDescription: 'View and manage user accounts',
-      manageSkins: 'Manage Skins',
-      skinsDescription: 'Add, edit, and remove skins',
-      viewOrders: 'View Orders',
-      ordersDescription: 'Manage customer orders',
-      loading: 'Loading...',
-      noData: 'No data available',
-    },
-    ru: {
-      title: 'Панель администратора',
-      totalSkins: 'Всего скинов',
-      totalUsers: 'Всего пользователей',
-      totalOrders: 'Всего заказов',
-      totalRevenue: 'Общий доход',
-      recentOrders: 'Недавние заказы',
-      popularSkins: 'Популярные скины',
-      viewAll: 'Показать все',
-      steamImport: 'Импорт Steam',
-      importDescription: 'Импорт скинов с Steam Market',
-      manageUsers: 'Управление пользователями',
-      usersDescription: 'Просмотр и управление аккаунтами',
-      manageSkins: 'Управление скинами',
-      skinsDescription: 'Добавление, редактирование и удаление скинов',
-      viewOrders: 'Просмотр заказов',
-      ordersDescription: 'Управление заказами клиентов',
-      loading: 'Загрузка...',
-      noData: 'Нет данных',
-    },
-    uz: {
-      title: 'Admin Dashboard',
-      totalSkins: 'Jami Skinlar',
-      totalUsers: 'Jami Foydalanuvchilar',
-      totalOrders: 'Jami Buyurtmalar',
-      totalRevenue: 'Jami Daromad',
-      recentOrders: 'So\'nggi Buyurtmalar',
-      popularSkins: 'Mashhur Skinlar',
-      viewAll: 'Barchasini ko\'rish',
-      steamImport: 'Steam Import',
-      importDescription: 'Steam Market\'dan skinlarni import qilish',
-      manageUsers: 'Foydalanuvchilarni boshqarish',
-      usersDescription: 'Foydalanuvchi hisoblarini ko\'rish va boshqarish',
-      manageSkins: 'Skinlarni boshqarish',
-      skinsDescription: 'Skinlarni qo\'shish, tahrirlash va o\'chirish',
-      viewOrders: 'Buyurtmalarni ko\'rish',
-      ordersDescription: 'Mijoz buyurtmalarini boshqarish',
-      loading: 'Yuklanmoqda...',
-      noData: 'Ma\'lumot mavjud emas',
-    },
+  // Simple English translations for now
+  const t = {
+    title: 'Admin Dashboard',
+    totalSkins: 'Total Skins',
+    totalUsers: 'Total Users',
+    totalOrders: 'Total Orders',
+    totalRevenue: 'Total Revenue',
+    recentOrders: 'Recent Orders',
+    popularSkins: 'Popular Skins',
+    viewAll: 'View All',
+    steamImport: 'Steam Import',
+    importDescription: 'Import skins from Steam Market',
+    manageUsers: 'Manage Users',
+    usersDescription: 'View and manage user accounts',
+    manageSkins: 'Manage Skins',
+    skinsDescription: 'Add, edit, and remove skins',
+    viewOrders: 'View Orders',
+    ordersDescription: 'Manage customer orders',
+    loading: 'Loading...',
+    noData: 'No data available',
   };
-
-  const t = translations[language];
 
   useEffect(() => {
     fetchDashboardStats();

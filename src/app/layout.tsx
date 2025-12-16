@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
@@ -46,7 +47,9 @@ export default function RootLayout({
   return (
     <html lang="uz" className="dark">
       <body className={inter.className} suppressHydrationWarning={true}>
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

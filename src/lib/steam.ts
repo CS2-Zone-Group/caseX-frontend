@@ -203,7 +203,7 @@ export const bulkImportSkinsFromSteam = async (steamItems: any[]): Promise<{
       await new Promise(resolve => setTimeout(resolve, 500));
     } catch (error) {
       result.failed++;
-      result.errors.push(`Error importing ${item.market_name || item.name}: ${error.message}`);
+      result.errors.push(`Error importing ${item.market_name || item.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 

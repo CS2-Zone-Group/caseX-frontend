@@ -3,51 +3,26 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { language } = useLanguage();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const translations = {
-    en: {
-      dashboard: 'Dashboard',
-      skins: 'Skins',
-      users: 'Users',
-      orders: 'Orders',
-      steamImport: 'Steam Import',
-      settings: 'Settings',
-      logout: 'Logout',
-      menu: 'Menu',
-    },
-    ru: {
-      dashboard: 'Панель управления',
-      skins: 'Скины',
-      users: 'Пользователи',
-      orders: 'Заказы',
-      steamImport: 'Импорт Steam',
-      settings: 'Настройки',
-      logout: 'Выйти',
-      menu: 'Меню',
-    },
-    uz: {
-      dashboard: 'Boshqaruv paneli',
-      skins: 'Skinlar',
-      users: 'Foydalanuvchilar',
-      orders: 'Buyurtmalar',
-      steamImport: 'Steam Import',
-      settings: 'Sozlamalar',
-      logout: 'Chiqish',
-      menu: 'Menyu',
-    },
+  // Simple English translations for now
+  const t = {
+    dashboard: 'Dashboard',
+    skins: 'Skins',
+    users: 'Users',
+    orders: 'Orders',
+    steamImport: 'Steam Import',
+    settings: 'Settings',
+    logout: 'Logout',
+    menu: 'Menu',
   };
-
-  const t = translations[language];
 
   const navigation = [
     { name: t.dashboard, href: '/admin', icon: '📊' },

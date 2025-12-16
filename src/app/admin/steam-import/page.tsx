@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { searchSteamSkins, getPopularSteamSkins, importSkinFromSteam, bulkImportSkinsFromSteam } from '@/lib/steam';
 
 interface SteamItem {
@@ -16,7 +15,6 @@ interface SteamItem {
 }
 
 export default function SteamImportPage() {
-  const { language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SteamItem[]>([]);
   const [popularSkins, setPopularSkins] = useState<SteamItem[]>([]);
@@ -25,70 +23,27 @@ export default function SteamImportPage() {
   const [importing, setImporting] = useState(false);
   const [importProgress, setImportProgress] = useState({ imported: 0, failed: 0, total: 0 });
 
-  const translations = {
-    en: {
-      title: 'Steam Skin Import',
-      searchPlaceholder: 'Search for skins (e.g., AK-47, AWP)',
-      search: 'Search',
-      popularSkins: 'Popular Skins',
-      loadPopular: 'Load Popular Skins',
-      selectAll: 'Select All',
-      deselectAll: 'Deselect All',
-      importSelected: 'Import Selected',
-      importing: 'Importing...',
-      importProgress: 'Progress: {imported} imported, {failed} failed, {remaining} remaining',
-      noResults: 'No results found',
-      weapon: 'Weapon',
-      rarity: 'Rarity',
-      exterior: 'Exterior',
-      price: 'Price',
-      selected: 'selected',
-      importSuccess: 'Successfully imported {count} skins',
-      importError: 'Import completed with {failed} errors',
-    },
-    ru: {
-      title: 'Импорт скинов Steam',
-      searchPlaceholder: 'Поиск скинов (например, AK-47, AWP)',
-      search: 'Поиск',
-      popularSkins: 'Популярные скины',
-      loadPopular: 'Загрузить популярные',
-      selectAll: 'Выбрать все',
-      deselectAll: 'Отменить выбор',
-      importSelected: 'Импортировать выбранные',
-      importing: 'Импорт...',
-      importProgress: 'Прогресс: {imported} импортировано, {failed} ошибок, {remaining} осталось',
-      noResults: 'Результаты не найдены',
-      weapon: 'Оружие',
-      rarity: 'Редкость',
-      exterior: 'Состояние',
-      price: 'Цена',
-      selected: 'выбрано',
-      importSuccess: 'Успешно импортировано {count} скинов',
-      importError: 'Импорт завершен с {failed} ошибками',
-    },
-    uz: {
-      title: 'Steam Skin Import',
-      searchPlaceholder: 'Skinlarni qidirish (masalan, AK-47, AWP)',
-      search: 'Qidirish',
-      popularSkins: 'Mashhur Skinlar',
-      loadPopular: 'Mashhur skinlarni yuklash',
-      selectAll: 'Barchasini tanlash',
-      deselectAll: 'Tanlovni bekor qilish',
-      importSelected: 'Tanlanganlarni import qilish',
-      importing: 'Import qilinmoqda...',
-      importProgress: 'Jarayon: {imported} import qilindi, {failed} xato, {remaining} qoldi',
-      noResults: 'Natija topilmadi',
-      weapon: 'Qurol',
-      rarity: 'Kamyoblik',
-      exterior: 'Holat',
-      price: 'Narx',
-      selected: 'tanlangan',
-      importSuccess: '{count} ta skin muvaffaqiyatli import qilindi',
-      importError: 'Import {failed} ta xato bilan yakunlandi',
-    },
+  // Simple English translations for now
+  const t = {
+    title: 'Steam Skin Import',
+    searchPlaceholder: 'Search for skins (e.g., AK-47, AWP)',
+    search: 'Search',
+    popularSkins: 'Popular Skins',
+    loadPopular: 'Load Popular Skins',
+    selectAll: 'Select All',
+    deselectAll: 'Deselect All',
+    importSelected: 'Import Selected',
+    importing: 'Importing...',
+    importProgress: 'Progress: {imported} imported, {failed} failed, {remaining} remaining',
+    noResults: 'No results found',
+    weapon: 'Weapon',
+    rarity: 'Rarity',
+    exterior: 'Exterior',
+    price: 'Price',
+    selected: 'selected',
+    importSuccess: 'Successfully imported {count} skins',
+    importError: 'Import completed with {failed} errors',
   };
-
-  const t = translations[language];
 
   useEffect(() => {
     loadPopularSkins();

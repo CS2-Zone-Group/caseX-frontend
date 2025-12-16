@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSettingsStore, Theme, Language, Currency } from '@/store/settingsStore';
 import { translations } from '@/lib/translations';
-import { fetchExchangeRates } from '@/lib/currency';
+import { getExchangeRates } from '@/lib/currency';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -25,7 +25,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const loadRates = async () => {
     setLoading(true);
     try {
-      const newRates = await fetchExchangeRates();
+      const newRates = await getExchangeRates();
       setRates(newRates);
     } catch (error) {
       console.error('Failed to load rates:', error);
