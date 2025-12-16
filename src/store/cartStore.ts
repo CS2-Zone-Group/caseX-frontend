@@ -32,18 +32,34 @@ export const useCartStore = create<CartState>((set, get) => ({
   loading: false,
 
   fetchCart: async () => {
+    const currentState = get();
+    if (currentState.loading) return; // Prevent multiple simultaneous requests
+    
     try {
       set({ loading: true });
       const { data } = await api.get('/cart');
       set({
-        items: data.items,
-        total: data.total,
-        itemCount: data.itemCount,
+        items: data.items || [],
+        total: data.total || 0,
+        itemCount: data.itemCount || 0,
         loading: false,
       });
-    } catch (error) {
-      set({ loading: false });
+    } catch (error: any) {
+      set({ 
+        loading: false,
+        items: [],
+        total: 0,
+        itemCount: 0
+      });
       console.error('Cart fetch error:', error);
+      
+      // If it's an authentication error, don't throw
+      if (error.response?.status === 401) {
+        console.log('User not authenticated for cart');
+        return;
+      }
+      
+      throw error;
     }
   },
 

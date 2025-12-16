@@ -15,9 +15,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   useEffect(() => {
-    // Rehydrate stores
-    useAuthStore.persist.rehydrate();
-    useSettingsStore.persist.rehydrate();
+    // Rehydrate stores and set hydration state
+    const rehydrateStores = async () => {
+      await useAuthStore.persist.rehydrate();
+      await useSettingsStore.persist.rehydrate();
+      
+      // Mark auth store as hydrated
+      useAuthStore.getState().setHasHydrated(true);
+    };
+    
+    rehydrateStores();
     
     // Apply theme after rehydration with a small delay to prevent hydration mismatch
     const applyTheme = () => {

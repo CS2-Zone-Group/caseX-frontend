@@ -3,18 +3,22 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSettingsStore } from '@/store/settingsStore';
+import { useAuthStore } from '@/store/authStore';
 import { translations } from '@/lib/translations';
 import { convertCurrency, formatPrice, getCurrencySymbol } from '@/lib/currency';
 import Navbar from '@/components/Navbar';
+import ChangePasswordModal from '@/components/ChangePasswordModal';
 
 function ProfileContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { language, currency, theme, setLanguage, setCurrency, setTheme } = useSettingsStore();
+  const { user, fetchUserBalance } = useAuthStore();
   const t = translations[language];
   
-  const baseBalance = 1234.56; // USD base balance
+  const baseBalance = user?.balance || 0; // Real user balance
   const [activeTab, setActiveTab] = useState<'settings' | 'balance' | 'history'>('settings');
+  const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
   
   useEffect(() => {
     const tab = searchParams.get('tab');
@@ -22,6 +26,13 @@ function ProfileContent() {
       setActiveTab(tab);
     }
   }, [searchParams]);
+
+  // Fetch user balance when component mounts
+  useEffect(() => {
+    if (user?.id) {
+      fetchUserBalance();
+    }
+  }, [user?.id]); // Only depend on user.id, not the whole user object or fetchUserBalance
 
   // Initialize theme on component mount
   useEffect(() => {
@@ -45,27 +56,9 @@ function ProfileContent() {
     
     convertBalance();
   }, [currency, baseBalance]);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [email, setEmail] = useState('diyorbekolimov2000@gmail.com');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(user?.email || 'diyorbekolimov2000@gmail.com');
   const [publicKey] = useState('0xA200bAf5f5e950eF307871d831...');
-
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
-  const [steamConnected, setSteamConnected] = useState(false);
-  const [twitterConnected, setTwitterConnected] = useState(false);
-  const [twitchConnected, setTwitchConnected] = useState(false);
   const [convertedBalance, setConvertedBalance] = useState(baseBalance);
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -156,27 +149,35 @@ function ProfileContent() {
                   <h1 className="text-2xl lg:text-3xl font-bold text-green-600 dark:text-green-400">{t.profileSettings}</h1>
                 </div>
 
-                {/* Profile Image */}
+                {/* Profile Avatar */}
                 <div className="mb-8">
-                  <label className="block text-gray-600 dark:text-gray-400 text-sm mb-4">{t.profileImage.toUpperCase()}</label>
-                  <div className="flex flex-col sm:flex-row items-center gap-4 lg:gap-6">
-                    <div className="w-24 h-24 lg:w-32 lg:h-32 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden">
-                      {profileImage ? (
-                        <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                  <label className="block text-gray-600 dark:text-gray-400 text-sm mb-4">PROFIL RASMI</label>
+                  <div className="flex items-center gap-4">
+                    <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center overflow-hidden">
+                      {user?.steamAvatar ? (
+                        <img src={user.steamAvatar} alt={user.username} className="w-full h-full object-cover" />
+                      ) : user?.avatar ? (
+                        <img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
                       ) : (
-                        <svg className="w-16 h-16 text-gray-400 dark:text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                        </svg>
+                        <span className="text-white font-bold text-xl">
+                          {user?.username?.charAt(0).toUpperCase() || 'U'}
+                        </span>
                       )}
                     </div>
                     <div>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">
-                        {t.imageRecommendation}
+                      <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                        {user?.username || 'Foydalanuvchi'}
                       </p>
-                      <label className="px-6 py-3 bg-green-500 text-white rounded-lg cursor-pointer hover:bg-green-600 transition inline-block">
-                        {t.uploadFile}
-                        <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
-                      </label>
+                      {user?.steamId && (
+                        <div className="flex items-center space-x-2 mt-1">
+                          <div className="flex items-center justify-center w-4 h-4 bg-gray-800 rounded-sm">
+                            <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                            </svg>
+                          </div>
+                          <span className="text-sm text-gray-600 dark:text-gray-400">Steam User</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -199,17 +200,19 @@ function ProfileContent() {
 
                 {/* Password */}
                 <div className="mb-8">
-                  <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">{t.password.toUpperCase()}</label>
+                  <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">PAROL</label>
                   <div className="flex items-center gap-3">
                     <input
                       type="password"
-                      value={password}
-                      placeholder={t.password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="flex-1 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                      value="••••••••"
+                      readOnly
+                      className="flex-1 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none"
                     />
-                    <button className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium">
-                      {t.setPassword}
+                    <button 
+                      onClick={() => setChangePasswordModalOpen(true)}
+                      className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium"
+                    >
+                      Parol o'rnatish
                     </button>
                   </div>
                 </div>
@@ -395,6 +398,12 @@ function ProfileContent() {
           </div>
         </div>
       </div>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={changePasswordModalOpen}
+        onClose={() => setChangePasswordModalOpen(false)}
+      />
     </div>
   );
 }

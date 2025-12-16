@@ -86,7 +86,11 @@ export async function convertCurrency(
   return usdAmount * rates[toCurrency];
 }
 
-export function formatPrice(amount: number, currency: Currency): string {
+export function formatPrice(amount: number | string | null | undefined, currency: Currency): string {
+  // Convert to number and handle invalid values
+  const numAmount = typeof amount === 'number' ? amount : parseFloat(String(amount || 0));
+  const safeAmount = isNaN(numAmount) ? 0 : numAmount;
+  
   // Format number with space as thousand separator
   const formatNumber = (num: number, decimals: number = 2) => {
     return num.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
@@ -94,13 +98,13 @@ export function formatPrice(amount: number, currency: Currency): string {
 
   switch (currency) {
     case 'USD':
-      return `$${formatNumber(amount, 2)}`;
+      return `$${formatNumber(safeAmount, 2)}`;
     case 'UZS':
-      return `${formatNumber(amount, 0)} so'm`;
+      return `${formatNumber(safeAmount, 0)} so'm`;
     case 'RUB':
-      return `${formatNumber(amount, 2)} ₽`;
+      return `${formatNumber(safeAmount, 2)} ₽`;
     default:
-      return `$${formatNumber(amount, 2)}`;
+      return `$${formatNumber(safeAmount, 2)}`;
   }
 }
 

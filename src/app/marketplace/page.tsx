@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import MarketplaceFilters from '@/components/MarketplaceFilters';
+import SkinDetailsModal from '@/components/SkinDetailsModal';
 import api from '@/lib/api';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
@@ -21,13 +22,15 @@ interface Skin {
 }
 
 export default function MarketplacePage() {
-  const { user } = useAuthStore();
+  const { user, hasHydrated } = useAuthStore();
   const { addToCart } = useCartStore();
   const { language, currency } = useSettingsStore();
   const t = translations[language];
   const [skins, setSkins] = useState<Skin[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtersVisible, setFiltersVisible] = useState(false);
+  const [selectedSkin, setSelectedSkin] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [filters, setFilters] = useState({
     search: '',
     rarity: '',
@@ -68,7 +71,7 @@ export default function MarketplacePage() {
   };
 
   const handleAddToCart = async (skinId: string) => {
-    if (!user) {
+    if (!hasHydrated || !user) {
       const message = language === 'uz' ? 'Iltimos, avval tizimga kiring' : 
                      language === 'ru' ? 'Пожалуйста, сначала войдите в систему' : 
                      'Please login first';
@@ -85,6 +88,28 @@ export default function MarketplacePage() {
     } catch (error: any) {
       alert(error.message);
     }
+  };
+
+  const openSkinDetails = (skin: Skin) => {
+    // Convert marketplace skin to Steam item format for the modal
+    const steamItem = {
+      market_hash_name: skin.name,
+      market_name: skin.name,
+      name: skin.name,
+      icon_url: skin.imageUrl.replace('https://community.cloudflare.steamstatic.com/economy/image/', '').replace('/330x192', ''),
+      tags: [
+        { category: 'Weapon', localized_tag_name: skin.weaponType },
+        { category: 'Rarity', localized_tag_name: skin.rarity },
+        { category: 'Exterior', localized_tag_name: skin.exterior }
+      ]
+    };
+    setSelectedSkin(steamItem);
+    setIsModalOpen(true);
+  };
+
+  const closeSkinDetails = () => {
+    setIsModalOpen(false);
+    setSelectedSkin(null);
   };
 
   return (
@@ -197,7 +222,10 @@ export default function MarketplacePage() {
                       key={skin.id}
                       className="bg-white dark:bg-gray-900 rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 shadow-sm hover:shadow-md"
                     >
-                      <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg mb-3 overflow-hidden">
+                      <div 
+                        className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg mb-3 overflow-hidden cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                        onClick={() => openSkinDetails(skin)}
+                      >
                         <img
                           src={skin.imageUrl}
                           alt={skin.name}
@@ -206,7 +234,11 @@ export default function MarketplacePage() {
                       </div>
                       
                       <div className="space-y-2">
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm truncate" title={skin.name}>
+                        <h3 
+                          className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm truncate cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 transition-colors" 
+                          title={skin.name}
+                          onClick={() => openSkinDetails(skin)}
+                        >
                           {skin.name}
                         </h3>
                         
@@ -252,6 +284,13 @@ export default function MarketplacePage() {
           </div>
         </div>
       </div>
+
+      {/* Skin Details Modal */}
+      <SkinDetailsModal
+        isOpen={isModalOpen}
+        onClose={closeSkinDetails}
+        skin={selectedSkin}
+      />
     </div>
   );
 }

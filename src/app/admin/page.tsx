@@ -73,195 +73,283 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg text-gray-600 dark:text-gray-400">{t.loading}</div>
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <div className="text-lg text-gray-600 dark:text-gray-400">{t.loading}</div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-        {t.title}
-      </h1>
+    <div className="space-y-6">
+      {/* Welcome Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold mb-1">Welcome back, Admin! 👋</h1>
+            <p className="text-blue-100">Here's what's happening with your platform today.</p>
+          </div>
+          <div className="hidden lg:block">
+            <div className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <div className="flex items-center">
-            <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900">
-              <span className="text-2xl">🎯</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t.totalSkins}</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.totalSkins}</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.totalSkins || 0}</p>
+              <p className="text-xs text-green-600 dark:text-green-400 mt-1">+12% from last month</p>
+            </div>
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <div className="flex items-center">
-            <div className="p-3 rounded-full bg-green-100 dark:bg-green-900">
-              <span className="text-2xl">👥</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t.totalUsers}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.totalUsers}</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.totalUsers || 0}</p>
+              <p className="text-xs text-green-600 dark:text-green-400 mt-1">+8% from last month</p>
+            </div>
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-md">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+              </svg>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <div className="flex items-center">
-            <div className="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900">
-              <span className="text-2xl">📦</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t.totalOrders}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.totalOrders}</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.totalOrders || 0}</p>
+              <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">+5% from last month</p>
+            </div>
+            <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-md">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <div className="flex items-center">
-            <div className="p-3 rounded-full bg-purple-100 dark:bg-purple-900">
-              <span className="text-2xl">💰</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t.totalRevenue}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.totalRevenue}</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 ${stats?.totalRevenue?.toFixed(2) || '0.00'}
               </p>
+              <p className="text-xs text-green-600 dark:text-green-400 mt-1">+15% from last month</p>
+            </div>
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </div>
           </div>
         </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Link
-          href="/admin/steam-import"
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-        >
-          <div className="text-center">
-            <div className="text-4xl mb-4">⬇️</div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              {t.steamImport}
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t.importDescription}
-            </p>
-          </div>
-        </Link>
+      <div>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Link
+            href="/admin/steam-import"
+            className="group bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg hover:scale-105 transition-all duration-300"
+          >
+            <div className="text-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 shadow-md">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                </svg>
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                {t.steamImport}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {t.importDescription}
+              </p>
+            </div>
+          </Link>
 
-        <Link
-          href="/admin/users"
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-        >
-          <div className="text-center">
-            <div className="text-4xl mb-4">👥</div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              {t.manageUsers}
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t.usersDescription}
-            </p>
-          </div>
-        </Link>
+          <Link
+            href="/admin/users"
+            className="group bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg hover:scale-105 transition-all duration-300"
+          >
+            <div className="text-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 shadow-md">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                </svg>
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                {t.manageUsers}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {t.usersDescription}
+              </p>
+            </div>
+          </Link>
 
-        <Link
-          href="/admin/skins"
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-        >
-          <div className="text-center">
-            <div className="text-4xl mb-4">🎯</div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              {t.manageSkins}
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t.skinsDescription}
-            </p>
-          </div>
-        </Link>
+          <Link
+            href="/admin/skins"
+            className="group bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg hover:scale-105 transition-all duration-300"
+          >
+            <div className="text-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 shadow-md">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                {t.manageSkins}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {t.skinsDescription}
+              </p>
+            </div>
+          </Link>
 
-        <Link
-          href="/admin/orders"
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-        >
-          <div className="text-center">
-            <div className="text-4xl mb-4">📦</div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              {t.viewOrders}
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t.ordersDescription}
-            </p>
-          </div>
-        </Link>
+          <Link
+            href="/admin/orders"
+            className="group bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg hover:scale-105 transition-all duration-300"
+          >
+            <div className="text-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 shadow-md">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors">
+                {t.viewOrders}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {t.ordersDescription}
+              </p>
+            </div>
+          </Link>
+        </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Orders */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              {t.recentOrders}
-            </h2>
-            <Link
-              href="/admin/orders"
-              className="text-primary-600 hover:text-primary-700 text-sm font-medium"
-            >
-              {t.viewAll}
-            </Link>
-          </div>
-
-          <div className="space-y-4">
-            {stats?.recentOrders?.map((order) => (
-              <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div>
-                  <p className="font-medium text-gray-900 dark:text-white">{order.user}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{order.skin}</p>
+      <div>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Recent Activity</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Recent Orders */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
                 </div>
-                <div className="text-right">
-                  <p className="font-medium text-gray-900 dark:text-white">${order.amount}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{order.date}</p>
-                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {t.recentOrders}
+                </h3>
               </div>
-            )) || (
-              <p className="text-gray-500 dark:text-gray-400 text-center py-4">{t.noData}</p>
-            )}
-          </div>
-        </div>
+              <Link
+                href="/admin/orders"
+                className="text-blue-600 hover:text-blue-700 text-sm font-medium hover:underline transition-all"
+              >
+                {t.viewAll}
+              </Link>
+            </div>
 
-        {/* Popular Skins */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              {t.popularSkins}
-            </h2>
-            <Link
-              href="/admin/skins"
-              className="text-primary-600 hover:text-primary-700 text-sm font-medium"
-            >
-              {t.viewAll}
-            </Link>
+            <div className="space-y-3">
+              {stats?.recentOrders?.map((order, index) => (
+                <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-md flex items-center justify-center text-white text-xs font-bold">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white text-sm">{order.user}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">{order.skin}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-green-600 dark:text-green-400 text-sm">${order.amount}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{order.date}</p>
+                  </div>
+                </div>
+              )) || (
+                <div className="text-center py-6">
+                  <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">{t.noData}</p>
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="space-y-4">
-            {stats?.popularSkins?.map((skin) => (
-              <div key={skin.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div>
-                  <p className="font-medium text-gray-900 dark:text-white">{skin.name}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{skin.sales} sales</p>
+          {/* Popular Skins */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
                 </div>
-                <div className="text-right">
-                  <p className="font-medium text-gray-900 dark:text-white">${skin.revenue.toFixed(2)}</p>
-                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {t.popularSkins}
+                </h3>
               </div>
-            )) || (
-              <p className="text-gray-500 dark:text-gray-400 text-center py-4">{t.noData}</p>
-            )}
+              <Link
+                href="/admin/skins"
+                className="text-blue-600 hover:text-blue-700 text-sm font-medium hover:underline transition-all"
+              >
+                {t.viewAll}
+              </Link>
+            </div>
+
+            <div className="space-y-3">
+              {stats?.popularSkins?.map((skin, index) => (
+                <div key={skin.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-6 h-6 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-md flex items-center justify-center text-white text-xs font-bold">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white text-sm">{skin.name}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">{skin.sales} sales</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-purple-600 dark:text-purple-400 text-sm">${skin.revenue.toFixed(2)}</p>
+                  </div>
+                </div>
+              )) || (
+                <div className="text-center py-6">
+                  <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">{t.noData}</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

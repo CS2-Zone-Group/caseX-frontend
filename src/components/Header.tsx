@@ -17,10 +17,10 @@ export default function Header() {
   const t = translations[language];
 
   useEffect(() => {
-    if (user) {
+    if (user?.id) {
       fetchCart();
     }
-  }, [user, fetchCart]);
+  }, [user?.id]); // Only depend on user.id, not the whole user object or fetchCart
 
   return (
     <>

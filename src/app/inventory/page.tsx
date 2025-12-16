@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
+import AuthGuard from '@/components/AuthGuard';
 import MarketplaceFilters from '@/components/MarketplaceFilters';
 import { formatPrice } from '@/lib/currency';
 import { useAuthStore } from '@/store/authStore';
@@ -108,8 +109,9 @@ export default function InventoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <Navbar />
+    <AuthGuard>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <Navbar />
       
       <main className="container mx-auto px-2 sm:px-4 py-8 pt-20">
         <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
@@ -343,6 +345,7 @@ export default function InventoryPage() {
           </div>
         </div>
       </main>
-    </div>
+      </div>
+    </AuthGuard>
   );
 }

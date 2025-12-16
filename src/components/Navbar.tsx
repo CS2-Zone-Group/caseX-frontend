@@ -2,28 +2,49 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useCartStore } from '@/store/cartStore';
+import { useAuthStore } from '@/store/authStore';
 import { translations } from '@/lib/translations';
 import { convertCurrency, formatPrice } from '@/lib/currency';
 
 export default function Navbar() {
+  const router = useRouter();
   const { language, currency } = useSettingsStore();
   const { itemCount } = useCartStore();
+  const { user, token, logout, checkTokenValidity, fetchUserBalance, hasHydrated } = useAuthStore();
   const t = translations[language];
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [convertedBalance, setConvertedBalance] = useState(1234.56);
+  const [convertedBalance, setConvertedBalance] = useState(0);
   
-  // Mock user data - replace with actual auth state
-  const isLoggedIn = true;
-  const baseBalance = 1234.56; // USD base balance
-  const user = {
-    name: 'Diyorbek',
-    email: 'diyorbekolimov2000@gmail.com',
-    avatar: null,
-    balance: convertedBalance
-  };
+  const isLoggedIn = hasHydrated && !!user && !!token;
+  const baseBalance = user?.balance || 0;
+
+  // Check token validity and fetch balance on mount and periodically
+  useEffect(() => {
+    if (isLoggedIn) {
+      const initializeUser = async () => {
+        const isValid = await checkTokenValidity();
+        if (isValid) {
+          await fetchUserBalance();
+        }
+      };
+      
+      initializeUser();
+      
+      // Check token validity and fetch balance every 5 minutes
+      const interval = setInterval(async () => {
+        const isValid = await checkTokenValidity();
+        if (isValid) {
+          await fetchUserBalance();
+        }
+      }, 5 * 60 * 1000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [user?.id, token]); // Only depend on user.id and token, not the functions
 
   // Convert balance when currency changes
   useEffect(() => {
@@ -37,8 +58,16 @@ export default function Navbar() {
       }
     };
     
-    convertBalance();
+    if (baseBalance > 0) {
+      convertBalance();
+    }
   }, [currency, baseBalance]);
+
+  const handleLogout = () => {
+    logout();
+    setProfileMenuOpen(false);
+    router.push('/auth/login');
+  };
 
   return (
     <nav className="fixed top-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-50 border-b border-gray-200 dark:border-gray-800">
@@ -56,12 +85,6 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-6">
-            <a href="#features" className="hover:text-primary-600 transition">
-              {language === 'uz' ? 'Xususiyatlar' : language === 'ru' ? 'Особенности' : 'Features'}
-            </a>
-            <a href="#about" className="hover:text-primary-600 transition">
-              {language === 'uz' ? 'Biz haqimizda' : language === 'ru' ? 'О нас' : 'About'}
-            </a>
             <Link href="/marketplace" className="hover:text-primary-600 transition">
               {t.marketplace}
             </Link>
@@ -92,16 +115,27 @@ export default function Navbar() {
                   onClick={() => setProfileMenuOpen(!profileMenuOpen)}
                   className="flex items-center gap-3 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition"
                 >
-                  <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-blue-600 rounded-full flex items-center justify-center">
-                    {user.avatar ? (
-                      <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" />
+                  <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-blue-600 rounded-full flex items-center justify-center overflow-hidden">
+                    {user.steamAvatar ? (
+                      <img src={user.steamAvatar} alt={user.username} className="w-full h-full object-cover" />
+                    ) : user.avatar ? (
+                      <img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-white font-bold text-sm">{user.name[0]}</span>
+                      <span className="text-white font-bold text-sm">{user.username[0].toUpperCase()}</span>
                     )}
                   </div>
                   <div className="text-left">
-                    <div className="text-sm font-semibold">{user.name}</div>
-                    <div className="text-xs text-gray-500">{formatPrice(user.balance, currency)}</div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm font-semibold">{user.username}</span>
+                      {user.steamId && (
+                        <div className="flex items-center justify-center w-3 h-3 bg-gray-800 rounded-sm" title="Steam User">
+                          <svg className="w-2 h-2 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-500">{formatPrice(convertedBalance, currency)}</div>
                   </div>
                   <svg className={`w-4 h-4 transition-transform ${profileMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -112,7 +146,7 @@ export default function Navbar() {
                 {profileMenuOpen && (
                   <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
                     <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                      <div className="font-semibold text-sm">{user.name}</div>
+                      <div className="font-semibold text-sm">{user.username}</div>
                       <div className="text-xs text-gray-500">{user.email}</div>
                     </div>
                     
@@ -140,7 +174,7 @@ export default function Navbar() {
                         </svg>
                         <div className="flex-1">
                           <div className="text-sm">{language === 'uz' ? 'Balans' : language === 'ru' ? 'Баланс' : 'Balance'}</div>
-                          <div className="text-xs text-primary-600 font-semibold">{formatPrice(user.balance, currency)}</div>
+                          <div className="text-xs text-primary-600 font-semibold">{formatPrice(convertedBalance, currency)}</div>
                         </div>
                         <button 
                           className="w-6 h-6 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition"
@@ -169,14 +203,30 @@ export default function Navbar() {
                         <span>{language === 'uz' ? 'To\'lov tarixi' : language === 'ru' ? 'История платежей' : 'Payment History'}</span>
                       </Link>
 
+                      {/* Admin Panel Link - Only for admin users */}
+                      {user.role === 'admin' && (
+                        <>
+                          <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+                          
+                          <Link
+                            href="/admin"
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400 transition"
+                            onClick={() => setProfileMenuOpen(false)}
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span>{language === 'uz' ? 'Admin Panel' : language === 'ru' ? 'Админ Панель' : 'Admin Panel'}</span>
+                          </Link>
+                        </>
+                      )}
+
                       <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
 
                       <button
                         className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 transition w-full"
-                        onClick={() => {
-                          setProfileMenuOpen(false);
-                          // Add logout logic here
-                        }}
+                        onClick={handleLogout}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -211,12 +261,6 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 pb-4 space-y-2">
-            <a href="#features" className="block py-2 hover:text-primary-600">
-              {language === 'uz' ? 'Xususiyatlar' : language === 'ru' ? 'Особенности' : 'Features'}
-            </a>
-            <a href="#about" className="block py-2 hover:text-primary-600">
-              {language === 'uz' ? 'Biz haqimizda' : language === 'ru' ? 'О нас' : 'About'}
-            </a>
             <Link href="/marketplace" className="block py-2 hover:text-primary-600">
               {t.marketplace}
             </Link>
@@ -232,6 +276,13 @@ export default function Navbar() {
                 <Link href="/profile" className="block py-2 hover:text-primary-600">
                   {language === 'uz' ? 'Profil' : language === 'ru' ? 'Профиль' : 'Profile'}
                 </Link>
+                
+                {/* Admin Panel Link for mobile - Only for admin users */}
+                {user?.role === 'admin' && (
+                  <Link href="/admin" className="block py-2 text-blue-600 hover:text-blue-700 font-medium">
+                    {language === 'uz' ? 'Admin Panel' : language === 'ru' ? 'Админ Панель' : 'Admin Panel'}
+                  </Link>
+                )}
               </>
             ) : (
               <Link 

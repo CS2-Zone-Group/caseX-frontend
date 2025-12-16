@@ -78,15 +78,18 @@ export const searchSteamSkins = async (
   try {
     const response = await api.get<SteamSearchResponse>('/steam/search', {
       params: { query, start, count },
+      timeout: 10000, // 10 second timeout
     });
     
     if (response.data.success) {
       return response.data.data;
     }
     
+    console.warn('Steam search returned success: false');
     return [];
   } catch (error) {
     console.error('Failed to search Steam skins:', error);
+    // Return empty array instead of throwing error
     return [];
   }
 };
@@ -98,15 +101,18 @@ export const getPopularSteamSkins = async (count: number = 50): Promise<any[]> =
   try {
     const response = await api.get<SteamSearchResponse>('/steam/popular', {
       params: { count },
+      timeout: 10000, // 10 second timeout
     });
     
     if (response.data.success) {
       return response.data.data;
     }
     
+    console.warn('Steam API returned success: false');
     return [];
   } catch (error) {
     console.error('Failed to get popular Steam skins:', error);
+    // Return empty array instead of throwing error
     return [];
   }
 };
