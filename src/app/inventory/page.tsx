@@ -15,12 +15,16 @@ interface InventoryItemType {
   id: string;
   isListed: boolean;
   listPrice: number | null;
+  isSteamItem?: boolean;
+  steamAssetId?: string;
   skin: {
     id: string;
     name: string;
     imageUrl: string;
     rarity: string;
     exterior: string;
+    weaponType?: string;
+    price?: number;
   };
 }
 
@@ -29,6 +33,12 @@ export default function InventoryPage() {
   const { user } = useAuthStore();
   const { language, currency } = useSettingsStore();
   const t = translations[language];
+
+  // Update document title
+  useEffect(() => {
+    document.title = `${t.inventory} - CaseX`;
+  }, [language, t.inventory]);
+  
   const [items, setItems] = useState<InventoryItemType[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -58,7 +68,7 @@ export default function InventoryPage() {
       return;
     }
     fetchInventory();
-  }, [user, router, isHydrated]);
+  }, [user?.id, isHydrated]); // Only depend on user.id, not the entire user object
 
   const fetchInventory = async () => {
     try {
@@ -95,7 +105,10 @@ export default function InventoryPage() {
 
   const totalValue = items
     .filter(item => selectedItems.includes(item.id))
-    .reduce((sum, item) => sum + (item.listPrice || 0), 0);
+    .reduce((sum, item) => {
+      const price = item.isSteamItem ? (item.skin.price || 0) : (item.listPrice || 0);
+      return sum + price;
+    }, 0);
 
   if (loading) {
     return (
@@ -172,7 +185,15 @@ export default function InventoryPage() {
                   <span className="font-bold ml-1 lg:ml-2">
                     {items.length} {language === 'uz' ? 'ta element' : language === 'ru' ? 'предметов' : 'items'}
                   </span>
-                  <span className="text-green-600 dark:text-green-400 ml-1 lg:ml-2">≈ ${totalValue.toFixed(2)}</span>
+                  <span className="text-green-600 dark:text-green-400 ml-1 lg:ml-2">
+                    ≈ {formatPrice(
+                      items.reduce((sum, item) => {
+                        const price = item.isSteamItem ? (item.skin.price || 0) : (item.listPrice || 0);
+                        return sum + price;
+                      }, 0), 
+                      currency
+                    )}
+                  </span>
                 </div>
               </div>
 
@@ -226,12 +247,28 @@ export default function InventoryPage() {
                         src={item.skin.imageUrl}
                         alt={item.skin.name}
                         className="w-full h-full object-contain p-2"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            parent.innerHTML = '<div class="text-gray-400 text-xs flex items-center justify-center h-full">No Image</div>';
+                          }
+                        }}
                       />
                       {selectedItems.includes(item.id) && (
                         <div className="absolute top-2 right-2 w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center">
                           <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
+                        </div>
+                      )}
+                      {item.isSteamItem && (
+                        <div className="absolute top-2 left-2 px-2 py-1 bg-blue-600 text-white text-xs rounded-full flex items-center gap-1">
+                          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                          </svg>
+                          Steam
                         </div>
                       )}
                     </div>
@@ -260,7 +297,10 @@ export default function InventoryPage() {
                       
                       <div className="text-center pt-2">
                         <span className="text-sm sm:text-base font-bold text-green-600 dark:text-green-400">
-                          {formatPrice(Number(item.listPrice || 0), currency)}
+                          {item.isSteamItem 
+                            ? formatPrice(Number(item.skin.price || 0), currency)
+                            : formatPrice(Number(item.listPrice || 0), currency)
+                          }
                         </span>
                       </div>
                     </div>
@@ -279,7 +319,7 @@ export default function InventoryPage() {
                     </span>
                     <span className="font-bold ml-1 lg:ml-2">{selectedItems.length}</span>
                     <span className="text-green-600 dark:text-green-400 ml-2 lg:ml-4">
-                      {language === 'uz' ? 'Jami:' : language === 'ru' ? 'Итого:' : 'Total:'} ${totalValue.toFixed(2)}
+                      {language === 'uz' ? 'Jami:' : language === 'ru' ? 'Итого:' : 'Total:'} {formatPrice(totalValue, currency)}
                     </span>
                   </div>
                   

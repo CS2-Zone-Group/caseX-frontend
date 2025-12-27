@@ -58,9 +58,17 @@ export const useAuthStore = create<AuthState>()(
           const response = await api.get('/users/profile');
           
           if (response.data) {
-            // Update user data if token is valid
+            // Update user data if token is valid, preserving Steam fields
+            const currentUser = get().user;
+            const updatedUser = {
+              ...response.data,
+              // Preserve Steam fields if they exist in current user but not in response
+              steamAvatar: response.data.steamAvatar || currentUser?.steamAvatar || null,
+              steamId: response.data.steamId || currentUser?.steamId || null,
+            };
+            
             set({ 
-              user: response.data, 
+              user: updatedUser, 
               isTokenValid: true 
             });
             return true;

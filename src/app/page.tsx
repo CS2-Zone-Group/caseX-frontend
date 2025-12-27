@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { useSettingsStore } from '@/store/settingsStore';
 import { translations } from '@/lib/translations';
@@ -8,6 +9,16 @@ import Navbar from '@/components/Navbar';
 export default function Home() {
   const { language, setLanguage } = useSettingsStore();
   const t = translations[language];
+
+  // Update document title
+  useEffect(() => {
+    const titles = {
+      uz: 'CaseX - CS2 Skinlari Marketplace',
+      ru: 'CaseX - Маркетплейс CS2 Скинов', 
+      en: 'CaseX - CS2 Skins Marketplace'
+    };
+    document.title = titles[language];
+  }, [language]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">

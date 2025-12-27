@@ -16,6 +16,20 @@ export default function AdminLayout({
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
   const { user, logout, checkTokenValidity } = useAuthStore();
 
+  // Update document title based on current page
+  useEffect(() => {
+    const pageTitles: { [key: string]: string } = {
+      '/admin': 'Dashboard - Admin Panel - CaseX',
+      '/admin/skins': 'Skins Management - Admin Panel - CaseX',
+      '/admin/users': 'Users Management - Admin Panel - CaseX',
+      '/admin/orders': 'Orders Management - Admin Panel - CaseX',
+      '/admin/steam-import': 'Steam Import - Admin Panel - CaseX',
+      '/admin/settings': 'Settings - Admin Panel - CaseX'
+    };
+    
+    document.title = pageTitles[pathname] || 'Admin Panel - CaseX';
+  }, [pathname]);
+
   useEffect(() => {
     // Check token validity and update user data
     const initializeUser = async () => {

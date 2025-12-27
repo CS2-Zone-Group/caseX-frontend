@@ -33,6 +33,7 @@ export default function AuthGuard({
       }
 
       // Check if token is still valid
+      const { checkTokenValidity } = useAuthStore.getState();
       const isValid = await checkTokenValidity();
       setIsAuthenticated(isValid);
       setIsChecking(false);
@@ -43,7 +44,7 @@ export default function AuthGuard({
     };
 
     checkAuth();
-  }, [token, user, requireAuth, redirectTo, router, checkTokenValidity]);
+  }, [token, user?.id, requireAuth, redirectTo]); // Only depend on primitive values
 
   if (isChecking) {
     return (

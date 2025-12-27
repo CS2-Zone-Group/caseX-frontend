@@ -18,6 +18,7 @@ export default function Header() {
 
   useEffect(() => {
     if (user?.id) {
+      const { fetchCart } = useCartStore.getState();
       fetchCart();
     }
   }, [user?.id]); // Only depend on user.id, not the whole user object or fetchCart

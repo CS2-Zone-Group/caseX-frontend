@@ -26,6 +26,11 @@ export default function MarketplacePage() {
   const { addToCart } = useCartStore();
   const { language, currency } = useSettingsStore();
   const t = translations[language];
+  
+  // Update document title
+  useEffect(() => {
+    document.title = `${t.marketplace} - CaseX`;
+  }, [language, t.marketplace]);
   const [skins, setSkins] = useState<Skin[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtersVisible, setFiltersVisible] = useState(false);

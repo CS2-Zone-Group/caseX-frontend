@@ -25,6 +25,8 @@ export default function Navbar() {
   // Check token validity and fetch balance on mount and periodically
   useEffect(() => {
     if (isLoggedIn) {
+      const { checkTokenValidity, fetchUserBalance } = useAuthStore.getState();
+      
       const initializeUser = async () => {
         const isValid = await checkTokenValidity();
         if (isValid) {
@@ -36,6 +38,7 @@ export default function Navbar() {
       
       // Check token validity and fetch balance every 5 minutes
       const interval = setInterval(async () => {
+        const { checkTokenValidity, fetchUserBalance } = useAuthStore.getState();
         const isValid = await checkTokenValidity();
         if (isValid) {
           await fetchUserBalance();

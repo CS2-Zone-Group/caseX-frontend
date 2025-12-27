@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useAuthStore } from '@/store/authStore';
 import { translations } from '@/lib/translations';
-import { convertCurrency, formatPrice, getCurrencySymbol } from '@/lib/currency';
+import { convertCurrency, formatPrice, getExchangeRates } from '@/lib/currency';
 import Navbar from '@/components/Navbar';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
 
@@ -20,6 +20,16 @@ function ProfileContent() {
   const [activeTab, setActiveTab] = useState<'settings' | 'balance' | 'history'>('settings');
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
   
+  // Update document title based on active tab
+  useEffect(() => {
+    const tabTitles = {
+      settings: language === 'uz' ? 'Profil Sozlamalari' : language === 'ru' ? 'Настройки Профиля' : 'Profile Settings',
+      balance: language === 'uz' ? 'Til va Valyuta' : language === 'ru' ? 'Язык и Валюта' : 'Language & Currency',
+      history: language === 'uz' ? 'To\'lov Tarixi' : language === 'ru' ? 'История Платежей' : 'Payment History'
+    };
+    document.title = `${tabTitles[activeTab]} - CaseX`;
+  }, [activeTab, language]);
+  
   useEffect(() => {
     const tab = searchParams.get('tab');
     if (tab === 'balance' || tab === 'history') {
@@ -30,6 +40,7 @@ function ProfileContent() {
   // Fetch user balance when component mounts
   useEffect(() => {
     if (user?.id) {
+      const { fetchUserBalance } = useAuthStore.getState();
       fetchUserBalance();
     }
   }, [user?.id]); // Only depend on user.id, not the whole user object or fetchUserBalance
@@ -59,6 +70,31 @@ function ProfileContent() {
   const [email, setEmail] = useState(user?.email || 'diyorbekolimov2000@gmail.com');
   const [publicKey] = useState('0xA200bAf5f5e950eF307871d831...');
   const [convertedBalance, setConvertedBalance] = useState(baseBalance);
+  const [exchangeRates, setExchangeRates] = useState<{USD: number, UZS: number, RUB: number} | null>(null);
+  const [ratesLoading, setRatesLoading] = useState(false);
+  
+  // Fetch exchange rates when balance tab is active
+  useEffect(() => {
+    if (activeTab === 'balance') {
+      const fetchRates = async () => {
+        setRatesLoading(true);
+        try {
+          const rates = await getExchangeRates();
+          setExchangeRates(rates);
+        } catch (error) {
+          console.error('Failed to fetch exchange rates:', error);
+        } finally {
+          setRatesLoading(false);
+        }
+      };
+      
+      fetchRates();
+      
+      // Refresh rates every 5 minutes
+      const interval = setInterval(fetchRates, 5 * 60 * 1000);
+      return () => clearInterval(interval);
+    }
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -243,19 +279,100 @@ function ProfileContent() {
               <div className="bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-8 shadow-lg border border-gray-200 dark:border-gray-700">
                 <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-6 lg:mb-8">{t.languageAndCurrency}</h1>
                 
-                {/* Balance Card */}
-                <div className="bg-gradient-to-br from-primary-600 to-blue-600 rounded-xl p-6 mb-6">
-                  <div className="text-white/80 text-sm mb-2">{t.availableBalance}</div>
-                  <div className="text-4xl font-bold text-white mb-4">
-                    {formatPrice(convertedBalance, currency)}
+                {/* Balance and Exchange Rates Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                  {/* Balance Card */}
+                  <div className="bg-gradient-to-br from-primary-600 to-blue-600 rounded-xl p-6">
+                    <div className="text-white/80 text-sm mb-2">{t.availableBalance}</div>
+                    <div className="text-4xl font-bold text-white mb-4">
+                      {formatPrice(convertedBalance, currency)}
+                    </div>
+                    <div className="flex gap-3">
+                      <button className="px-6 py-2 bg-white text-primary-600 rounded-lg font-semibold hover:bg-gray-100 transition">
+                        {t.deposit}
+                      </button>
+                      <button className="px-6 py-2 bg-white/20 text-white rounded-lg font-semibold hover:bg-white/30 transition">
+                        {t.withdraw}
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex gap-3">
-                    <button className="px-6 py-2 bg-white text-primary-600 rounded-lg font-semibold hover:bg-gray-100 transition">
-                      {t.deposit}
-                    </button>
-                    <button className="px-6 py-2 bg-white/20 text-white rounded-lg font-semibold hover:bg-white/30 transition">
-                      {t.withdraw}
-                    </button>
+
+                  {/* Exchange Rates Card */}
+                  <div className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        {language === 'uz' ? 'Markaziy Bank Kurslari' : 
+                         language === 'ru' ? 'Курсы Центрального Банка' : 
+                         'Central Bank Exchange Rates'}
+                      </h3>
+                      {ratesLoading && (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600"></div>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {exchangeRates ? (
+                        <>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <span className="text-2xl">🇺🇸</span>
+                              <div>
+                                <div className="font-medium text-gray-900 dark:text-white">USD</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">US Dollar</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-bold text-gray-900 dark:text-white">
+                                {exchangeRates.UZS.toLocaleString('uz-UZ')} so'm
+                              </div>
+                              <div className="text-xs text-green-600 dark:text-green-400">
+                                {language === 'uz' ? 'Markaziy Bank' : 
+                                 language === 'ru' ? 'Центральный Банк' : 
+                                 'Central Bank'}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <span className="text-2xl">🇷🇺</span>
+                                <div>
+                                  <div className="font-medium text-gray-900 dark:text-white">RUB</div>
+                                  <div className="text-xs text-gray-500 dark:text-gray-400">Russian Ruble</div>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className="font-bold text-gray-900 dark:text-white">
+                                  {exchangeRates.RUB.toLocaleString('uz-UZ')} so'm
+                                </div>
+                                <div className="text-xs text-green-600 dark:text-green-400">
+                                  {language === 'uz' ? 'Markaziy Bank' : 
+                                   language === 'ru' ? 'Центральный Банк' : 
+                                   'Central Bank'}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
+                            <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                              {language === 'uz' ? 'Kurslar 5 daqiqada yangilanadi' : 
+                               language === 'ru' ? 'Курсы обновляются каждые 5 минут' : 
+                               'Rates updated every 5 minutes'}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="text-center py-8">
+                          <div className="text-gray-500 dark:text-gray-400 text-sm">
+                            {language === 'uz' ? 'Kurslar yuklanmoqda...' : 
+                             language === 'ru' ? 'Загрузка курсов...' : 
+                             'Loading exchange rates...'}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 

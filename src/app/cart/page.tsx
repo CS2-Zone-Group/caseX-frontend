@@ -19,6 +19,11 @@ export default function CartPage() {
   const [isHydrated, setIsHydrated] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Update document title
+  useEffect(() => {
+    document.title = `${t.cart} - CaseX`;
+  }, [language, t.cart]);
+
   useEffect(() => {
     setIsHydrated(true);
   }, []);
