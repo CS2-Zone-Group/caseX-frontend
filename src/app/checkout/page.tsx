@@ -46,8 +46,9 @@ export default function CheckoutPage() {
       clearCart();
       setIsProcessing(false);
       
-      
-      router.push(`/checkout/success`);
+      const randomNum = Math.floor(100000 + Math.random() * 900000);
+      const mockTrxId = `#TRX-${randomNum}`;
+      router.push(`/checkout/success?transactionId=${mockTrxId}`);
     }, 2000);
   }; 
 
