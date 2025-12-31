@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/Navbar';
 import MarketplaceFilters from '@/components/MarketplaceFilters';
 import SkinDetailsModal from '@/components/SkinDetailsModal';
@@ -10,6 +10,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { translations } from '@/lib/translations';
 import { formatPrice } from '@/lib/currency';
+import { useFilterStore } from '@/store/filterStore';
 
 interface Skin {
   id: string;
@@ -27,59 +28,95 @@ export default function MarketplacePage() {
   const { language, currency } = useSettingsStore();
   const t = translations[language];
   
-  // Update document title
-  useEffect(() => {
-    document.title = `${t.marketplace} - CaseX`;
-  }, [language, t.marketplace]);
-  const [skins, setSkins] = useState<Skin[]>([]);
+  const [skins, setSkins] = useState<Skin[]>([]); 
   const [loading, setLoading] = useState(true);
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [selectedSkin, setSelectedSkin] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [filters, setFilters] = useState({
-    search: '',
-    rarity: '',
-    weaponType: '',
-    exterior: '',
-    minPrice: '',
-    maxPrice: '',
-    sortBy: 'createdAt',
-    sortOrder: 'DESC',
-  });
+
+  const {
+    searchQuery,
+    sortBy,
+    rarity,
+    weaponType,
+    condition,
+    priceRange,
+    setSortBy, 
+    resetFilters
+  } = useFilterStore();
 
   useEffect(() => {
-    fetchSkins();
-  }, [filters]);
+    document.title = `${t.marketplace} - CaseX`;
+  }, [language, t.marketplace]);
 
-  const fetchSkins = async () => {
+  useEffect(() => {
+    resetFilters();
+  }, []); 
+
+  const fetchMarketItems = useCallback(async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const params = new URLSearchParams();
-      params.append('page', '1');
-      params.append('limit', '20');
-      
-      if (filters.search) params.append('search', filters.search);
-      if (filters.rarity) params.append('rarity', filters.rarity);
-      if (filters.weaponType) params.append('weaponType', filters.weaponType);
-      if (filters.minPrice) params.append('minPrice', filters.minPrice);
-      if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
-      params.append('sortBy', filters.sortBy);
-      params.append('sortOrder', filters.sortOrder);
+      let sortField = 'createdAt'; 
+      let sortOrder = 'DESC';      
 
-      const { data } = await api.get(`/skins?${params.toString()}`);
-      setSkins(data.items);
+      if (sortBy && sortBy !== 'default') {
+        if (sortBy.includes('-')) {
+          const parts = sortBy.split('-');
+          sortField = parts[0]; 
+          sortOrder = parts[1];
+        } else {
+  
+           sortField = sortBy;
+        }
+      }
+
+      
+      const params = {
+        search: searchQuery,
+        sortBy: sortField,    
+        sortOrder: sortOrder, 
+        rarity: rarity,
+        weaponType: weaponType,
+        exterior: condition,
+        minPrice: priceRange.min,
+        maxPrice: priceRange.max,
+        page: 1,
+        limit: 50
+      };
+
+
+      const { data } = await api.get('/skins', { params });
+      
+      if (Array.isArray(data)) {
+         setSkins(data);
+      } else if (data.items && Array.isArray(data.items)) {
+         setSkins(data.items);
+      } else if (data.data && Array.isArray(data.data)) {
+         setSkins(data.data);
+      } else {
+         setSkins([]);
+      }
+
     } catch (error) {
-      console.error('Fetch skins error:', error);
+      console.error('Marketplace fetch error:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery, sortBy, rarity, weaponType, condition, priceRange]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchMarketItems();
+    }, 500); 
+
+    return () => clearTimeout(timer);
+  }, [fetchMarketItems]); 
 
   const handleAddToCart = async (skinId: string) => {
     if (!hasHydrated || !user) {
       const message = language === 'uz' ? 'Iltimos, avval tizimga kiring' : 
-                     language === 'ru' ? 'Пожалуйста, сначала войдите в систему' : 
-                     'Please login first';
+                      language === 'ru' ? 'Пожалуйста, сначала войдите в систему' : 
+                      'Please login first';
       alert(message);
       return;
     }
@@ -87,8 +124,8 @@ export default function MarketplacePage() {
     try {
       await addToCart(skinId);
       const message = language === 'uz' ? 'Savatga qo\'shildi!' : 
-                     language === 'ru' ? 'Добавлено в корзину!' : 
-                     'Added to cart!';
+                      language === 'ru' ? 'Добавлено в корзину!' : 
+                      'Added to cart!';
       alert(message);
     } catch (error: any) {
       alert(error.message);
@@ -96,7 +133,6 @@ export default function MarketplacePage() {
   };
 
   const openSkinDetails = (skin: Skin) => {
-    // Convert marketplace skin to Steam item format for the modal
     const steamItem = {
       market_hash_name: skin.name,
       market_name: skin.name,
@@ -123,23 +159,17 @@ export default function MarketplacePage() {
       
       <div className="container mx-auto px-2 sm:px-4 py-8 pt-20">
         <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
+          
           {/* Filters Sidebar */}
           <div className="lg:hidden mb-4">
             {filtersVisible && (
-              <MarketplaceFilters 
-                filters={filters} 
-                onFilterChange={setFilters} 
-              />
+              <MarketplaceFilters filters={filtersVisible} />
             )}
           </div>
-          {filtersVisible && (
-            <div className="hidden lg:block">
-              <MarketplaceFilters 
-                filters={filters} 
-                onFilterChange={setFilters} 
-              />
-            </div>
-          )}
+          
+          <div className="hidden lg:block w-80 flex-shrink-0">
+             <MarketplaceFilters filters={filtersVisible}/>
+          </div>
 
           {/* Main Content */}
           <div className="flex-1">
@@ -149,7 +179,7 @@ export default function MarketplacePage() {
                 <div className="flex items-center gap-2">
                   <button 
                     onClick={() => setFiltersVisible(!filtersVisible)}
-                    className="p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 shadow-sm"
+                    className="p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 shadow-sm lg:hidden" // lg:hidden qo'shildi
                     title={language === 'uz' ? 'Filtrlar' : language === 'ru' ? 'Фильтры' : 'Filters'}
                   >
                     {filtersVisible ? (
@@ -165,7 +195,7 @@ export default function MarketplacePage() {
                   <button 
                     className="p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 shadow-sm"
                     title={language === 'uz' ? 'Yangilash' : language === 'ru' ? 'Обновить' : 'Refresh'}
-                    onClick={() => fetchSkins()}
+                    onClick={() => fetchMarketItems()}
                   >
                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -187,11 +217,8 @@ export default function MarketplacePage() {
               </div>
 
               <select
-                value={`${filters.sortBy}-${filters.sortOrder}`}
-                onChange={(e) => {
-                  const [sortBy, sortOrder] = e.target.value.split('-');
-                  setFilters({ ...filters, sortBy, sortOrder });
-                }}
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
                 className="px-3 lg:px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm lg:text-base shadow-sm"
               >
                 <option value="createdAt-DESC">{t.sortNewest}</option>
@@ -217,10 +244,12 @@ export default function MarketplacePage() {
                 <p className="text-gray-600 dark:text-gray-400">
                   {t.tryDifferentFilters}
                 </p>
+                <button onClick={resetFilters} className="mt-4 text-primary-600 hover:underline">
+                  {language === 'uz' ? 'Filtrlarni tozalash' : 'Clear filters'}
+                </button>
               </div>
             ) : (
               <>
-                {/* Skins Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4">
                   {skins.map((skin) => (
                     <div
@@ -249,11 +278,11 @@ export default function MarketplacePage() {
                         
                         <div className="flex items-center justify-center">
                           <span className={`px-2 py-1 rounded text-xs font-medium truncate max-w-full ${
-                            skin.rarity === 'covert' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400' :
-                            skin.rarity === 'classified' ? 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-400' :
-                            skin.rarity === 'restricted' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-400' :
-                            skin.rarity === 'milspec' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400' :
-                            skin.rarity === 'industrial' ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-400' :
+                            skin.rarity?.toLowerCase() === 'covert' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400' :
+                            skin.rarity?.toLowerCase() === 'classified' ? 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-400' :
+                            skin.rarity?.toLowerCase() === 'restricted' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-400' :
+                            skin.rarity?.toLowerCase() === 'milspec' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400' :
+                            skin.rarity?.toLowerCase() === 'industrial' ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-400' :
                             'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
                           }`}>
                             {skin.rarity}
@@ -290,7 +319,6 @@ export default function MarketplacePage() {
         </div>
       </div>
 
-      {/* Skin Details Modal */}
       <SkinDetailsModal
         isOpen={isModalOpen}
         onClose={closeSkinDetails}

@@ -10,6 +10,8 @@ import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { translations } from '@/lib/translations';
 import api from '@/lib/api';
+import { useFilterStore } from '@/store/filterStore';
+
 
 interface InventoryItemType {
   id: string;
@@ -38,11 +40,11 @@ export default function InventoryPage() {
   useEffect(() => {
     document.title = `${t.inventory} - CaseX`;
   }, [language, t.inventory]);
-  
+  const {searchQuery,sortBy,rarity,weaponType,condition,priceRange,setFilter,setPriceRange,setSearchQuery,setSortBy}=useFilterStore()
   const [items, setItems] = useState<InventoryItemType[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState('deliveries');
+  // const [sortBy, setSortBy] = useState('deliveries');
   const [isHydrated, setIsHydrated] = useState(false);
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [filters, setFilters] = useState({
@@ -55,6 +57,18 @@ export default function InventoryPage() {
     sortBy: 'createdAt',
     sortOrder: 'DESC',
   });
+
+ 
+
+ 
+
+
+
+
+
+
+
+ 
 
   useEffect(() => {
     setIsHydrated(true);
@@ -72,7 +86,16 @@ export default function InventoryPage() {
 
   const fetchInventory = async () => {
     try {
-      const { data } = await api.get('/inventory');
+      const params={
+        search:searchQuery,
+        sort:sortBy,
+        rarity:rarity,
+        type:weaponType,
+        condition:condition,
+        minPrice:priceRange.min,
+        maxPrice:priceRange.max
+      }
+      const { data } = await api.get('/inventory',{params});
       setItems(data);
     } catch (error) {
       console.error('Inventory fetch error:', error);
@@ -199,7 +222,7 @@ export default function InventoryPage() {
 
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
+                // onChange={(e) => setSortBy(e.target.value)}
                 className="px-3 lg:px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm lg:text-base shadow-sm"
               >
                 <option value="deliveries">
