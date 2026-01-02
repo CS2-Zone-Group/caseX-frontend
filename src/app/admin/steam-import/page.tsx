@@ -23,7 +23,7 @@ export default function SteamImportPage() {
   const [loading, setLoading] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importProgress, setImportProgress] = useState({ imported: 0, failed: 0, total: 0 });
-  const [selectedSkin, setSelectedSkin] = useState<SteamItem | null>(null);
+  const [selectedSkin, setSelectedSkin] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Simple English translations for now
@@ -132,7 +132,23 @@ export default function SteamImportPage() {
   };
 
   const openSkinDetails = (item: SteamItem) => {
-    setSelectedSkin(item);
+    // Convert SteamItem to Skin format for the modal
+    const convertedSkin = {
+      id: item.market_hash_name,
+      name: item.name || item.market_name,
+      weaponType: item.tags?.find(tag => tag.category === 'Weapon')?.localized_tag_name || 'Unknown',
+      rarity: item.tags?.find(tag => tag.category === 'Rarity')?.localized_tag_name || 'Unknown',
+      exterior: item.tags?.find(tag => tag.category === 'Exterior')?.localized_tag_name || 'Unknown',
+      price: 0, // Steam items don't have our price
+      imageUrl: item.icon_url.startsWith('http') 
+        ? item.icon_url 
+        : `https://community.cloudflare.steamstatic.com/economy/image/${item.icon_url}/330x192`,
+      marketHashName: item.market_hash_name,
+      steamIconUrl: item.icon_url,
+      collection: item.tags?.find(tag => tag.category === 'ItemSet')?.localized_tag_name,
+      isAvailable: true
+    };
+    setSelectedSkin(convertedSkin as any);
     setIsModalOpen(true);
   };
 

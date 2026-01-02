@@ -302,16 +302,16 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
               <div className="grid grid-cols-2 gap-3 mt-2">
                 <input
                   type="number"
-                  placeholder="0"
-                  value={priceRange.min}
-                  onChange={(e) => setPriceRange(Number(e.target.value),priceRange.max)}
+                  placeholder="Min"
+                  value={priceRange.min || ''}
+                  onChange={(e) => setPriceRange(Number(e.target.value) || 0, priceRange.max)}
                   className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600"
                 />
                 <input
                   type="number"
-                  placeholder="∞"
-                  value={priceRange.max}
-                  onChange={(e) => setPriceRange(priceRange.min,Number(e.target.value))}
+                  placeholder="Max"
+                  value={priceRange.max || ''}
+                  onChange={(e) => setPriceRange(priceRange.min, Number(e.target.value) || 0)}
                   className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600"
                 />
               </div>

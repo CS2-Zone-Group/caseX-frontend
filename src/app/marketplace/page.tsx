@@ -20,6 +20,15 @@ interface Skin {
   exterior: string;
   price: number;
   imageUrl: string;
+  marketHashName?: string;
+  steamIconUrl?: string;
+  steamPrice?: string;
+  steamVolume?: string;
+  description?: string;
+  collection?: string;
+  float?: number;
+  isAvailable?: boolean;
+  sellerId?: string;
 }
 
 export default function MarketplacePage() {
@@ -31,7 +40,7 @@ export default function MarketplacePage() {
   const [skins, setSkins] = useState<Skin[]>([]); 
   const [loading, setLoading] = useState(true);
   const [filtersVisible, setFiltersVisible] = useState(false);
-  const [selectedSkin, setSelectedSkin] = useState<any>(null);
+  const [selectedSkin, setSelectedSkin] = useState<Skin | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const {
@@ -70,19 +79,24 @@ export default function MarketplacePage() {
         }
       }
 
-      
-      const params = {
+      const params: any = {
         search: searchQuery,
         sortBy: sortField,    
         sortOrder: sortOrder, 
         rarity: rarity,
         weaponType: weaponType,
         exterior: condition,
-        minPrice: priceRange.min,
-        maxPrice: priceRange.max,
         page: 1,
         limit: 50
       };
+
+      // Only add price filters if they have values
+      if (priceRange.min > 0) {
+        params.minPrice = priceRange.min;
+      }
+      if (priceRange.max > 0) {
+        params.maxPrice = priceRange.max;
+      }
 
 
       const { data } = await api.get('/skins', { params });
@@ -133,18 +147,7 @@ export default function MarketplacePage() {
   };
 
   const openSkinDetails = (skin: Skin) => {
-    const steamItem = {
-      market_hash_name: skin.name,
-      market_name: skin.name,
-      name: skin.name,
-      icon_url: skin.imageUrl.replace('https://community.cloudflare.steamstatic.com/economy/image/', '').replace('/330x192', ''),
-      tags: [
-        { category: 'Weapon', localized_tag_name: skin.weaponType },
-        { category: 'Rarity', localized_tag_name: skin.rarity },
-        { category: 'Exterior', localized_tag_name: skin.exterior }
-      ]
-    };
-    setSelectedSkin(steamItem);
+    setSelectedSkin(skin);
     setIsModalOpen(true);
   };
 
