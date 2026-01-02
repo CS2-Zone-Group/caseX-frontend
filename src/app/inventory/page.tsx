@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import AuthGuard from '@/components/AuthGuard';
@@ -10,13 +10,13 @@ import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { translations } from '@/lib/translations';
 import api from '@/lib/api';
+import { useFilterStore } from '@/store/filterStore';
 
 interface InventoryItemType {
   id: string;
   isListed: boolean;
   listPrice: number | null;
   isSteamItem?: boolean;
-  steamAssetId?: string;
   skin: {
     id: string;
     name: string;
@@ -34,52 +34,141 @@ export default function InventoryPage() {
   const { language, currency } = useSettingsStore();
   const t = translations[language];
 
-  // Update document title
+  const {
+    searchQuery,
+    sortBy,
+    rarity,
+    weaponType,
+    condition,
+    priceRange,
+    setSortBy,
+    resetFilters
+  } = useFilterStore();
+
+  const [allItems, setAllItems] = useState<InventoryItemType[]>([]); 
+  const [filteredItems, setFilteredItems] = useState<InventoryItemType[]>([]); 
+  
+  const [loading, setLoading] = useState(true);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
+  const [filtersVisible, setFiltersVisible] = useState(false);
+
   useEffect(() => {
     document.title = `${t.inventory} - CaseX`;
   }, [language, t.inventory]);
-  
-  const [items, setItems] = useState<InventoryItemType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState('deliveries');
-  const [isHydrated, setIsHydrated] = useState(false);
-  const [filtersVisible, setFiltersVisible] = useState(false);
-  const [filters, setFilters] = useState({
-    search: '',
-    rarity: '',
-    weaponType: '',
-    exterior: '',
-    minPrice: '',
-    maxPrice: '',
-    sortBy: 'createdAt',
-    sortOrder: 'DESC',
-  });
+
+  useEffect(() => {
+    resetFilters();
+  }, []);
 
   useEffect(() => {
     setIsHydrated(true);
   }, []);
 
-  useEffect(() => {
-    if (!isHydrated) return;
-    
-    if (!user) {
-      router.push('/auth/login');
-      return;
-    }
-    fetchInventory();
-  }, [user?.id, isHydrated]); // Only depend on user.id, not the entire user object
+  const fetchInventoryItems = useCallback(async () => {
+    if (!user || !isHydrated) return;
 
-  const fetchInventory = async () => {
+    setLoading(true);
     try {
-      const { data } = await api.get('/inventory');
-      setItems(data);
+      const params = {
+        userId: user.id,
+      };
+
+      const { data } = await api.get('/inventory', { params });
+      
+      let rawItems: InventoryItemType[] = [];
+
+      if (Array.isArray(data)) {
+        rawItems = data;
+      } else if (data.items && Array.isArray(data.items)) {
+        rawItems = data.items;
+      } else if (data.data && Array.isArray(data.data)) {
+        rawItems = data.data;
+      }
+
+      setAllItems(rawItems);
+      setFilteredItems(rawItems); 
+
     } catch (error) {
       console.error('Inventory fetch error:', error);
+      setAllItems([]);
+      setFilteredItems([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, isHydrated]);
+
+  useEffect(() => {
+    if (!isHydrated || !user) return;
+    fetchInventoryItems();
+  }, [fetchInventoryItems, isHydrated, user]);
+
+
+  useEffect(() => {
+    let result = [...allItems];
+
+    if (searchQuery) {
+      const lowerQuery = searchQuery.toLowerCase();
+      result = result.filter(item => 
+        item.skin?.name?.toLowerCase().includes(lowerQuery)
+      );
+    }
+
+    if (rarity) {
+      result = result.filter(item => 
+        item.skin?.rarity?.toLowerCase() === rarity.toLowerCase()
+      );
+    }
+
+    if (weaponType) {
+      result = result.filter(item => 
+        item.skin?.weaponType?.toLowerCase() === weaponType.toLowerCase()
+      );
+    }
+
+    if (condition) {
+      result = result.filter(item => 
+        item.skin?.exterior?.toLowerCase() === condition.toLowerCase()
+      );
+    }
+
+    if (priceRange.min > 0 || priceRange.max > 0) {
+      result = result.filter(item => {
+        const price = item.listPrice || item.skin?.price || 0;
+        const minOk = priceRange.min ? price >= priceRange.min : true;
+        const maxOk = priceRange.max ? price <= priceRange.max : true;
+        return minOk && maxOk;
+      });
+    }
+
+    if (sortBy && sortBy !== 'default') {
+      const [field, order] = sortBy.includes('-') ? sortBy.split('-') : [sortBy, 'DESC'];
+      
+      result.sort((a, b) => {
+        let valA: any = 0;
+        let valB: any = 0;
+
+        if (field === 'price') {
+          valA = a.listPrice || a.skin?.price || 0;
+          valB = b.listPrice || b.skin?.price || 0;
+        } else if (field === 'name') {
+          valA = a.skin?.name || '';
+          valB = b.skin?.name || '';
+        } else {
+          valA = a.id; 
+          valB = b.id;
+        }
+
+        if (valA < valB) return order === 'ASC' ? -1 : 1;
+        if (valA > valB) return order === 'ASC' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    setFilteredItems(result);
+
+  }, [allItems, searchQuery, sortBy, rarity, weaponType, condition, priceRange]);
+
 
   const handleSelectItem = (id: string) => {
     setSelectedItems(prev =>
@@ -87,35 +176,27 @@ export default function InventoryPage() {
     );
   };
 
-  const handleWithdraw = () => {
-    console.log('Withdraw items:', selectedItems);
-  };
+  const handleSell = () => console.log('Sell:', selectedItems);
 
-  const handleSellNow = () => {
-    console.log('Sell items:', selectedItems);
-  };
+  const totalInventoryValue = filteredItems.reduce((sum, item) => {
+    const price = item.listPrice || item.skin?.price || 0;
+    return sum + Number(price);
+  }, 0);
 
-  const handleSell = () => {
-    console.log('List items for sale:', selectedItems);
-  };
-
-  const handleDonate = () => {
-    console.log('Donate items:', selectedItems);
-  };
-
-  const totalValue = items
+  const selectedValue = allItems
     .filter(item => selectedItems.includes(item.id))
     .reduce((sum, item) => {
-      const price = item.isSteamItem ? (item.skin.price || 0) : (item.listPrice || 0);
-      return sum + price;
+      const price = item.listPrice || item.skin?.price || 0;
+      return sum + Number(price);
     }, 0);
 
-  if (loading) {
+  if (loading && allItems.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <Navbar />
-        <div className="container mx-auto px-4 py-8 text-center text-gray-900 dark:text-white">
-          {language === 'uz' ? 'Yuklanmoqda...' : language === 'ru' ? 'Загрузка...' : 'Loading...'}
+        <div className="container mx-auto px-4 py-8 pt-32 text-center text-gray-900 dark:text-white">
+           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-2"></div>
+           Loading...
         </div>
       </div>
     );
@@ -125,266 +206,138 @@ export default function InventoryPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <Navbar />
-      
-      <main className="container mx-auto px-2 sm:px-4 py-8 pt-20">
-        <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
-          {/* Filters Sidebar */}
-          <div className="lg:hidden mb-4">
-            {filtersVisible && (
-              <MarketplaceFilters 
-                filters={filters} 
-                onFilterChange={setFilters} 
-              />
-            )}
-          </div>
-          {filtersVisible && (
-            <div className="hidden lg:block">
-              <MarketplaceFilters 
-                filters={filters} 
-                onFilterChange={setFilters} 
-              />
+
+        <main className="container mx-auto px-2 sm:px-4 py-8 pt-20">
+          <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
+            
+            <div className="lg:hidden mb-4">
+              {filtersVisible && <MarketplaceFilters filters={filtersVisible} />}
             </div>
-          )}
-
-          {/* Main Content */}
-          <div className="flex-1">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 lg:mb-6 gap-4 sm:gap-0">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                <div className="flex items-center gap-2">
-                  <button 
-                    onClick={() => setFiltersVisible(!filtersVisible)}
-                    className="p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 shadow-sm"
-                    title={language === 'uz' ? 'Filtrlar' : language === 'ru' ? 'Фильтры' : 'Filters'}
-                  >
-                    {filtersVisible ? (
-                      <svg className="w-4 h-4 lg:w-5 lg:h-5 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
-                    ) : (
-                      <svg className="w-4 h-4 lg:w-5 lg:h-5 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
-                      </svg>
-                    )}
-                  </button>
-                  <button 
-                    className="p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 shadow-sm"
-                    title={language === 'uz' ? 'Yangilash' : language === 'ru' ? 'Обновить' : 'Refresh'}
-                    onClick={() => fetchInventory()}
-                  >
-                    <svg className="w-4 h-4 lg:w-5 lg:h-5 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                  </button>
-                </div>
-                
-                <div className="text-gray-900 dark:text-white text-sm lg:text-base">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    {language === 'uz' ? 'Inventar narxi' : language === 'ru' ? 'Цена инвентаря для' : 'Inventory price for'}
-                  </span>
-                  <span className="font-bold ml-1 lg:ml-2">
-                    {items.length} {language === 'uz' ? 'ta element' : language === 'ru' ? 'предметов' : 'items'}
-                  </span>
-                  <span className="text-green-600 dark:text-green-400 ml-1 lg:ml-2">
-                    ≈ {formatPrice(
-                      items.reduce((sum, item) => {
-                        const price = item.isSteamItem ? (item.skin.price || 0) : (item.listPrice || 0);
-                        return sum + price;
-                      }, 0), 
-                      currency
-                    )}
-                  </span>
-                </div>
-              </div>
-
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 lg:px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm lg:text-base shadow-sm"
-              >
-                <option value="deliveries">
-                  {language === 'uz' ? 'Saralash: Yetkazib berish' : language === 'ru' ? 'Сортировка: Доставки' : 'Sort: Deliveries'}
-                </option>
-                <option value="price-high">
-                  {language === 'uz' ? 'Narx: Yuqoridan pastga' : language === 'ru' ? 'Цена: По убыванию' : 'Price: High to Low'}
-                </option>
-                <option value="price-low">
-                  {language === 'uz' ? 'Narx: Pastdan yuqoriga' : language === 'ru' ? 'Цена: По возрастанию' : 'Price: Low to High'}
-                </option>
-                <option value="name">
-                  {language === 'uz' ? 'Nom: A-Z' : language === 'ru' ? 'Имя: A-Z' : 'Name: A-Z'}
-                </option>
-              </select>
+            <div className="hidden lg:block w-80 flex-shrink-0">
+               <MarketplaceFilters filters={filtersVisible} />
             </div>
 
-            {/* Items Grid */}
-            {items.length === 0 ? (
-              <div className="text-center py-12 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  {language === 'uz' ? 'Inventoringiz bo\'sh' : language === 'ru' ? 'Ваш инвентарь пуст' : 'Your inventory is empty'}
-                </p>
-                <button
-                  onClick={() => router.push('/marketplace')}
-                  className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-                >
-                  {language === 'uz' ? 'Marketplace\'ga o\'tish' : language === 'ru' ? 'Перейти в маркетплейс' : 'Go to marketplace'}
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4">
-                {items.map((item) => (
-                  <div
-                    key={item.id}
-                    className={`bg-white dark:bg-gray-900 rounded-xl p-3 sm:p-4 border transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md ${
-                      selectedItems.includes(item.id) 
-                        ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20' 
-                        : 'border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'
-                    }`}
-                    onClick={() => handleSelectItem(item.id)}
-                  >
-                    <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg mb-3 overflow-hidden relative">
-                      <img
-                        src={item.skin.imageUrl}
-                        alt={item.skin.name}
-                        className="w-full h-full object-contain p-2"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const parent = target.parentElement;
-                          if (parent) {
-                            parent.innerHTML = '<div class="text-gray-400 text-xs flex items-center justify-center h-full">No Image</div>';
-                          }
-                        }}
-                      />
-                      {selectedItems.includes(item.id) && (
-                        <div className="absolute top-2 right-2 w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center">
-                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                      )}
-                      {item.isSteamItem && (
-                        <div className="absolute top-2 left-2 px-2 py-1 bg-blue-600 text-white text-xs rounded-full flex items-center gap-1">
-                          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                          </svg>
-                          Steam
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <h3 className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm truncate" title={item.skin.name}>
-                        {item.skin.name}
-                      </h3>
-                      
-                      <div className="flex items-center justify-center">
-                        <span className={`px-2 py-1 rounded text-xs font-medium truncate max-w-full ${
-                          item.skin.rarity === 'covert' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400' :
-                          item.skin.rarity === 'classified' ? 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-400' :
-                          item.skin.rarity === 'restricted' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-400' :
-                          item.skin.rarity === 'milspec' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400' :
-                          item.skin.rarity === 'industrial' ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-400' :
-                          'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
-                        }`}>
-                          {item.skin.rarity}
-                        </span>
-                      </div>
-                      
-                      <p className="text-xs text-gray-600 dark:text-gray-400 text-center truncate">
-                        {item.skin.exterior}
-                      </p>
-                      
-                      <div className="text-center pt-2">
-                        <span className="text-sm sm:text-base font-bold text-green-600 dark:text-green-400">
-                          {item.isSteamItem 
-                            ? formatPrice(Number(item.skin.price || 0), currency)
-                            : formatPrice(Number(item.listPrice || 0), currency)
-                          }
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Action Buttons */}
-            {selectedItems.length > 0 && (
-              <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-3 lg:p-4 shadow-lg">
-                <div className="container mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
-                  <div className="text-gray-900 dark:text-white text-sm lg:text-base">
-                    <span className="text-gray-600 dark:text-gray-400">
-                      {language === 'uz' ? 'Tanlangan elementlar:' : language === 'ru' ? 'Выбранные предметы:' : 'Selected items:'}
-                    </span>
-                    <span className="font-bold ml-1 lg:ml-2">{selectedItems.length}</span>
-                    <span className="text-green-600 dark:text-green-400 ml-2 lg:ml-4">
-                      {language === 'uz' ? 'Jami:' : language === 'ru' ? 'Итого:' : 'Total:'} {formatPrice(totalValue, currency)}
-                    </span>
+            <div className="flex-1">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 lg:mb-6 gap-4 sm:gap-0">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setFiltersVisible(!filtersVisible)}
+                      className="p-2 bg-white dark:bg-gray-800 rounded-lg lg:hidden border border-gray-200 dark:border-gray-700"
+                    >
+                       Filter
+                    </button>
+                    <button
+                      className="p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+                      onClick={() => fetchInventoryItems()}
+                    >
+                      <svg className="w-5 h-5 text-gray-700 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    </button>
                   </div>
                   
-                  <div className="flex flex-wrap gap-2 lg:gap-3">
-                    <button
-                      onClick={handleWithdraw}
-                      className="px-3 lg:px-6 py-2 lg:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1 lg:gap-2 text-sm lg:text-base"
-                    >
-                      <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                      </svg>
-                      <span className="hidden sm:inline">
-                        {language === 'uz' ? 'Chiqarish' : language === 'ru' ? 'Вывести' : 'Withdraw'}
-                      </span>
-                      <span className="sm:hidden">
-                        {language === 'uz' ? 'Chiq' : language === 'ru' ? 'Выв' : 'Out'}
-                      </span>
-                    </button>
-                    
-                    <button
-                      onClick={handleSellNow}
-                      className="px-3 lg:px-6 py-2 lg:py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center gap-1 lg:gap-2 text-sm lg:text-base"
-                    >
-                      <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span className="hidden sm:inline">
-                        {language === 'uz' ? 'Hozir sotish' : language === 'ru' ? 'Продать сейчас' : 'Sell now'}
-                      </span>
-                      <span className="sm:hidden">
-                        {language === 'uz' ? 'Hozir' : language === 'ru' ? 'Сейчас' : 'Now'}
-                      </span>
-                    </button>
-                    
-                    <button
-                      onClick={handleSell}
-                      className="px-3 lg:px-6 py-2 lg:py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-1 lg:gap-2 text-sm lg:text-base"
-                    >
-                      <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                      {language === 'uz' ? 'Sotish' : language === 'ru' ? 'Продать' : 'Sell'}
-                    </button>
-                    
-                    <button
-                      onClick={handleDonate}
-                      className="px-3 lg:px-6 py-2 lg:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-1 lg:gap-2 text-sm lg:text-base"
-                    >
-                      <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                      </svg>
-                      <span className="hidden sm:inline">
-                        {language === 'uz' ? 'Sovg\'a qilish' : language === 'ru' ? 'Подарить' : 'Donate'}
-                      </span>
-                      <span className="sm:hidden">
-                        {language === 'uz' ? 'Sovg\'a' : language === 'ru' ? 'Подарок' : 'Gift'}
-                      </span>
-                    </button>
+                  <div className="text-gray-900 dark:text-white text-sm lg:text-base">
+                    <span className="text-gray-600 dark:text-gray-400">Items: {filteredItems.length}</span>
+                    <span className="font-bold ml-2 text-green-600 dark:text-green-400">
+                      Total: {formatPrice(totalInventoryValue, currency)}
+                    </span>
                   </div>
                 </div>
+
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700"
+                >
+                  <option value="createdAt-DESC">{t.sortNewest}</option>
+                  <option value="price-DESC">{t.priceHighToLow}</option>
+                  <option value="price-ASC">{t.priceLowToHigh}</option>
+                  <option value="name-ASC">{t.nameAtoZ}</option>
+                </select>
               </div>
-            )}
+
+              {filteredItems.length === 0 ? (
+                <div className="text-center py-20 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
+                  <p className="text-gray-500 mb-4">No items found matching your filters</p>
+                  <button onClick={resetFilters} className="text-primary-600 hover:underline">
+                    Clear Filters
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
+                  {filteredItems.map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() => handleSelectItem(item.id)}
+                      className={`bg-white dark:bg-gray-900 rounded-xl p-3 sm:p-4 border transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md ${
+                        selectedItems.includes(item.id)
+                          ? 'border-primary-600 ring-1 ring-primary-600'
+                          : 'border-gray-200 dark:border-gray-800'
+                      }`}
+                    >
+                      <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg mb-3 overflow-hidden relative">
+                        <img
+                          src={item.skin?.imageUrl}
+                          alt={item.skin?.name}
+                          className="w-full h-full object-contain p-2"
+                          onError={(e) => {
+                             const target = e.target as HTMLImageElement;
+                             if (target.src.includes('/330x192')) {
+                                target.src = target.src.replace('/330x192', '');
+                             } else {
+                                target.style.display = 'none';
+                                target.parentElement!.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">No Image</div>';
+                             }
+                          }}
+                        />
+                        {selectedItems.includes(item.id) && (
+                          <div className="absolute top-2 right-2 w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center text-white text-xs">✓</div>
+                        )}
+                        {item.isSteamItem && (
+                          <div className="absolute top-2 left-2 px-2 py-0.5 bg-blue-600 text-white text-[10px] rounded-full">Steam</div>
+                        )}
+                      </div>
+
+                      <div className="space-y-1">
+                        <h3 className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm truncate" title={item.skin?.name}>
+                          {item.skin?.name}
+                        </h3>
+                        
+                        <div className="flex justify-center">
+                          <span className="px-2 py-0.5 rounded text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 truncate">
+                            {item.skin?.rarity}
+                          </span>
+                        </div>
+                        
+                        <p className="text-[10px] text-gray-500 text-center truncate">{item.skin?.exterior}</p>
+                        
+                        <div className="text-center pt-1">
+                           <span className="text-sm font-bold text-green-600 dark:text-green-400">
+                            {formatPrice(Number(item.listPrice || item.skin?.price || 0), currency)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {selectedItems.length > 0 && (
+                <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 shadow-lg z-50">
+                  <div className="container mx-auto flex justify-between items-center">
+                    <span className="dark:text-white font-medium">
+                        {selectedItems.length} selected 
+                        <span className="ml-2 text-green-500">
+                            ({formatPrice(selectedValue, currency)})
+                        </span>
+                    </span>
+                    <button onClick={handleSell} className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Sell</button>
+                  </div>
+                </div>
+              )}
+
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
       </div>
     </AuthGuard>
   );

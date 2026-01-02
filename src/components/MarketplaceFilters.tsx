@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import {  useState } from 'react';
 import { useSettingsStore } from '@/store/settingsStore';
 import { translations } from '@/lib/translations';
+import { useFilterStore } from '@/store/filterStore';
 
 interface MarketplaceFiltersProps {
   onFilterChange?: (filters: any) => void;
@@ -18,6 +19,12 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
   const [weaponTypeOpen, setWeaponTypeOpen] = useState(false);
   const [exteriorOpen, setExteriorOpen] = useState(false);
   const [priceRangeOpen, setPriceRangeOpen] = useState(false);
+  const {searchQuery,sortBy,rarity,weaponType,condition,priceRange,setFilter,setPriceRange,setSearchQuery,setSortBy,resetFilters}=useFilterStore()
+  
+
+
+
+
 
   const rarityOptions = [
     { 
@@ -167,8 +174,8 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
             <input
               type="text"
               placeholder={t.search}
-              value={filters.search}
-              onChange={(e) => handleFilterChange('search', e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery( e.target.value)}
               className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 pr-10 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600"
             />
             <svg className="absolute right-3 top-2.5 w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -187,23 +194,19 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            {sortOpen && (
-              <select
-                value={`${filters.sortBy}-${filters.sortOrder}`}
-                onChange={(e) => {
-                  const [sortBy, sortOrder] = e.target.value.split('-');
-                  handleFilterChange('sortBy', sortBy);
-                  handleFilterChange('sortOrder', sortOrder);
-                }}
-                className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2"
-              >
-                {sortOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            )}
+           {sortOpen && (
+                 <select
+                        value={sortBy} 
+                        onChange={(e) => setSortBy(e.target.value)}   
+                        className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2"
+                      >
+                        {sortOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                </select>
+                    )}
           </div>
 
           {/* Rarity */}
@@ -219,8 +222,8 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
             </button>
             {rarityOpen && (
               <select
-                value={filters.rarity}
-                onChange={(e) => handleFilterChange('rarity', e.target.value)}
+                value={rarity||''}
+                onChange={(e) => setFilter('rarity', e.target.value)}
                 className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2"
               >
                 {rarityOptions.map((option) => (
@@ -245,8 +248,8 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
             </button>
             {weaponTypeOpen && (
               <select
-                value={filters.weaponType}
-                onChange={(e) => handleFilterChange('weaponType', e.target.value)}
+                value={weaponType||''}
+                onChange={(e) => setFilter('weaponType', e.target.value)}
                 className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2"
               >
                 {weaponTypes.map((option) => (
@@ -271,8 +274,8 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
             </button>
             {exteriorOpen && (
               <select
-                value={filters.exterior}
-                onChange={(e) => handleFilterChange('exterior', e.target.value)}
+                value={condition||''}
+                onChange={(e) => setFilter('condition', e.target.value)}
                 className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2"
               >
                 {exteriorOptions.map((option) => (
@@ -300,15 +303,15 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
                 <input
                   type="number"
                   placeholder="0"
-                  value={filters.minPrice}
-                  onChange={(e) => handleFilterChange('minPrice', e.target.value)}
+                  value={priceRange.min}
+                  onChange={(e) => setPriceRange(Number(e.target.value),priceRange.max)}
                   className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600"
                 />
                 <input
                   type="number"
                   placeholder="∞"
-                  value={filters.maxPrice}
-                  onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
+                  value={priceRange.max}
+                  onChange={(e) => setPriceRange(priceRange.min,Number(e.target.value))}
                   className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600"
                 />
               </div>
@@ -317,16 +320,7 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
 
           {/* Reset Button */}
           <button 
-            onClick={() => onFilterChange?.({
-              search: '',
-              rarity: '',
-              weaponType: '',
-              exterior: '',
-              minPrice: '',
-              maxPrice: '',
-              sortBy: 'createdAt',
-              sortOrder: 'DESC'
-            })}
+            onClick={() =>resetFilters()}
             className="w-full py-2 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition"
           >
             {language === 'uz' ? 'Filtrlarni tozalash' : language === 'ru' ? 'Сбросить фильтры' : 'Reset Filters'}

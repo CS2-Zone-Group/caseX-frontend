@@ -5,8 +5,12 @@ import { translations } from '@/lib/translations';
 import { useSettingsStore } from '@/store/settingsStore';
 import { formatPrice } from '@/lib/currency';
 import { useRouter } from 'next/navigation';
+// import { useInventoryStore } from '@/store/inventoryStore';
+// import api from '@/lib/api';
+// import { useAuthStore } from '@/store/authStore';
 
 export default function CheckoutPage() {
+  // const {user}=useAuthStore()
   const router = useRouter(); 
   const { items, fetchCart, removeFromCart, loading, clearCart } = useCartStore();
   const { language, currency } = useSettingsStore();
@@ -16,7 +20,8 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  // const {addToInventory}=useInventoryStore()
+  
   useEffect(() => {
     setIsHydrated(true);
     if (items.length === 0) {
@@ -41,8 +46,28 @@ export default function CheckoutPage() {
 
     
     setIsProcessing(true);
+
+
+    // try {
+    //   const payload={
+    //     userId:user?.id,
+    //     items:items.map(item=>item.id),
+    //     totalAmount:finalTotal,
+    //     paymentMethod:paymentMethod
+    //   }
+    //   const response=await api.post('/inventory',payload)
+    //   if(response.status===200||response.status===201){}
+    // } catch (error) {
+      
+    // }
+
+
+
+
+
     
     setTimeout(() => {
+      // addToInventory(items)
       clearCart();
       setIsProcessing(false);
       
