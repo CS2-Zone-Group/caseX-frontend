@@ -112,7 +112,25 @@ export const translations = {
     steamAccount: 'Steam akkaunt',
     twitterAccount: 'Twitter akkaunt',
     twitchAccount: 'Twitch akkaunt',
-    
+
+     //Payment Methods
+     paymentMethodsTitle:'Xavfsiz To\'lov Usullari',
+     payme:'Payme',
+     click:'Click',
+     uzum:'Uzum',
+     paynet:'Paynet',
+     visa:'Visa',
+     mastercard:'Mastercard',
+     bitcoin:'Bitcoin',
+     ethereum:'Ethereum',
+     usdt:'USDT',
+     more:'boshqalar',
+     moreMethods:'Turli usullar',
+     successText:'Barcha to\'lovlar xavfsiz va shifrlangan. Biz sizning moliyaviy ma\'lumotlaringizni saqlamaymiz.' ,
+     safety:'SSL Shifrlangan',
+     sertificate:'PCI DSS Sertifikatlangan',
+     transaction:'Operatsiya',
+     fee:'Komissiya',   
     // Common
     loading: 'Yuklanmoqda...',
     goToMarketplace: 'Marketplace\'ga o\'tish',
@@ -203,7 +221,15 @@ export const translations = {
       viewInventor: 'Перейти в инвентарь',
       shoppingAgain: 'Купить еще',
   
-    
+
+
+
+
+
+
+
+
+
     // Inventory
     myInventory: 'Мой инвентарь',
     emptyInventory: 'Ваш инвентарь пуст',
@@ -213,6 +239,26 @@ export const translations = {
     confirm: 'Подтвердить',
     cancel: 'Отмена',
     price: 'Цена',
+
+
+    //Payment Methods
+    paymentMethodsTitle: 'Безопасные способы оплаты',
+    payme: 'Payme',
+    click: 'Click',
+    uzum: 'Uzum',
+    paynet: 'Paynet',
+    visa: 'Visa',
+    mastercard: 'Mastercard',
+    bitcoin: 'Bitcoin',
+    ethereum: 'Ethereum',
+    usdt: 'USDT',
+    more: 'Другие',
+    moreMethods: 'Различные методы',
+    successText: 'Все платежи безопасны и зашифрованы. Мы не храним ваши финансовые данные.',
+    safety: 'SSL зашифровано',
+    sertificate: 'Сертифицировано PCI DSS',
+    transaction: 'Транзакция',
+    fee: 'Комиссия',
     
     // Profile & Settings
     profile: 'Профиль',
@@ -293,6 +339,26 @@ export const translations = {
     or: 'Or',
     alreadyHaveAccount: 'Already have an account?',
     dontHaveAccount: 'Don\'t have an account?',
+
+
+    //Payment Methods
+    paymentMethodsTitle: 'Secure Payment Methods',
+    payme: 'Payme',
+    click: 'Click',
+    uzum: 'Uzum',
+    paynet: 'Paynet',
+    visa: 'Visa',
+    mastercard: 'Mastercard',
+    bitcoin: 'Bitcoin',
+    ethereum: 'Ethereum',
+    usdt: 'USDT',
+    more: 'Others',
+    moreMethods: 'Various methods',
+    successText: 'All payments are secure and encrypted. We do not store your financial information.',
+    safety: 'SSL Encrypted',
+    sertificate: 'PCI DSS Certified',
+    transaction: 'Transaction',
+    fee: 'FEE',
     
     // Marketplace
     search: 'Search...',
