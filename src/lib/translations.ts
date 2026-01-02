@@ -53,6 +53,18 @@ export const translations = {
     paymentMethodError:'Iltimos, to\'lov usulini tanlang',
     selectPaymentMethod:'To\'lov usulini tanlang',
     processing:'jarayonda...',
+
+
+    //Success
+    success:'Muvafaqiyatli',
+    paymentSuccessful:'To\'lovingiz qabul qilindi. Skinlar zaxiraga olindi.',
+    status:'status',
+    killed:'To\'landi',
+    transactionId:'Tranzaksiya id',
+    viewInventor:'Invento\'rni ko\'rish',
+    shoppingAgain:'Yana xarid qilish',
+
+    
     
     // Inventory
     myInventory: 'Mening Inventorim',
@@ -180,6 +192,17 @@ export const translations = {
     paymentMethodError: "Пожалуйста, выберите способ оплаты",
     selectPaymentMethod: "Выберите способ оплаты",
     processing: "Обработка...",
+
+    //Success
+    
+      success: 'Успешно',
+      paymentSuccessful: 'Оплата принята. Скины зарезервированы.',
+      status: 'Статус',
+      killed: 'Оплачено',
+      transactionId: 'ID транзакции',
+      viewInventor: 'Перейти в инвентарь',
+      shoppingAgain: 'Купить еще',
+  
     
     // Inventory
     myInventory: 'Мой инвентарь',
@@ -305,6 +328,16 @@ export const translations = {
     paymentMethodError: "Please select a payment method",
     selectPaymentMethod: "Select payment method",
     processing: "Processing...",
+
+
+    //Success
+    success: 'Success',
+    paymentSuccessful: 'Payment successful. Skins have been reserved.',
+    status: 'Status',
+    killed: 'Paid', 
+    transactionId: 'Transaction ID',
+    viewInventor: 'View Inventory',
+    shoppingAgain: 'Buy More',
    
     
     // Inventory
