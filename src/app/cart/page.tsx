@@ -14,6 +14,7 @@ export default function CartPage() {
   const router = useRouter();
   const { user } = useAuthStore();
   const { items, total, loading, fetchCart, removeFromCart, clearCart } = useCartStore();
+  
   const { language, currency } = useSettingsStore();
   const t = translations[language];
   const [isHydrated, setIsHydrated] = useState(false);
@@ -138,6 +139,7 @@ export default function CartPage() {
                     <img
                       src={item.skin.imageUrl}
                       alt={item.skin.name}
+                      
                       className="w-full h-full object-contain"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
@@ -185,7 +187,7 @@ export default function CartPage() {
                     <span className="text-primary-600">{formatPrice(Number(total), currency)}</span>
                   </div>
                 </div>
-                <button className="w-full py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition">
+                <button onClick={()=>router.push('/checkout')} className="w-full py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition">
                   {t.checkout}
                 </button>
               </div>

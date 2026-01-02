@@ -39,6 +39,20 @@ export const translations = {
     total: 'Jami',
     checkout: 'To\'lovga o\'tish',
     items: 'Mahsulotlar',
+
+    //Checkout
+    thePriceclearance:'Haridni Rasmiylashtirish',
+    skinsPrice:'Skinlar narxi',
+    ta:'ta',
+    skin:'skin',
+    paymentDetails:'To\'lov Tafsilotlari',
+    commission:'Komissiya',
+    checkTotal:'Jami',
+    paymentToDo:'To\'lov qilish',
+    clickingAgree:'Sotib olish tugmasini bosish orqali siz foydalanish shartlariga rozilik bildirasiz.',
+    paymentMethodError:'Iltimos, to\'lov usulini tanlang',
+    selectPaymentMethod:'To\'lov usulini tanlang',
+    processing:'jarayonda...',
     
     // Inventory
     myInventory: 'Mening Inventorim',
@@ -136,6 +150,7 @@ export const translations = {
     minPrice: 'Мин цена',
     maxPrice: 'Макс цена',
     newest: 'Новые',
+    skin:'скин',
     cheapest: 'Дешевые',
     expensive: 'Дорогие',
     nameAZ: 'Имя (A-Z)',
@@ -150,6 +165,21 @@ export const translations = {
     total: 'Итого',
     checkout: 'Оформить заказ',
     items: 'Товары',
+
+
+    //Checkout
+
+    thePriceclearance: 'Оформление заказа',
+    skinsPrice: 'Стоимость скинов',
+    ta: 'шт',
+    paymentDetails: 'Детали платежа',
+    commission: 'Комиссия',
+    checkTotal: 'Итого',
+    paymentToDo: 'Оплатить',
+    clickingAgree: 'Нажимая кнопку купить, вы соглашаетесь с условиями использования.',
+    paymentMethodError: "Пожалуйста, выберите способ оплаты",
+    selectPaymentMethod: "Выберите способ оплаты",
+    processing: "Обработка...",
     
     // Inventory
     myInventory: 'Мой инвентарь',
@@ -261,6 +291,21 @@ export const translations = {
     total: 'Total',
     checkout: 'Checkout',
     items: 'Items',
+
+    //Checkout
+    thePriceclearance: 'Order Summary',
+    skinsPrice: 'Skins Price',
+    ta: 'pcs',
+    skin:'skin',
+    paymentDetails: 'Payment Details',
+    commission: 'Commission',
+    checkTotal: 'Total',
+    paymentToDo: 'Pay Now',
+    clickingAgree: 'By clicking buy, you agree to the terms of service.',
+    paymentMethodError: "Please select a payment method",
+    selectPaymentMethod: "Select payment method",
+    processing: "Processing...",
+   
     
     // Inventory
     myInventory: 'My Inventory',

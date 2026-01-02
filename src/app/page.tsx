@@ -30,9 +30,9 @@ export default function Home() {
         <div className="container mx-auto text-center">
           <div className="inline-block mb-4 px-4 py-2 bg-primary-100 dark:bg-primary-900/30 rounded-full">
             <span className="text-primary-600 dark:text-primary-400 font-semibold">
-              {language === 'uz' ? '🇺🇿 O\'zbekiston #1 CS2 Marketplace' : 
-               language === 'ru' ? '🇺🇿 #1 CS2 Маркетплейс Узбекистана' : 
-               '🇺🇿 Uzbekistan\'s #1 CS2 Marketplace'}
+              {language === 'uz' ? 'O\'zbekiston #1 CS2 Marketplace' : 
+               language === 'ru' ? '#1 CS2 Маркетплейс Узбекистана' : 
+               'Uzbekistan\'s #1 CS2 Marketplace'}
             </span>
           </div>
           
