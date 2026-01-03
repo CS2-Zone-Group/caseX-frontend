@@ -10,6 +10,7 @@ import PaymentMethods from '@/components/PaymentMethods';
 export default function Home() {
   const { language, setLanguage } = useSettingsStore();
   const t = translations[language];
+  const currentYear = new Date().getFullYear();
 
   // Update document title
   useEffect(() => {
@@ -322,7 +323,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-gray-900 text-white">
+      <footer className="py-12 px-4 bg-white dark:bg-gray-900 dark:text-white">
         <div className="container mx-auto text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-blue-600 rounded-lg flex items-center justify-center">
@@ -330,13 +331,13 @@ export default function Home() {
             </div>
             <span className="text-xl font-bold">CaseX</span>
           </div>
-          <p className="text-gray-400 mb-4">
-            {language === 'uz' ? 'CS2 Skinlari uchun O\'zbekiston Marketplace' : 
+          <p className="dark:text-gray-300 text-gray-700 mb-4">
+            {language === 'uz' ? 'CS2 Skinlari uchun O\'zbekiston marketplace' : 
              language === 'ru' ? 'Узбекский маркетплейс CS2 скинов' : 
              'Uzbekistan CS2 Skins Marketplace'}
           </p>
-          <p className="text-gray-500 text-sm">
-            © 2024 CaseX. {language === 'uz' ? 'Barcha huquqlar himoyalangan.' : 
+          <p className="dark:text-gray-400 text-gray-600  text-sm">
+            © {currentYear} CaseX. {language === 'uz' ? 'Barcha huquqlar himoyalangan.' : 
                           language === 'ru' ? 'Все права защищены.' : 
                           'All rights reserved.'}
           </p>
