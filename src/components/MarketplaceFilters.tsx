@@ -176,9 +176,9 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
               placeholder={t.search}
               value={searchQuery}
               onChange={(e) => setSearchQuery( e.target.value)}
-              className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 pr-10 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600"
+              className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-1.5 pr-9 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm h-8"
             />
-            <svg className="absolute right-3 top-2.5 w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="absolute right-2.5 top-2 w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
@@ -187,18 +187,18 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
           <div>
             <button 
               onClick={() => setSortOpen(!sortOpen)}
-              className="w-full flex items-center justify-between text-gray-900 dark:text-white py-2"
+              className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span>{language === 'uz' ? 'Saralash' : language === 'ru' ? 'Сортировка' : 'Sort'}</span>
-              <svg className={`w-4 h-4 transition-transform ${sortOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <span className="text-sm font-medium">{language === 'uz' ? 'Saralash' : language === 'ru' ? 'Сортировка' : 'Sort'}</span>
+              <svg className={`w-5 h-5 transition-transform ${sortOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
            {sortOpen && (
                  <select
                         value={sortBy} 
                         onChange={(e) => setSortBy(e.target.value)}   
-                        className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2"
+                        className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-3 pr-10 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2 text-sm h-8 appearance-none bg-no-repeat bg-right bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center]"
                       >
                         {sortOptions.map((option) => (
                           <option key={option.value} value={option.value}>
@@ -213,18 +213,18 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
           <div>
             <button 
               onClick={() => setRarityOpen(!rarityOpen)}
-              className="w-full flex items-center justify-between text-gray-900 dark:text-white py-2"
+              className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span>{language === 'uz' ? 'Kamyoblik' : language === 'ru' ? 'Редкость' : 'Rarity'}</span>
-              <svg className={`w-4 h-4 transition-transform ${rarityOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <span className="text-sm font-medium">{language === 'uz' ? 'Kamyoblik' : language === 'ru' ? 'Редкость' : 'Rarity'}</span>
+              <svg className={`w-5 h-5 transition-transform ${rarityOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             {rarityOpen && (
               <select
                 value={rarity||''}
                 onChange={(e) => setFilter('rarity', e.target.value)}
-                className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2"
+                className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-3 pr-10 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2 text-sm h-8 appearance-none bg-no-repeat bg-right bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center]"
               >
                 {rarityOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -239,18 +239,18 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
           <div>
             <button 
               onClick={() => setWeaponTypeOpen(!weaponTypeOpen)}
-              className="w-full flex items-center justify-between text-gray-900 dark:text-white py-2"
+              className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span>{language === 'uz' ? 'Qurol turi' : language === 'ru' ? 'Тип оружия' : 'Weapon Type'}</span>
-              <svg className={`w-4 h-4 transition-transform ${weaponTypeOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <span className="text-sm font-medium">{language === 'uz' ? 'Qurol turi' : language === 'ru' ? 'Тип оружия' : 'Weapon Type'}</span>
+              <svg className={`w-5 h-5 transition-transform ${weaponTypeOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             {weaponTypeOpen && (
               <select
                 value={weaponType||''}
                 onChange={(e) => setFilter('weaponType', e.target.value)}
-                className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2"
+                className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-3 pr-10 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2 text-sm h-8 appearance-none bg-no-repeat bg-right bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center]"
               >
                 {weaponTypes.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -265,18 +265,18 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
           <div>
             <button 
               onClick={() => setExteriorOpen(!exteriorOpen)}
-              className="w-full flex items-center justify-between text-gray-900 dark:text-white py-2"
+              className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span>{language === 'uz' ? 'Holat' : language === 'ru' ? 'Состояние' : 'Exterior'}</span>
-              <svg className={`w-4 h-4 transition-transform ${exteriorOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <span className="text-sm font-medium">{language === 'uz' ? 'Holat' : language === 'ru' ? 'Состояние' : 'Exterior'}</span>
+              <svg className={`w-5 h-5 transition-transform ${exteriorOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             {exteriorOpen && (
               <select
                 value={condition||''}
                 onChange={(e) => setFilter('condition', e.target.value)}
-                className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2"
+                className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-3 pr-10 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2 text-sm h-8 appearance-none bg-no-repeat bg-right bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center]"
               >
                 {exteriorOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -291,28 +291,28 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
           <div>
             <button 
               onClick={() => setPriceRangeOpen(!priceRangeOpen)}
-              className="w-full flex items-center justify-between text-gray-900 dark:text-white py-2"
+              className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span>{language === 'uz' ? 'Narx oralig\'i' : language === 'ru' ? 'Диапазон цен' : 'Price Range'}</span>
-              <svg className={`w-4 h-4 transition-transform ${priceRangeOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <span className="text-sm font-medium">{language === 'uz' ? 'Narx oralig\'i' : language === 'ru' ? 'Диапазон цен' : 'Price Range'}</span>
+              <svg className={`w-5 h-5 transition-transform ${priceRangeOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             {priceRangeOpen && (
-              <div className="grid grid-cols-2 gap-3 mt-2">
+              <div className="grid grid-cols-2 gap-2 mt-2">
                 <input
                   type="number"
                   placeholder="Min"
                   value={priceRange.min || ''}
                   onChange={(e) => setPriceRange(Number(e.target.value) || 0, priceRange.max)}
-                  className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm h-8"
                 />
                 <input
                   type="number"
                   placeholder="Max"
                   value={priceRange.max || ''}
                   onChange={(e) => setPriceRange(priceRange.min, Number(e.target.value) || 0)}
-                  className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm h-8"
                 />
               </div>
             )}
@@ -321,7 +321,7 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
           {/* Reset Button */}
           <button 
             onClick={() =>resetFilters()}
-            className="w-full py-2 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition"
+            className="w-full py-1.5 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition text-sm h-8"
           >
             {language === 'uz' ? 'Filtrlarni tozalash' : language === 'ru' ? 'Сбросить фильтры' : 'Reset Filters'}
           </button>

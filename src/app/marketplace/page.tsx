@@ -206,23 +206,13 @@ export default function MarketplacePage() {
                   </button>
                 </div>
                 
-                <div className="text-gray-900 dark:text-white text-sm lg:text-base">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    {t.marketplacePrice}
-                  </span>
-                  <span className="font-bold ml-1 lg:ml-2">
-                    {skins.length} {language === 'uz' ? 'ta skin' : language === 'ru' ? 'скинов' : 'items'}
-                  </span>
-                  <span className="text-green-600 dark:text-green-400 ml-1 lg:ml-2">
-                    ≈ {formatPrice(skins.reduce((sum, skin) => sum + Number(skin.price), 0), currency)}
-                  </span>
-                </div>
+
               </div>
 
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 lg:px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm lg:text-base shadow-sm"
+                className="pl-3 pr-10 py-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm h-8 shadow-sm appearance-none bg-no-repeat bg-right bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center]"
               >
                 <option value="createdAt-DESC">{t.sortNewest}</option>
                 <option value="price-DESC">{t.priceHighToLow}</option>
