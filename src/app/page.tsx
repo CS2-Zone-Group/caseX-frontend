@@ -332,9 +332,9 @@ export default function Home() {
             <span className="text-xl font-bold">CaseX</span>
           </div>
           <p className="dark:text-gray-300 text-gray-700 mb-4">
-            {language === 'uz' ? 'CS2 Skinlari uchun O\'zbekiston marketplace' : 
+            {language === 'uz' ? 'CS2 skinlari uchun O\'zbekiston marketplace' : 
              language === 'ru' ? 'Узбекский маркетплейс CS2 скинов' : 
-             'Uzbekistan CS2 Skins Marketplace'}
+             'Uzbekistan CS2 skins marketplace'}
           </p>
           <p className="dark:text-gray-400 text-gray-600  text-sm">
             © {currentYear} CaseX. {language === 'uz' ? 'Barcha huquqlar himoyalangan.' : 
