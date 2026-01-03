@@ -6,6 +6,7 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { translations } from '@/lib/translations';
 import Navbar from '@/components/Navbar';
 import PaymentMethods from '@/components/PaymentMethods';
+import PopularItems from '@/components/PopularItems';
 
 export default function Home() {
   const { language, setLanguage } = useSettingsStore();
@@ -100,132 +101,7 @@ export default function Home() {
       </section>
 
       {/* Popular Items Section */}
-      <section className="py-20 px-4 bg-gray-900 text-white">
-        <div className="container mx-auto">
-          <h2 className="text-4xl font-bold mb-12">
-            {language === 'uz' ? 'MASHHUR MAHSULOTLAR UCHUN ENG YAXSHI TAKLIFLAR' : 
-             language === 'ru' ? 'ЛУЧШИЕ ПРЕДЛОЖЕНИЯ ДЛЯ ПОПУЛЯРНЫХ ТОВАРОВ' : 
-             'EXPLORE BEST OFFERS FOR POPULAR ITEMS'}
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Gloves */}
-            <div className="group relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden border border-gray-700 hover:border-purple-500">
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-600/20 to-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="relative z-10">
-                <div className="text-5xl font-bold text-gray-700 mb-4 tracking-wider">GLOVES</div>
-                <div className="flex items-center justify-center mb-6 h-40 relative bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-xl">
-                  <div className="text-7xl group-hover:scale-110 transition-transform">🧤</div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <div className="text-sm text-gray-400 mb-1">
-                      {language === 'uz' ? '4.8K TAKLIFLAR' : language === 'ru' ? '4.8K ПРЕДЛОЖЕНИЙ' : '4.8K OFFERS'}
-                    </div>
-                    <div className="text-lg font-semibold">
-                      {language === 'uz' ? 'BOSHLANG\'ICH' : language === 'ru' ? 'НАЧИНАЯ С' : 'START FROM'} $40.59
-                    </div>
-                  </div>
-                  <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-primary-600 transition">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* AWP */}
-            <div className="group relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden border border-gray-700 hover:border-blue-500">
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-600/20 to-cyan-600/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="relative z-10">
-                <div className="text-5xl font-bold text-gray-700 mb-4 tracking-wider">AWP</div>
-                <div className="flex items-center justify-center mb-6 h-40 relative bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-xl">
-                  <div className="text-7xl group-hover:scale-110 transition-transform">🎯</div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <div className="text-sm text-gray-400 mb-1">
-                      {language === 'uz' ? '16.3K TAKLIFLAR' : language === 'ru' ? '16.3K ПРЕДЛОЖЕНИЙ' : '16.3K OFFERS'}
-                    </div>
-                    <div className="text-lg font-semibold">
-                      {language === 'uz' ? 'BOSHLANG\'ICH' : language === 'ru' ? 'НАЧИНАЯ С' : 'START FROM'} $0.19
-                    </div>
-                  </div>
-                  <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-primary-600 transition">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Knives */}
-            <div className="group relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden border border-gray-700 hover:border-pink-500">
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-pink-600/20 to-rose-600/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="relative z-10">
-                <div className="text-5xl font-bold text-gray-700 mb-4 tracking-wider">KNIVES</div>
-                <div className="flex items-center justify-center mb-6 h-40 relative bg-gradient-to-br from-pink-500/10 to-rose-500/10 rounded-xl">
-                  <div className="text-7xl group-hover:scale-110 group-hover:rotate-12 transition-all">🔪</div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <div className="text-sm text-gray-400 mb-1">
-                      {language === 'uz' ? '17.6K TAKLIFLAR' : language === 'ru' ? '17.6K ПРЕДЛОЖЕНИЙ' : '17.6K OFFERS'}
-                    </div>
-                    <div className="text-lg font-semibold">
-                      {language === 'uz' ? 'BOSHLANG\'ICH' : language === 'ru' ? 'НАЧИНАЯ С' : 'START FROM'} $47.15
-                    </div>
-                  </div>
-                  <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-primary-600 transition">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* AK-47 */}
-            <div className="group relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden border border-gray-700 hover:border-orange-500">
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-orange-600/20 to-red-600/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="relative z-10">
-                <div className="text-5xl font-bold text-gray-700 mb-4 tracking-wider">AK-47</div>
-                <div className="flex items-center justify-center mb-6 h-40 relative bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-xl">
-                  <div className="text-7xl group-hover:scale-110 transition-transform">⚔️</div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <div className="text-sm text-gray-400 mb-1">
-                      {language === 'uz' ? '24.5K TAKLIFLAR' : language === 'ru' ? '24.5K ПРЕДЛОЖЕНИЙ' : '24.5K OFFERS'}
-                    </div>
-                    <div className="text-lg font-semibold">
-                      {language === 'uz' ? 'BOSHLANG\'ICH' : language === 'ru' ? 'НАЧИНАЯ С' : 'START FROM'} $0.21
-                    </div>
-                  </div>
-                  <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-primary-600 transition">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-center mt-12">
-            <Link 
-              href="/marketplace"
-              className="inline-block px-8 py-4 bg-gradient-to-r from-primary-600 to-blue-600 text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all text-lg font-semibold"
-            >
-              {language === 'uz' ? 'Barcha Mahsulotlarni Ko\'rish →' : 
-               language === 'ru' ? 'Посмотреть Все Товары →' : 
-               'View All Items →'}
-            </Link>
-          </div>
-        </div>
-      </section>
+     <PopularItems/>
 
       {/* Features Section */}
       <section id="features" className="py-20 px-4 bg-white dark:bg-gray-800">

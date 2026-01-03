@@ -11,6 +11,8 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { translations } from '@/lib/translations';
 import { formatPrice } from '@/lib/currency';
 import { useFilterStore } from '@/store/filterStore';
+import { useSearchParams } from 'next/navigation';
+import { webcrypto } from 'crypto';
 
 interface Skin {
   id: string;
@@ -23,6 +25,7 @@ interface Skin {
 }
 
 export default function MarketplacePage() {
+  const searchParams=useSearchParams()
   const { user, hasHydrated } = useAuthStore();
   const { addToCart } = useCartStore();
   const { language, currency } = useSettingsStore();
@@ -33,6 +36,8 @@ export default function MarketplacePage() {
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [selectedSkin, setSelectedSkin] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const category=searchParams.get('category')
+  
 
   const {
     searchQuery,
@@ -81,21 +86,32 @@ export default function MarketplacePage() {
         minPrice: priceRange.min,
         maxPrice: priceRange.max,
         page: 1,
-        limit: 50
+        limit: 50,
       };
+      if(category){
 
+      }
 
       const { data } = await api.get('/skins', { params });
-      
+      let fetchedSkins:Skin[]=[]
       if (Array.isArray(data)) {
-         setSkins(data);
+        fetchedSkins = data;
       } else if (data.items && Array.isArray(data.items)) {
-         setSkins(data.items);
+          fetchedSkins=data.items;
       } else if (data.data && Array.isArray(data.data)) {
-         setSkins(data.data);
-      } else {
-         setSkins([]);
+         fetchedSkins=data.data;
+      } 
+      if(category){
+        fetchedSkins=fetchedSkins.filter(skin=>{
+          const searchCat=category.toLowerCase()
+
+          const type=skin.weaponType?.toLowerCase()||"";
+          const name=skin.name?.toLowerCase() ||""
+          return type.includes(searchCat)||name.includes(searchCat)
+        })
       }
+
+      setSkins(fetchedSkins)
 
     } catch (error) {
       console.error('Marketplace fetch error:', error);
