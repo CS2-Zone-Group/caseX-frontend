@@ -8,8 +8,11 @@ import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
 import { translations } from '@/lib/translations';
 import { convertCurrency, formatPrice } from '@/lib/currency';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { useFavouritesStore } from '@/store/favouritesStore';
 
 export default function Navbar() {
+  const {count,fetchFavouriteIds}=useFavouritesStore()
   const router = useRouter();
   const { language, currency } = useSettingsStore();
   const { itemCount } = useCartStore();
@@ -21,7 +24,9 @@ export default function Navbar() {
   
   const isLoggedIn = hasHydrated && !!user && !!token;
   const baseBalance = user?.balance || 0;
-
+useEffect(()=>{
+  fetchFavouriteIds()
+},[])
   // Check token validity and fetch balance on mount and periodically
   useEffect(() => {
     if (isLoggedIn) {
@@ -109,6 +114,20 @@ export default function Navbar() {
                     </span>
                   )}
                 </Link>
+
+               <Link href="/favorites" className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-red-500 transition-colors">
+                  <FavoriteBorderIcon />
+        
+                  {count > 0 && (
+                        <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-500 rounded-full">
+                           {count}
+                        </span>
+                  )}
+               </Link>
+
+
+
+
               </>
             )}
             

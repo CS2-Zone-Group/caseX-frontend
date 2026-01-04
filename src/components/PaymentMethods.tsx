@@ -1,11 +1,102 @@
 'use client'
 import { translations } from '@/lib/translations';
 import { useSettingsStore } from '@/store/settingsStore';
+import { useRouter } from 'next/navigation';
 import React from 'react'
 
 const PaymentMethods = () => {
   const { language } = useSettingsStore();
   const t = translations[language];
+  const router = useRouter();
+
+  const methods = [
+    {
+      name: t.payme,
+      logo: '/assets/logos/payme.png',
+      limit: '$1000',
+      fee: '0%',
+      isZeroFee: true,
+      logoClass: 'dark:invert dark:hue-rotate-180',
+      containerClass: 'h-36',
+    },
+    {
+      name: t.click,
+      logo: '/assets/logos/click.png',
+      limit: '$1000',
+      fee: '0%',
+      isZeroFee: true,
+      logoClass: '',
+      containerClass: 'h-36',
+    },
+    {
+      name: t.uzum,
+      logo: '/assets/logos/uzum.png',
+      limit: '$1000',
+      fee: '0%',
+      isZeroFee: true,
+      logoClass: '',
+      containerClass: 'h-36',
+    },
+    {
+      name: t.paynet,
+      logo: '/assets/logos/paynet.svg.png',
+      limit: '$1000',
+      fee: '0%',
+      isZeroFee: true,
+      logoClass: 'dark:invert dark:hue-rotate-180',
+      containerClass: 'h-36',
+    },
+    {
+      name: t.visa,
+      logo: '/assets/logos/visa.png',
+      limit: '$1500',
+      fee: '1.25%',
+      isZeroFee: false,
+      containerClass: 'h-36',
+      logoClass: '',
+
+    },
+    {
+      name: t.mastercard,
+      logo: '/assets/logos/mastercard.png',
+      limit: '$1500',
+      fee: '1.25%',
+      isZeroFee: false,
+      containerClass: 'h-20 mb-16',
+      logoClass: '',
+
+    },
+    {
+      name: t.bitcoin,
+      logo: '/assets/logos/bitcoin.png',
+      limit: '$3500',
+      fee: '1.5%',
+      isZeroFee: false,
+      containerClass: 'h-20 mb-16',
+      logoClass: '',
+
+    },
+    {
+      name: t.ethereum,
+      logo: '/assets/logos/ethereum.png',
+      limit: '$3500',
+      fee: '2%',
+      isZeroFee: false,
+      containerClass: 'h-20 mb-16',
+      logoClass: '',
+
+    },
+    {
+      name: t.usdt,
+      logo: '/assets/logos/USDT.svg.png',
+      limit: '$3500',
+      fee: '1%',
+      isZeroFee: false,
+      containerClass: 'h-20 mb-16',
+      logoClass: '',
+
+    }
+  ];
 
   return (
     <>
@@ -13,114 +104,43 @@ const PaymentMethods = () => {
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4">
-              {language === 'uz' ? 'Xavfsiz To\'lov Usullari' : 
-               language === 'ru' ? 'Безопасные Способы Оплаты' : 
-               'Secure Payment Methods'}
+              {language === 'uz' ? 'Xavfsiz To\'lov Usullari' :
+                language === 'ru' ? 'Безопасные Способы Оплаты' :
+                  'Secure Payment Methods'}
             </h2>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
-            
-            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition group shadow-sm dark:shadow-none">
-              <div className="text-center mb-3">
-                    <div className="flex items-center justify-center h-36">
-                    <img src="/assets/logos/payme.png" alt="Payme" className='h-full max-w-36 dark:invert dark:hue-rotate-180 object-contain' />
-                    </div>
-                <div className="font-bold text-sm text-gray-700 dark:text-gray-300">{t.payme}</div>
+            {methods.map((item, index) => (
+              <div 
+                key={index} 
+               
+                className="cursor-pointer bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors shadow-sm dark:shadow-none"
+              >
+                <div className="text-center mb-3">
+                  <div className={`flex items-center justify-center ${item.containerClass}`}>
+                    <img
+                      src={item.logo}
+                      alt={item.name}
+                      className={`h-full max-w-36 object-contain ${item.logoClass}`}
+                    />
+                  </div>
+                  <div className="font-bold text-sm text-gray-700 dark:text-gray-300">{item.name}</div>
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">{item.limit} / {t.transaction}</div>
+                <div className={`text-xs text-center px-2 py-1 rounded ${item.isZeroFee
+                    ? 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400'
+                    : 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400'
+                  }`}>
+                  {item.fee} {t.fee}
+                </div>
               </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">$1000 / {t.transaction}</div>
-              <div className="text-xs text-center px-2 py-1 bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 rounded">0% {t.fee}</div>
-            </div>
+            ))}
 
-            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition group shadow-sm dark:shadow-none">
-              <div className="text-center mb-3">
-              <div className="flex items-center justify-center h-36">
-                    <img src="/assets/logos/click.png" alt="Click" className='h-full max-w-36 object-contain' />
-                    </div>
-                <div className="font-bold text-sm text-gray-700 dark:text-gray-300">{t.click}</div>
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">$1000 / {t.transaction}</div>
-              <div className="text-xs text-center px-2 py-1 bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 rounded">0% {t.fee}</div>
-            </div>
-
-            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition group shadow-sm dark:shadow-none">
-              <div className="text-center mb-3">
-              <div className="flex items-center justify-center h-36">
-                    <img src="/assets/logos/uzum.png" alt="Uzum" className='h-full max-w-36 object-contain' />
-                    </div>
-                <div className="font-bold text-sm text-gray-700 dark:text-gray-300">{t.uzum}</div>
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">$1000 / {t.transaction}</div>
-              <div className="text-xs text-center px-2 py-1 bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 rounded">0% {t.fee}</div>
-            </div>
-
-            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition group shadow-sm dark:shadow-none">
-              <div className="text-center mb-3">
-              <div className="flex items-center justify-center h-36">
-                    <img src="/assets/logos/paynet.svg.png" alt="Paynet" className='h-full dark:invert dark:hue-rotate-180 max-w-36 object-contain' />
-                    </div>
-                <div className="font-bold text-sm text-gray-700 dark:text-gray-300">{t.paynet}</div>
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">$1000 / {t.transaction}</div>
-              <div className="text-xs text-center px-2 py-1 bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 rounded">0% {t.fee}</div>
-            </div>
-
-            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition group shadow-sm dark:shadow-none">
-              <div className="text-center mb-3">
-              <div className="flex items-center justify-center h-36">
-                    <img src="/assets/logos/visa.png" alt="VISA" className='h-full max-w-36 object-contain' />
-                    </div>
-                <div className="font-bold text-sm text-gray-700 dark:text-gray-300">{t.visa}</div>
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">$1500 / {t.transaction}</div>
-              <div className="text-xs text-center px-2 py-1 bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 rounded">1.25% {t.fee}</div>
-            </div>
-
-            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition group shadow-sm dark:shadow-none">
-              <div className="text-center mb-3">
-              <div className="flex items-center justify-center h-20 mb-16">
-                    <img src="/assets/logos/mastercard.png" alt="Mastercard" className='h-full max-w-36 object-contain' />
-                    </div>
-                <div className="font-bold text-sm text-gray-700 dark:text-gray-300">{t.mastercard}</div>
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">$1500 / {t.transaction}</div>
-              <div className="text-xs text-center px-2 py-1 bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 rounded">1.25% {t.fee}</div>
-            </div>
-
-            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition group shadow-sm dark:shadow-none">
-              <div className="text-center mb-3">
-              <div className="flex items-center justify-center h-20 mb-16">
-                    <img src="/assets/logos/bitcoin.png" alt="Bitcoin" className='h-full max-w-36 object-contain' />
-                    </div>
-                <div className="font-bold text-sm text-gray-700 dark:text-gray-300">{t.bitcoin}</div>
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">$3500 / {t.transaction}</div>
-              <div className="text-xs text-center px-2 py-1 bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 rounded">1.5% {t.fee}</div>
-            </div>
-
-            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition group shadow-sm dark:shadow-none">
-              <div className="text-center mb-3">
-              <div className="flex items-center justify-center h-20 mb-16">
-                    <img src="/assets/logos/ethereum.png" alt="Ethereum" className='h-full max-w-36 object-contain' />
-                    </div>
-                <div className="font-bold text-sm text-gray-700 dark:text-gray-300">{t.ethereum}</div>
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">$3500 / {t.transaction}</div>
-              <div className="text-xs text-center px-2 py-1 bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 rounded">2% {t.fee}</div>
-            </div>
-
-            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition group shadow-sm dark:shadow-none">
-              <div className="text-center mb-3">
-              <div className="flex items-center justify-center h-20 mb-16">
-                    <img src="/assets/logos/USDT.svg.png" alt="USDT" className='h-full max-w-36 object-contain' />
-                    </div>
-                <div className="font-bold text-sm text-gray-700 dark:text-gray-300">{t.usdt}</div>
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">$3500 / {t.transaction}</div>
-              <div className="text-xs text-center px-2 py-1 bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 rounded">1% {t.fee}</div>
-            </div>
-
-            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition group shadow-sm dark:shadow-none">
+            <div 
+             
+              className="cursor-pointer bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors shadow-sm dark:shadow-none"
+            >
               <div className="text-center mb-3">
                 <div className="flex items-center justify-center mb-16 h-20">
                   <div className="text-7xl">💎</div>
@@ -138,9 +158,9 @@ const PaymentMethods = () => {
 
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-gray-500 dark:text-gray-400 mb-6">
-              {language === 'uz' ? 'Barcha to\'lovlar xavfsiz va shifrlangan. Biz sizning moliyaviy ma\'lumotlaringizni saqlamaymiz.' : 
-               language === 'ru' ? 'Все платежи безопасны и зашифрованы. Мы не храним ваши финансовые данные.' : 
-               'All payments are secure and encrypted. We do not store your financial information.'}
+              {language === 'uz' ? 'Barcha to\'lovlar xavfsiz va shifrlangan. Biz sizning moliyaviy ma\'lumotlaringizni saqlamaymiz.' :
+                language === 'ru' ? 'Все платежи безопасны и зашифрованы. Мы не храним ваши финансовые данные.' :
+                  'All payments are secure and encrypted. We do not store your financial information.'}
             </p>
             <div className="flex justify-center items-center gap-4 text-sm text-gray-500">
               <span className="flex items-center gap-1">

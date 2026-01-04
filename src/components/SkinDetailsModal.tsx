@@ -1,6 +1,10 @@
 'use client';
 
+import { useFavouritesStore } from '@/store/favouritesStore';
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+
 
 interface SkinDetailsModalProps {
   isOpen: boolean;
@@ -19,6 +23,7 @@ interface SkinDetailsModalProps {
 
 export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsModalProps) {
   const [activeTab, setActiveTab] = useState<'details' | 'sales'>('details');
+  const {count}=useFavouritesStore()
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -138,7 +143,22 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
                 SALES INFO
               </button>
             </div>
+
+            <div className='flex items-center'>
+
             
+
+            <Link href="/favorites" className="relative  p-2 text-gray-300 dark:text-gray-300 hover:text-red-500 transition-colors">
+                  <FavoriteBorderIcon className='w-6 h-6 ' />
+        
+                  {count > 0 && (
+                        <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-500 rounded-full">
+                           {count}
+                        </span>
+                  )}
+               </Link>
+              
+
             <button
               onClick={onClose}
               className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-800 transition-colors"
@@ -147,6 +167,7 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
+            </div>
           </div>
 
           {/* Content */}

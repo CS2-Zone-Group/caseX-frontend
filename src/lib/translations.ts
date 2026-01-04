@@ -30,6 +30,11 @@ export const translations = {
     nameAZ: 'Nom (A-Z)',
     addToCart: 'Cartga',
     noSkinsFound: 'Skinlar topilmadi',
+
+
+    //Favorites
+    favorites:'Sevimlilar',
+    notFavoritesNow:'Hozircha sevimlilar yo\'q',
     
     // Cart
     cartTitle: 'Savat',
@@ -131,6 +136,9 @@ export const translations = {
      sertificate:'PCI DSS Sertifikatlangan',
      transaction:'Operatsiya',
      fee:'Komissiya',   
+
+     //Favorites
+     
     // Common
     loading: 'Yuklanmoqda...',
     goToMarketplace: 'Marketplace\'ga o\'tish',
@@ -173,6 +181,11 @@ export const translations = {
     or: 'Или',
     alreadyHaveAccount: 'Уже есть аккаунт?',
     dontHaveAccount: 'Нет аккаунта?',
+
+    //Favorites
+    loading:'загрузка...',
+    favorites:'избранные',
+    notFavoritesNow:'Избранного пока нет.',
     
     // Marketplace
     search: 'Поиск...',
@@ -298,7 +311,6 @@ export const translations = {
     twitchAccount: 'Twitch аккаунт',
     
     // Common
-    loading: 'Загрузка...',
     goToMarketplace: 'Перейти в маркетплейс',
     currency: 'сум',
     
@@ -339,6 +351,12 @@ export const translations = {
     or: 'Or',
     alreadyHaveAccount: 'Already have an account?',
     dontHaveAccount: 'Don\'t have an account?',
+
+
+    //Favorites
+    loading:'loading...',
+    favorites:'favorites',
+    notFavoritesNow:'No favorites yet.',
 
 
     //Payment Methods
@@ -454,7 +472,6 @@ export const translations = {
     twitchAccount: 'Twitch account',
     
     // Common
-    loading: 'Loading...',
     goToMarketplace: 'Go to marketplace',
     currency: 'sum',
     
