@@ -4,6 +4,12 @@ import { useFavouritesStore } from '@/store/favouritesStore';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import axios from 'axios';
+import { title } from 'process';
+import ShareIcon from '@mui/icons-material/Share';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import CheckIcon from '@mui/icons-material/Check';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 interface SkinDetailsModalProps {
@@ -24,6 +30,40 @@ interface SkinDetailsModalProps {
 export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsModalProps) {
   const [activeTab, setActiveTab] = useState<'details' | 'sales'>('details');
   const {count}=useFavouritesStore()
+  const [loading,setLoading]=useState(false)
+  const [copied,setCopied]=useState(false)
+  const [url,setUrl]=useState("")
+
+
+
+  const handleGenerateLink=async()=>{
+    setLoading(true)
+
+    try {
+
+      const {data}=await axios.post('/api/sharing',{
+        items:[skin],
+        title:`checkout this ${skin?.name}`
+      })
+      if(data.url){
+        setUrl(data.url)
+      }
+      
+    } catch (error) {
+      console.error("Link yaratishda hato",error)
+      
+    }finally{
+      setLoading(false)
+    }
+    
+  }
+    const handleCopied=()=>{
+      if(url){
+        navigator.clipboard.writeText(url)
+        setCopied(true)
+        setTimeout(()=>{setCopied(false)},2000)
+      }
+    }
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -144,9 +184,49 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
               </button>
             </div>
 
-            <div className='flex items-center'>
+            <div className='flex items-center gap-1'>
+              {!url?(
+              <button onClick={handleGenerateLink} className='w-6 text-white h-6'>
+                      {loading ? (
+                <>
+                  <CircularProgress size={20} color="inherit" />
+                  <span>Link yaratilmoqda...</span>
+                </>
+              ) : (
+                <>
+                  <ShareIcon  />
+                </>
+              )}
 
-            
+              </button>
+
+              ):(
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+              {/* <label className="text-sm text-gray-500 mb-2 block">Maxsus havolangiz tayyor:</label> */}
+              <div className="flex items-center gap-2">
+                
+                {/* Link turadigan Input */}
+                <div className=" bg-gray-100 w-96 dark:bg-gray-800 px-2 py-1 rounded-xl text-sm text-gray-600 dark:text-gray-300 font-mono truncate border border-gray-200 dark:border-gray-700">
+                  {url}
+                </div>
+
+                {/* Copy Button */}
+                <button 
+                  onClick={handleCopied}
+                  className={`flex items-center justify-center w-8 h-8 rounded-xl transition-all ${
+                    copied 
+                      ? 'bg-green-500 text-white' 
+                      : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  {copied ? <CheckIcon className='w-6 h-6' /> : <ContentCopyIcon className='w-6 h-6' />}
+                </button>
+              </div>
+              
+             
+            </div>
+              )}
+
 
             <Link href="/favorites" className="relative  p-2 text-gray-300 dark:text-gray-300 hover:text-red-500 transition-colors">
                   <FavoriteBorderIcon className='w-6 h-6 ' />
