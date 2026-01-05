@@ -7,7 +7,7 @@ import { useAuthStore } from '@/store/authStore';
 export default function AuthCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { setToken, fetchUser } = useAuthStore();
+  const { setAuth, checkTokenValidity } = useAuthStore();
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -23,14 +23,20 @@ export default function AuthCallbackPage() {
 
       if (token) {
         try {
-          // Store the token
-          setToken(token);
+          // Store the token temporarily in localStorage
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('token', token);
+          }
           
-          // Fetch user data
-          await fetchUser();
+          // Validate token and fetch user data
+          const isValid = await checkTokenValidity();
           
-          // Redirect to marketplace
-          router.push('/marketplace');
+          if (isValid) {
+            // Redirect to marketplace
+            router.push('/marketplace');
+          } else {
+            throw new Error('Token validation failed');
+          }
         } catch (error) {
           console.error('Error processing authentication:', error);
           alert('Authentication failed. Please try again.');
@@ -44,7 +50,7 @@ export default function AuthCallbackPage() {
     };
 
     handleCallback();
-  }, [searchParams, setToken, fetchUser, router]);
+  }, [searchParams, setAuth, checkTokenValidity, router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
