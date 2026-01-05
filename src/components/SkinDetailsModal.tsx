@@ -1,19 +1,15 @@
 'use client';
 
 import { useFavouritesStore } from '@/store/favouritesStore';
+import { useSettingsStore } from '@/store/settingsStore';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-<<<<<<< HEAD
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import axios from 'axios';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ShareIcon from '@mui/icons-material/Share';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
 import CircularProgress from '@mui/material/CircularProgress';
-
-=======
-import { useSettingsStore } from '@/store/settingsStore';
->>>>>>> 84f70300b2a9a0a2f9486a682971172e7882ad99
 
 interface SkinDetailsModalProps {
   isOpen: boolean;
@@ -40,44 +36,10 @@ interface SkinDetailsModalProps {
 
 export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsModalProps) {
   const [activeTab, setActiveTab] = useState<'details' | 'sales'>('details');
-<<<<<<< HEAD
-  const {count}=useFavouritesStore()
-  const [loading,setLoading]=useState(false)
-  const [copied,setCopied]=useState(false)
-  const [url,setUrl]=useState("")
-
-
-
-  const handleGenerateLink=async()=>{
-    setLoading(true)
-
-    try {
-
-      const {data}=await axios.post('/api/sharing',{
-        items:[skin],
-        title:`checkout this ${skin?.name}`
-      })
-      if(data.url){
-        setUrl(data.url)
-      }
-      
-    } catch (error) {
-      console.error("Link yaratishda hato",error)
-      
-    }finally{
-      setLoading(false)
-    }
-    
-  }
-    const handleCopied=()=>{
-      if(url){
-        navigator.clipboard.writeText(url)
-        setCopied(true)
-        setTimeout(()=>{setCopied(false)},2000)
-      }
-    }
-=======
-  const [isFavorited, setIsFavorited] = useState(false);
+  const { count } = useFavouritesStore();
+  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [url, setUrl] = useState("");
   const { language } = useSettingsStore();
 
   const translations = {
@@ -171,9 +133,32 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
   };
 
   const t = translations[language];
->>>>>>> 84f70300b2a9a0a2f9486a682971172e7882ad99
 
-  // Handle keyboard navigation
+  const handleGenerateLink = async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.post('/api/sharing', {
+        items: [skin],
+        title: `Check out this ${skin?.name}`
+      });
+      if (data.url) {
+        setUrl(data.url);
+      }
+    } catch (error) {
+      console.error("Link error", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCopied = () => {
+    if (url) {
+      navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => { setCopied(false) }, 2000);
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!isOpen) return;
@@ -181,7 +166,6 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
       if (event.key === 'Escape') {
         onClose();
       } else if (event.key === 'Tab') {
-        // Handle tab navigation between tabs
         if (event.shiftKey && activeTab === 'sales') {
           event.preventDefault();
           setActiveTab('details');
@@ -194,7 +178,7 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
 
     if (isOpen) {
       document.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      document.body.style.overflow = 'hidden';
     }
 
     return () => {
@@ -205,7 +189,6 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
 
   if (!isOpen || !skin) return null;
 
-  // Helper function to get float condition name
   const getFloatCondition = (floatValue: number) => {
     if (floatValue < 0.07) return language === 'uz' ? 'Zavod yangi' : language === 'ru' ? 'Прямо с завода' : 'Factory New';
     if (floatValue < 0.15) return language === 'uz' ? 'Kam eskirgan' : language === 'ru' ? 'Немного поношенное' : 'Minimal Wear';
@@ -217,16 +200,13 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        {/* Background overlay */}
         <div 
           className="fixed inset-0 transition-opacity bg-black bg-opacity-75"
           onClick={onClose}
           aria-hidden="true"
         />
 
-        {/* Modal */}
         <div className="inline-block w-full max-w-4xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl">
-          {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
             <div className="flex space-x-8">
               <button
@@ -250,104 +230,48 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
                 {t.salesInfo}
               </button>
             </div>
-<<<<<<< HEAD
 
-            <div className='flex items-center gap-1'>
-              {!url?(
-              <button onClick={handleGenerateLink} className='w-6 text-white h-6'>
-                      {loading ? (
-                <>
-                  <CircularProgress size={20} color="inherit" />
-                  <span>Link yaratilmoqda...</span>
-                </>
-              ) : (
-                <>
-                  <ShareIcon  />
-                </>
-              )}
-
-              </button>
-
-              ):(
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-              {/* <label className="text-sm text-gray-500 mb-2 block">Maxsus havolangiz tayyor:</label> */}
-              <div className="flex items-center gap-2">
-                
-                {/* Link turadigan Input */}
-                <div className=" bg-gray-100 w-96 dark:bg-gray-800 px-2 py-1 rounded-xl text-sm text-gray-600 dark:text-gray-300 font-mono truncate border border-gray-200 dark:border-gray-700">
-                  {url}
-                </div>
-
-                {/* Copy Button */}
+            <div className='flex items-center gap-2'>
+              {!url ? (
                 <button 
-                  onClick={handleCopied}
-                  className={`flex items-center justify-center w-8 h-8 rounded-xl transition-all ${
-                    copied 
-                      ? 'bg-green-500 text-white' 
-                      : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
-                  }`}
+                  onClick={handleGenerateLink} 
+                  className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  title={t.share}
                 >
-                  {copied ? <CheckIcon className='w-6 h-6' /> : <ContentCopyIcon className='w-6 h-6' />}
+                  {loading ? (
+                    <CircularProgress size={20} color="inherit" />
+                  ) : (
+                    <ShareIcon className="w-5 h-5" />
+                  )}
                 </button>
-              </div>
-              
-             
-            </div>
+              ) : (
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 flex items-center gap-2">
+                  <div className="bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 font-mono truncate border border-gray-200 dark:border-gray-700 max-w-[200px]">
+                    {url}
+                  </div>
+
+                  <button 
+                    onClick={handleCopied}
+                    className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all ${
+                      copied 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    {copied ? <CheckIcon className='w-5 h-5' /> : <ContentCopyIcon className='w-5 h-5' />}
+                  </button>
+                </div>
               )}
 
+              <Link href="/favorites" className="relative p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors">
+                 <FavoriteBorderIcon className='w-6 h-6' />
+                 {count > 0 && (
+                    <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-500 rounded-full">
+                       {count}
+                    </span>
+                 )}
+              </Link>
 
-            <Link href="/favorites" className="relative  p-2 text-gray-300 dark:text-gray-300 hover:text-red-500 transition-colors">
-                  <FavoriteBorderIcon className='w-6 h-6 ' />
-        
-                  {count > 0 && (
-                        <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-500 rounded-full">
-                           {count}
-                        </span>
-                  )}
-               </Link>
-              
-
-            <button
-              onClick={onClose}
-              className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-=======
-            
-            <div className="flex items-center space-x-2">
-              {/* Share button */}
-              <button
-                onClick={() => {
-                  const shareUrl = `${window.location.origin}/marketplace?item=${encodeURIComponent(skin.marketHashName || skin.name)}`;
-                  navigator.clipboard.writeText(shareUrl);
-                }}
-                className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                title={t.share}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
-                </svg>
-              </button>
-              
-              {/* Favorite button */}
-              <button
-                onClick={() => setIsFavorited(!isFavorited)}
-                className={`p-2 rounded-lg transition-colors ${
-                  isFavorited 
-                    ? 'text-red-500 hover:text-red-400 bg-red-500/10' 
-                    : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
-                title={t.favorite}
-              >
-                <svg className="w-5 h-5" fill={isFavorited ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              </button>
-              
-              {/* Close button */}
               <button
                 onClick={onClose}
                 className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -356,15 +280,12 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
->>>>>>> 84f70300b2a9a0a2f9486a682971172e7882ad99
             </div>
           </div>
 
-          {/* Content */}
           <div className="p-6">
             {activeTab === 'details' && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Left side - Image and basic info */}
                 <div className="space-y-6">
                   <div className="text-center">
                     <h2 id="modal-title" className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
@@ -404,8 +325,6 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
                       <button 
                         className="flex-1 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
                         onClick={() => {
-                          // Steam inspect link format: steam://rungame/730/76561202255233023/+csgo_econ_action_preview%20S76561198084749846A2329415893D14634948894154240664
-                          // For now, we'll show an alert since we need actual item data
                           alert('Inspect in game functionality would open CS2 with this item');
                         }}
                       >
@@ -418,7 +337,6 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
                     </div>
                   </div>
 
-                  {/* Trade Protection Warning */}
                   <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-500/30 rounded-lg p-4">
                     <div className="flex items-center space-x-2 mb-2">
                       <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -429,7 +347,6 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
                     <p className="text-blue-700 dark:text-blue-300 text-sm">{t.tradeProtectionText}</p>
                   </div>
 
-                  {/* Price Information */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-gray-600 dark:text-gray-400">{t.price}</span>
@@ -441,7 +358,6 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
                   </div>
                 </div>
 
-                {/* Right side - Detailed information */}
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 gap-4">
                     <div>
@@ -469,7 +385,6 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
                       <span className="text-gray-900 dark:text-white">{skin.rarity}</span>
                     </div>
 
-                    {/* Float Value with Visual Bar */}
                     {skin.float !== undefined && (
                       <div>
                         <span className="text-gray-600 dark:text-gray-400 block mb-2">{t.floatValue}:</span>
@@ -519,7 +434,6 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
 
             {activeTab === 'sales' && (
               <div className="space-y-6">
-                {/* Sales History Chart Placeholder */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t.salesHistory}</h3>
@@ -541,7 +455,6 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
                   </div>
                 </div>
 
-                {/* Recent Sales */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t.recentSales}</h3>
@@ -568,7 +481,6 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
             )}
           </div>
 
-          {/* Footer Actions */}
           <div className="flex space-x-4 p-6 border-t border-gray-200 dark:border-gray-700">
             <button className="flex-1 px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-all flex items-center justify-center space-x-2">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
