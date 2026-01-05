@@ -39,6 +39,7 @@ skins
 ├── rarity
 ├── exterior
 ├── price (decimal)
+├── float (decimal, 6,4) - Float value for wear condition
 ├── imageUrl
 ├── isAvailable
 ├── sellerId
@@ -47,6 +48,7 @@ skins
 ├── steamPrice (Steam price)
 ├── steamVolume (Steam trade volume)
 ├── steamDataUpdatedAt (Steam data update time)
+├── description (Item description)
 └── collection (Skin collection)
 
 inventory

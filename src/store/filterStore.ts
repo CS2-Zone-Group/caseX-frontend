@@ -21,7 +21,7 @@ export const useFilterStore = create<FilterState>((set) => ({
   rarity: null,
   weaponType: null,
   condition: null,
-  priceRange: { min: 0, max: 10000 }, 
+  priceRange: { min: 0, max: 0 }, // 0 means no filter 
 
   setSearchQuery: (query) => set({ searchQuery: query }),
   setSortBy: (sort) => set({ sortBy: sort }),
@@ -39,6 +39,6 @@ export const useFilterStore = create<FilterState>((set) => ({
     rarity: null,
     weaponType: null,
     condition: null,
-    priceRange: { min: 0, max: 10000 }
+    priceRange: { min: 0, max: 0 } // 0 means no filter
   }),
 }));
