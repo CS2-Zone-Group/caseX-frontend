@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import axios from 'axios';
-import { title } from 'process';
 import ShareIcon from '@mui/icons-material/Share';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
