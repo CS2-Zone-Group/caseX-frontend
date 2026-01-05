@@ -11,6 +11,9 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { translations } from '@/lib/translations';
 import { formatPrice } from '@/lib/currency';
 import { useFilterStore } from '@/store/filterStore';
+import { useSearchParams } from 'next/navigation';
+import { webcrypto } from 'crypto';
+import FavoriteButton from '@/components/FavoriteButton';
 
 interface Skin {
   id: string;
@@ -20,18 +23,10 @@ interface Skin {
   exterior: string;
   price: number;
   imageUrl: string;
-  marketHashName?: string;
-  steamIconUrl?: string;
-  steamPrice?: string;
-  steamVolume?: string;
-  description?: string;
-  collection?: string;
-  float?: number;
-  isAvailable?: boolean;
-  sellerId?: string;
 }
 
 export default function MarketplacePage() {
+  const searchParams=useSearchParams()
   const { user, hasHydrated } = useAuthStore();
   const { addToCart } = useCartStore();
   const { language, currency } = useSettingsStore();
@@ -40,8 +35,10 @@ export default function MarketplacePage() {
   const [skins, setSkins] = useState<Skin[]>([]); 
   const [loading, setLoading] = useState(true);
   const [filtersVisible, setFiltersVisible] = useState(false);
-  const [selectedSkin, setSelectedSkin] = useState<Skin | null>(null);
+  const [selectedSkin, setSelectedSkin] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const category=searchParams.get('category')
+  
 
   const {
     searchQuery,
@@ -79,37 +76,43 @@ export default function MarketplacePage() {
         }
       }
 
-      const params: any = {
+      
+      const params = {
         search: searchQuery,
         sortBy: sortField,    
         sortOrder: sortOrder, 
         rarity: rarity,
         weaponType: weaponType,
         exterior: condition,
+        minPrice: priceRange.min,
+        maxPrice: priceRange.max,
         page: 1,
-        limit: 50
+        limit: 50,
       };
+      if(category){
 
-      // Only add price filters if they have values
-      if (priceRange.min > 0) {
-        params.minPrice = priceRange.min;
       }
-      if (priceRange.max > 0) {
-        params.maxPrice = priceRange.max;
-      }
-
 
       const { data } = await api.get('/skins', { params });
-      
+      let fetchedSkins:Skin[]=[]
       if (Array.isArray(data)) {
-         setSkins(data);
+        fetchedSkins = data;
       } else if (data.items && Array.isArray(data.items)) {
-         setSkins(data.items);
+          fetchedSkins=data.items;
       } else if (data.data && Array.isArray(data.data)) {
-         setSkins(data.data);
-      } else {
-         setSkins([]);
+         fetchedSkins=data.data;
+      } 
+      if(category){
+        fetchedSkins=fetchedSkins.filter(skin=>{
+          const searchCat=category.toLowerCase()
+
+          const type=skin.weaponType?.toLowerCase()||"";
+          const name=skin.name?.toLowerCase() ||""
+          return type.includes(searchCat)||name.includes(searchCat)
+        })
       }
+
+      setSkins(fetchedSkins)
 
     } catch (error) {
       console.error('Marketplace fetch error:', error);
@@ -147,7 +150,18 @@ export default function MarketplacePage() {
   };
 
   const openSkinDetails = (skin: Skin) => {
-    setSelectedSkin(skin);
+    const steamItem = {
+      market_hash_name: skin.name,
+      market_name: skin.name,
+      name: skin.name,
+      icon_url: skin.imageUrl.replace('https://community.cloudflare.steamstatic.com/economy/image/', '').replace('/330x192', ''),
+      tags: [
+        { category: 'Weapon', localized_tag_name: skin.weaponType },
+        { category: 'Rarity', localized_tag_name: skin.rarity },
+        { category: 'Exterior', localized_tag_name: skin.exterior }
+      ]
+    };
+    setSelectedSkin(steamItem);
     setIsModalOpen(true);
   };
 
@@ -206,13 +220,23 @@ export default function MarketplacePage() {
                   </button>
                 </div>
                 
-
+                <div className="text-gray-900 dark:text-white text-sm lg:text-base">
+                  <span className="text-gray-600 dark:text-gray-400">
+                    {t.marketplacePrice}
+                  </span>
+                  <span className="font-bold ml-1 lg:ml-2">
+                    {skins.length} {language === 'uz' ? 'ta skin' : language === 'ru' ? 'скинов' : 'items'}
+                  </span>
+                  <span className="text-green-600 dark:text-green-400 ml-1 lg:ml-2">
+                    ≈ {formatPrice(skins.reduce((sum, skin) => sum + Number(skin.price), 0), currency)}
+                  </span>
+                </div>
               </div>
 
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="pl-3 pr-10 py-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm h-8 shadow-sm appearance-none bg-no-repeat bg-right bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center]"
+                className="px-3 lg:px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm lg:text-base shadow-sm"
               >
                 <option value="createdAt-DESC">{t.sortNewest}</option>
                 <option value="price-DESC">{t.priceHighToLow}</option>
@@ -292,15 +316,20 @@ export default function MarketplacePage() {
                               {formatPrice(Number(skin.price), currency)}
                             </span>
                           </div>
+                          <div className='flex'>
+
                           <button
                             onClick={() => handleAddToCart(skin.id)}
-                            className="w-full p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition flex items-center justify-center"
+                            className="w-36 p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition flex items-center justify-center"
                             title={language === 'uz' ? 'Savatga qo\'shish' : language === 'ru' ? 'Добавить в корзину' : 'Add to cart'}
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                           </button>
+                          <FavoriteButton  skinId={skin.id} className="w-10 h-10 text-2xl" // Kichikroq o'lcham
+                         />
+                          </div>
                         </div>
                       </div>
                     </div>
