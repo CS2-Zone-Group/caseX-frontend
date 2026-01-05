@@ -2,6 +2,28 @@
 
 O'zbekiston uchun CS2 skinlari marketplace platformasi
 
+## 🚀 Quick Start
+
+### For Team Members (Using Server Backend)
+```bash
+git clone <repository>
+cd caseX-frontend
+npm install
+npm run env:server  # Connect to deployed backend
+npm run dev
+```
+
+### For Developers (Using Local Backend)
+```bash
+git clone <repository>
+cd caseX-frontend
+npm install
+npm run env:local   # Connect to local backend
+npm run dev
+```
+
+**📖 Need help with environment setup? See [ENVIRONMENT_SETUP.md](./ENVIRONMENT_SETUP.md)**
+
 ## Loyiha Strukturasi
 
 ```
@@ -28,9 +50,29 @@ caseX/
 - JWT + Steam OAuth
 - Passport
 
+## 🌐 Backend Environments
+
+### Production Server (Team Use)
+- **URL**: https://api.casex.uz
+- **Status**: ✅ Running
+- **Use**: Team collaboration, testing, demo
+
+### Local Development
+- **URL**: http://localhost:4000
+- **Status**: Depends on your setup
+- **Use**: Development, debugging, new features
+
+## Environment Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run env:server` | Use server backend (https://api.casex.uz) |
+| `npm run env:local` | Use local backend (http://localhost:4000) |
+| `npm run env:status` | Check current configuration |
+
 ## Boshlash
 
-### Backend
+### Backend (Faqat developerlar uchun)
 
 ```bash
 cd caseX-backend
@@ -47,8 +89,13 @@ Backend: http://localhost:4000
 ```bash
 cd caseX-frontend
 npm install
-cp .env.example .env.local
-# .env.local faylini sozlang
+
+# Team members (server backend)
+npm run env:server
+npm run dev
+
+# Developers (local backend)
+npm run env:local
 npm run dev
 ```
 
@@ -62,7 +109,14 @@ NeonDB (PostgreSQL cloud) ishlatilmoqda - sozlash kerak emas, allaqachon sozlang
 
 ### Environment Variables
 
-Backend `.env` (allaqachon sozlangan):
+**Automatic Setup (Recommended):**
+```bash
+npm run env:server  # For server backend
+npm run env:local   # For local backend
+```
+
+**Manual Setup:**
+Backend `.env` (faqat local development uchun):
 ```env
 DATABASE_URL=postgresql://...neon.tech/neondb?sslmode=require
 JWT_SECRET=casex-secret-key-2024-change-in-production
@@ -72,10 +126,15 @@ PORT=4000
 FRONTEND_URL=http://localhost:3000
 ```
 
-Frontend `.env.local`:
+Frontend `.env.local` (automatic via npm scripts):
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:4000/api
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+# Server backend (team use)
+NEXT_PUBLIC_API_URL=https://api.casex.uz/api
+NEXT_PUBLIC_SITE_URL=https://casex.uz
+
+# Local backend (development)
+# NEXT_PUBLIC_API_URL=http://localhost:4000/api
+# NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 ## Asosiy Funksiyalar
