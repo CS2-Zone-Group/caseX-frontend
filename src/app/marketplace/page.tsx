@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import MarketplaceFilters from '@/components/MarketplaceFilters';
 import SkinDetailsModal from '@/components/SkinDetailsModal';
@@ -12,7 +12,6 @@ import { translations } from '@/lib/translations';
 import { formatPrice } from '@/lib/currency';
 import { useFilterStore } from '@/store/filterStore';
 import { useSearchParams } from 'next/navigation';
-import { webcrypto } from 'crypto';
 import FavoriteButton from '@/components/FavoriteButton';
 
 interface Skin {
@@ -25,8 +24,9 @@ interface Skin {
   imageUrl: string;
 }
 
-export default function MarketplacePage() {
-  const searchParams=useSearchParams()
+// 1. ASOSIY KODNI "MarketplaceContent" DEB NOMLAYMIZ (Export default EMAS)
+function MarketplaceContent() {
+  const searchParams = useSearchParams();
   const { user, hasHydrated } = useAuthStore();
   const { addToCart } = useCartStore();
   const { language, currency } = useSettingsStore();
@@ -37,8 +37,8 @@ export default function MarketplacePage() {
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [selectedSkin, setSelectedSkin] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const category=searchParams.get('category')
   
+  const category = searchParams.get('category');
 
   const {
     searchQuery,
@@ -55,6 +55,7 @@ export default function MarketplacePage() {
     document.title = `${t.marketplace} - CaseX`;
   }, [language, t.marketplace]);
 
+  // Sahifa yuklanganda filtrlarni tozalash (ixtiyoriy, agar kerak bo'lsa qoldiring)
   useEffect(() => {
     resetFilters();
   }, []); 
@@ -71,11 +72,9 @@ export default function MarketplacePage() {
           sortField = parts[0]; 
           sortOrder = parts[1];
         } else {
-  
            sortField = sortBy;
         }
       }
-
       
       const params = {
         search: searchQuery,
@@ -89,37 +88,36 @@ export default function MarketplacePage() {
         page: 1,
         limit: 50,
       };
-      if(category){
-
-      }
 
       const { data } = await api.get('/skins', { params });
-      let fetchedSkins:Skin[]=[]
+      let fetchedSkins: Skin[] = [];
+      
       if (Array.isArray(data)) {
         fetchedSkins = data;
       } else if (data.items && Array.isArray(data.items)) {
-          fetchedSkins=data.items;
+         fetchedSkins = data.items;
       } else if (data.data && Array.isArray(data.data)) {
-         fetchedSkins=data.data;
+         fetchedSkins = data.data;
       } 
-      if(category){
-        fetchedSkins=fetchedSkins.filter(skin=>{
-          const searchCat=category.toLowerCase()
 
-          const type=skin.weaponType?.toLowerCase()||"";
-          const name=skin.name?.toLowerCase() ||""
-          return type.includes(searchCat)||name.includes(searchCat)
-        })
+      // Agar category parametri bo'lsa, filtrlash
+      if(category){
+        fetchedSkins = fetchedSkins.filter(skin => {
+          const searchCat = category.toLowerCase();
+          const type = skin.weaponType?.toLowerCase() || "";
+          const name = skin.name?.toLowerCase() || "";
+          return type.includes(searchCat) || name.includes(searchCat);
+        });
       }
 
-      setSkins(fetchedSkins)
+      setSkins(fetchedSkins);
 
     } catch (error) {
       console.error('Marketplace fetch error:', error);
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, sortBy, rarity, weaponType, condition, priceRange]);
+  }, [searchQuery, sortBy, rarity, weaponType, condition, priceRange, category]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -185,7 +183,7 @@ export default function MarketplacePage() {
           </div>
           
           <div className="hidden lg:block w-80 flex-shrink-0">
-             <MarketplaceFilters filters={filtersVisible}/>
+              <MarketplaceFilters filters={filtersVisible}/>
           </div>
 
           {/* Main Content */}
@@ -196,7 +194,7 @@ export default function MarketplacePage() {
                 <div className="flex items-center gap-2">
                   <button 
                     onClick={() => setFiltersVisible(!filtersVisible)}
-                    className="p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 shadow-sm lg:hidden" // lg:hidden qo'shildi
+                    className="p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 shadow-sm lg:hidden"
                     title={language === 'uz' ? 'Filtrlar' : language === 'ru' ? 'Фильтры' : 'Filters'}
                   >
                     {filtersVisible ? (
@@ -316,19 +314,21 @@ export default function MarketplacePage() {
                               {formatPrice(Number(skin.price), currency)}
                             </span>
                           </div>
-                          <div className='flex'>
-
-                          <button
-                            onClick={() => handleAddToCart(skin.id)}
-                            className="w-36 p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition flex items-center justify-center"
-                            title={language === 'uz' ? 'Savatga qo\'shish' : language === 'ru' ? 'Добавить в корзину' : 'Add to cart'}
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                          </button>
-                          <FavoriteButton  skinId={skin.id} className="w-10 h-10 text-2xl" // Kichikroq o'lcham
-                         />
+                          
+                          <div className='flex gap-2 justify-center'>
+                              <button
+                                onClick={() => handleAddToCart(skin.id)}
+                                className="flex-1 p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition flex items-center justify-center"
+                                title={language === 'uz' ? 'Savatga qo\'shish' : language === 'ru' ? 'Добавить в корзину' : 'Add to cart'}
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                              </button>
+                              
+                              <div className="flex items-center justify-center">
+                                <FavoriteButton skinId={skin.id} className="w-10 h-10 text-2xl" />
+                              </div>
                           </div>
                         </div>
                       </div>
@@ -347,5 +347,18 @@ export default function MarketplacePage() {
         skin={selectedSkin}
       />
     </div>
+  );
+}
+
+// 2. ENDI "MarketplaceContent" NI SUSPENSE ICHIGA O'RAB CHIQARAMIZ
+export default function MarketplacePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      </div>
+    }>
+      <MarketplaceContent />
+    </Suspense>
   );
 }
