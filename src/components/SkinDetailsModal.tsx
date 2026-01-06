@@ -10,6 +10,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
 import CircularProgress from '@mui/material/CircularProgress';
+import api from '@/lib/api';
 
 interface SkinDetailsModalProps {
   isOpen: boolean;
@@ -137,15 +138,24 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
   const handleGenerateLink = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.post('/api/sharing', {
+      const { data } = await api.post('/sharing', {
         items: [skin],
         title: `Check out this ${skin?.name}`
       });
-      if (data.url) {
-        setUrl(data.url);
-      }
+
+     
+
+
+      if (data?.share?.shareUrl) {
+        setUrl(data.share.shareUrl);
+      }else if (data && data.id) {
+        const generatedUrl = `${window.location.origin}/marketplace/shared/${data.share.shareId}`;
+        
+        setUrl(generatedUrl);
+     }else{
+     }
     } catch (error) {
-      console.error("Link error", error);
+      console.error("Backend sharing link ishlamadi", error);
     } finally {
       setLoading(false);
     }
@@ -179,6 +189,9 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
     if (isOpen) {
       document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
+    }else{
+      setUrl("")
+      setCopied(false)
     }
 
     return () => {
@@ -232,7 +245,7 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
             </div>
 
             <div className='flex items-center gap-2'>
-              {!url ? (
+            {!url ? (
                 <button 
                   onClick={handleGenerateLink} 
                   className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -246,13 +259,19 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
                 </button>
               ) : (
                 <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 flex items-center gap-2">
-                  <div className="bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 font-mono truncate border border-gray-200 dark:border-gray-700 max-w-[200px]">
+                  {/* URL matni turadigan quti */}
+                  <div className="bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 font-mono border border-gray-200 dark:border-gray-700 
+                    truncate
+                    flex-1 min-w-0 
+                    max-w-[120px] sm:max-w-[200px] md:max-w-[300px]"
+                  >
                     {url}
                   </div>
 
+                  {/* Nusxalash tugmasi */}
                   <button 
                     onClick={handleCopied}
-                    className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all ${
+                    className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all flex-shrink-0 ${
                       copied 
                         ? 'bg-green-500 text-white' 
                         : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'

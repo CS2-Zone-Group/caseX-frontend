@@ -22,9 +22,17 @@ interface Skin {
   exterior: string;
   price: number;
   imageUrl: string;
+  marketHashName?: string;
+  steamIconUrl?: string;
+  steamPrice?: string;
+  steamVolume?: string;
+  description?: string;
+  collection?: string;
+  float?: number;
+  isAvailable?: boolean;
+  sellerId?: string;
 }
 
-// 1. ASOSIY KODNI "MarketplaceContent" DEB NOMLAYMIZ (Export default EMAS)
 function MarketplaceContent() {
   const searchParams = useSearchParams();
   const { user, hasHydrated } = useAuthStore();
@@ -35,10 +43,11 @@ function MarketplaceContent() {
   const [skins, setSkins] = useState<Skin[]>([]); 
   const [loading, setLoading] = useState(true);
   const [filtersVisible, setFiltersVisible] = useState(false);
-  const [selectedSkin, setSelectedSkin] = useState<any>(null);
+  const [selectedSkin, setSelectedSkin] = useState<Skin | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   const category = searchParams.get('category');
+  const skinIdFromUrl = searchParams.get('skinId');
 
   const {
     searchQuery,
@@ -55,7 +64,6 @@ function MarketplaceContent() {
     document.title = `${t.marketplace} - CaseX`;
   }, [language, t.marketplace]);
 
-  // Sahifa yuklanganda filtrlarni tozalash (ixtiyoriy, agar kerak bo'lsa qoldiring)
   useEffect(() => {
     resetFilters();
   }, []); 
@@ -76,18 +84,19 @@ function MarketplaceContent() {
         }
       }
       
-      const params = {
+      const params: any = {
         search: searchQuery,
         sortBy: sortField,    
         sortOrder: sortOrder, 
         rarity: rarity,
         weaponType: weaponType,
         exterior: condition,
-        minPrice: priceRange.min,
-        maxPrice: priceRange.max,
         page: 1,
         limit: 50,
       };
+
+      if (priceRange.min > 0) params.minPrice = priceRange.min;
+      if (priceRange.max > 0) params.maxPrice = priceRange.max;
 
       const { data } = await api.get('/skins', { params });
       let fetchedSkins: Skin[] = [];
@@ -100,7 +109,6 @@ function MarketplaceContent() {
          fetchedSkins = data.data;
       } 
 
-      // Agar category parametri bo'lsa, filtrlash
       if(category){
         fetchedSkins = fetchedSkins.filter(skin => {
           const searchCat = category.toLowerCase();
@@ -127,6 +135,41 @@ function MarketplaceContent() {
     return () => clearTimeout(timer);
   }, [fetchMarketItems]); 
 
+  useEffect(() => {
+    if (!skinIdFromUrl || isModalOpen) return;
+    console.log("🔍 URL tekshirilmoqda. Skin ID:", skinIdFromUrl);
+    const handleOpenSkin = async () => {
+      const foundLocal = skins.find(s => s.id == skinIdFromUrl);
+      
+      if (foundLocal) {
+        setSelectedSkin(foundLocal);
+        setIsModalOpen(true);
+        window.history.replaceState(null, '', '/marketplace');
+        return;
+      }
+
+      try {
+        console.log(`🚀 API ga so'rov yuborilyapti: /skins/${skinIdFromUrl}`);
+        const { data } = await api.get(`/skins/${skinIdFromUrl}`);
+        const actualSkin = data.data || data.item || data;
+        console.log("✅ API dan javob keldi:", data);
+        if (actualSkin && actualSkin.id) {
+           setSelectedSkin(actualSkin);
+           setIsModalOpen(true);
+           window.history.replaceState(null, '', '/marketplace');
+           console.log("🔓 Modal ochilmoqda. Skin ma'lumoti:", actualSkin);
+        }else{
+          console.log("Data bo'sh keldi");
+          
+        }
+      } catch (error) {
+        console.error("Ulashilgan skinlar ochishda hatolik",error);
+      }
+    };
+
+    handleOpenSkin();
+  }, [skinIdFromUrl, skins]);
+
   const handleAddToCart = async (skinId: string) => {
     if (!hasHydrated || !user) {
       const message = language === 'uz' ? 'Iltimos, avval tizimga kiring' : 
@@ -148,18 +191,7 @@ function MarketplaceContent() {
   };
 
   const openSkinDetails = (skin: Skin) => {
-    const steamItem = {
-      market_hash_name: skin.name,
-      market_name: skin.name,
-      name: skin.name,
-      icon_url: skin.imageUrl.replace('https://community.cloudflare.steamstatic.com/economy/image/', '').replace('/330x192', ''),
-      tags: [
-        { category: 'Weapon', localized_tag_name: skin.weaponType },
-        { category: 'Rarity', localized_tag_name: skin.rarity },
-        { category: 'Exterior', localized_tag_name: skin.exterior }
-      ]
-    };
-    setSelectedSkin(steamItem);
+    setSelectedSkin(skin);
     setIsModalOpen(true);
   };
 
@@ -175,7 +207,6 @@ function MarketplaceContent() {
       <div className="container mx-auto px-2 sm:px-4 py-8 pt-20">
         <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
           
-          {/* Filters Sidebar */}
           <div className="lg:hidden mb-4">
             {filtersVisible && (
               <MarketplaceFilters filters={filtersVisible} />
@@ -186,16 +217,13 @@ function MarketplaceContent() {
               <MarketplaceFilters filters={filtersVisible}/>
           </div>
 
-          {/* Main Content */}
           <div className="flex-1">
-            {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 lg:mb-6 gap-4 sm:gap-0">
               <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                 <div className="flex items-center gap-2">
                   <button 
                     onClick={() => setFiltersVisible(!filtersVisible)}
                     className="p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 shadow-sm lg:hidden"
-                    title={language === 'uz' ? 'Filtrlar' : language === 'ru' ? 'Фильтры' : 'Filters'}
                   >
                     {filtersVisible ? (
                       <svg className="w-4 h-4 lg:w-5 lg:h-5 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -209,7 +237,6 @@ function MarketplaceContent() {
                   </button>
                   <button 
                     className="p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 shadow-sm"
-                    title={language === 'uz' ? 'Yangilash' : language === 'ru' ? 'Обновить' : 'Refresh'}
                     onClick={() => fetchMarketItems()}
                   >
                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -319,7 +346,6 @@ function MarketplaceContent() {
                               <button
                                 onClick={() => handleAddToCart(skin.id)}
                                 className="flex-1 p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition flex items-center justify-center"
-                                title={language === 'uz' ? 'Savatga qo\'shish' : language === 'ru' ? 'Добавить в корзину' : 'Add to cart'}
                               >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -350,7 +376,6 @@ function MarketplaceContent() {
   );
 }
 
-// 2. ENDI "MarketplaceContent" NI SUSPENSE ICHIGA O'RAB CHIQARAMIZ
 export default function MarketplacePage() {
   return (
     <Suspense fallback={

@@ -8,6 +8,58 @@ import { translations } from '@/lib/translations';
 import { convertCurrency, formatPrice, getExchangeRates } from '@/lib/currency';
 import Navbar from '@/components/Navbar';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
+import Link from 'next/link';
+import React from 'react'
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import FilterNoneIcon from '@mui/icons-material/FilterNone';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import InsertLinkIcon from '@mui/icons-material/InsertLink';
+
+
+
+const MOCK_SHARES = [
+    {
+      _id: '1',
+      shareId: 'lqSAhD42Wd',
+      views: 124,
+      createdAt: '2024-01-20T10:30:00Z',
+      item: {
+        name: 'AK-47 | Asiimov',
+        image: 'https://community.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot7HxfDhjxszJemkV092lnYmGm_vbbuKIxz4F7MBo2-rF89SgilLm_kdpY2GncYfAcVdvYVzS_Vm9kO3m05G5vpWbz3QxvyJx5C3D30vgT18dAg',
+        price: 150.50,
+        rarity: 'Covert'
+      }
+    },
+    {
+      _id: '2',
+      shareId: 'k9XsF51Lm',
+      views: 45,
+      createdAt: '2024-01-18T14:15:00Z',
+      item: {
+        name: 'AWP | Dragon Lore',
+        image: 'https://community.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FAR17PLfYQJD_9W7m5a0mvLwOq7c2D4H65Vy3-qWpNj22gDj_0Y4YmGmI9fBdAE2aV7V_1K6w-3vgJC5vZXJwXFnvCMj4XfD30vgKJGfpQ',
+        price: 1200.00,
+        rarity: 'Contraband'
+      }
+    },
+    {
+      _id: '3',
+      shareId: 'm2Ba88Qz',
+      views: 12,
+      createdAt: '2024-01-22T09:00:00Z',
+      item: {
+        name: 'M4A4 | Howl',
+        image: 'https://community.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou-6kejhz2v_Nfz5H_uO1gb-Gw_alDLPIhm5u5Mx2gv2P8d2t2wDi_0Y4YmGmI9fBdAE2aV7V_1K6w-3vgJC5vZXJwXFnvCMj4XfD30vgKJGfpQ',
+        price: 950.00,
+        rarity: 'Contraband'
+      }
+    }
+  ];
+
+
+
 
 function ProfileContent() {
   const router = useRouter();
@@ -15,16 +67,27 @@ function ProfileContent() {
   const { language, currency, theme, setLanguage, setCurrency, setTheme } = useSettingsStore();
   const { user, fetchUserBalance } = useAuthStore();
   const t = translations[language];
-  
   const baseBalance = user?.balance || 0; // Real user balance
-  const [activeTab, setActiveTab] = useState<'settings' | 'balance' | 'history'>('settings');
+  const [activeTab, setActiveTab] = useState<'settings' | 'balance' | 'history'|'sharing'>('settings');
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
+    const [shares, setShares] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [editingItem, setEditingItem] = useState<any | null>(null);
+  const [newPrice, setNewPrice] = useState<string>('');
+  
+
+
+  
+
+  
   
   // Update document title based on active tab
   useEffect(() => {
     const tabTitles = {
       settings: language === 'uz' ? 'Profil Sozlamalari' : language === 'ru' ? 'Настройки Профиля' : 'Profile Settings',
       balance: language === 'uz' ? 'Til va Valyuta' : language === 'ru' ? 'Язык и Валюта' : 'Language & Currency',
+      sharing:language==='uz'?'Ulashganlarim':language==='ru'?'ulashganlarim':'Ulashganlarim',
       history: language === 'uz' ? 'To\'lov Tarixi' : language === 'ru' ? 'История Платежей' : 'Payment History'
     };
     document.title = `${tabTitles[activeTab]} - CaseX`;
@@ -96,6 +159,102 @@ function ProfileContent() {
     }
   }, [activeTab]);
 
+  useEffect(() => {
+    // 🔍 API ga so'rov yuborish o'rniga MOCK DATA ni yuklaymiz
+    const fetchShares = async () => {
+      try {
+        setLoading(true);
+        
+        // 1 soniya kutib turamiz (realistik bo'lishi uchun)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // MOCK DATA ni o'rnatamiz
+        setShares(MOCK_SHARES);
+
+        // ⚠️ BACKEND TUZALSA, MANA BU YERNI OCHASIZ:
+        // const res = await api.get('/sharing/my-shares');
+        // setShares(res.data);
+
+      } catch (error) {
+        console.error("Xatolik:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchShares();
+  }, []);
+
+  useEffect(() => {
+    // 🔍 API ga so'rov yuborish o'rniga MOCK DATA ni yuklaymiz
+    const fetchShares = async () => {
+      try {
+        setLoading(true);
+        
+        // 1 soniya kutib turamiz (realistik bo'lishi uchun)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // MOCK DATA ni o'rnatamiz
+        setShares(MOCK_SHARES);
+
+        // ⚠️ BACKEND TUZALSA, MANA BU YERNI OCHASIZ:
+        // const res = await api.get('/sharing/my-shares');
+        // setShares(res.data);
+
+      } catch (error) {
+        console.error("Xatolik:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchShares();
+  }, []);
+
+
+
+  const handleCopyLink = (shareId: string) => {
+    const link = `${window.location.origin}/marketplace/shared/${shareId}`;
+    navigator.clipboard.writeText(link);
+    
+    setCopiedId(shareId);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const handleDelete=(shareId:string)=>{
+    const filterList=shares.filter(item=>item.shareId!==shareId)
+    setShares(filterList)
+  }
+
+  const handleEditClick=(item:any)=>{
+    setEditingItem(item)
+    setNewPrice(item.item.price)
+  }
+
+  const handleSavedEdit=()=>{
+    if(!editingItem)return
+    const updateShare=shares.map(share=>{
+      if(share._id===editingItem._id){
+        return {
+          ...share, item:{...share.item,price:parseFloat(newPrice)}
+        }
+      }return share
+    })
+    setShares(updateShare)
+    setEditingItem(null)
+    alert("Narx muvaffaqiyatli o'zgartrildi.")
+  }
+
+  if (loading) {
+    return (
+      <div className="p-8 text-center text-gray-500">
+        {t.loading}
+      </div>
+    );
+  }
+
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
@@ -105,7 +264,7 @@ function ProfileContent() {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar */}
           <div className="w-full lg:w-80 bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-6 h-fit shadow-lg border border-gray-200 dark:border-gray-700">
-            <div className="grid grid-cols-2 lg:grid-cols-1 gap-2 lg:space-y-2 lg:grid-cols-none">
+            <div className="grid grid-cols-2 lg:grid-cols-1 gap-2 lg:space-y-2 ">
               <button
                 onClick={() => setActiveTab('settings')}
                 className={`w-full flex items-center justify-center lg:justify-start gap-2 lg:gap-3 px-3 lg:px-4 py-2 lg:py-3 rounded-lg transition text-sm lg:text-base ${
@@ -129,6 +288,19 @@ function ProfileContent() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span className="hidden lg:inline">{t.languageAndCurrency}</span>
+                <span className="lg:hidden text-xs">{language === 'uz' ? 'Til' : language === 'ru' ? 'Язык' : 'Lang'}</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('sharing')}
+                className={`w-full flex items-center justify-center lg:justify-start gap-2 lg:gap-3 px-3 lg:px-4 py-2 lg:py-3 rounded-lg transition text-sm lg:text-base ${
+                  activeTab === 'sharing' ? 'bg-primary-600 text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
+              >
+                <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <InsertLinkIcon/>
+                </svg>
+                <span className="hidden lg:inline">{t.myShares}</span>
                 <span className="lg:hidden text-xs">{language === 'uz' ? 'Til' : language === 'ru' ? 'Язык' : 'Lang'}</span>
               </button>
 
@@ -455,6 +627,180 @@ function ProfileContent() {
                   </div>
                 </div>
               </div>
+            )}
+
+            {activeTab==='sharing'&&(
+              <div  className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-200 dark:border-gray-700" >
+
+             
+              <div className="w-full max-w-4xl mx-auto p-4 md:p-6">
+          
+              {/* Sarlavha */}
+              <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+                {t.myShares}
+              </h1>
+          
+              {editingItem && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-2xl w-full max-w-sm border border-gray-200 dark:border-gray-700 animation-fade-in">
+                      
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+                        {t.modalTitle}
+                      </h3>
+                      
+                      <div className="mb-4 text-center">
+                        <p className="text-sm text-gray-500 mb-2">{editingItem.item.name}</p>
+                        <img src={editingItem.item.image} className="w-20 h-20 mx-auto object-contain" />
+                      </div>
+          
+                      <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          {t.inputLabel} ($)
+                        </label>
+                        <input 
+                          type="number" 
+                          value={newPrice}
+                          onChange={(e) => setNewPrice(e.target.value)}
+                          className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                        />
+                      </div>
+          
+                      <div className="flex gap-3">
+                        <button 
+                          onClick={() => setEditingItem(null)}
+                          className="flex-1 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                        >
+                          {t.btnCancel}
+                        </button>
+                        <button 
+                          onClick={handleSavedEdit}
+                          className="flex-1 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+                        >
+                          {t.btnSave}
+                        </button>
+                      </div>
+          
+                    </div>
+                  </div>
+                )}
+          
+          
+          
+            
+              {/* Asosiy Karta */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                
+                {shares.length === 0 ? (
+                  // Bo'sh holat
+                  <div className="p-10 text-center">
+                    <div className="text-gray-400 dark:text-gray-500 mb-2">📭</div>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      {t.emptyState}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                    
+                    <div className="hidden md:grid grid-cols-12 gap-4 p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 dark:bg-gray-900/50 dark:text-gray-400">
+                      <div className="col-span-5">{t.tableSkinName}</div>
+                      <div className="col-span-3 text-center">{t.tableStats}</div>
+                      <div className="col-span-4 text-right">{t.tableActions}</div>
+                    </div>
+            
+                    {shares.map((share) => (
+                      <div 
+                        key={share._id} 
+                        className="flex flex-col md:grid md:grid-cols-12 gap-4 p-4 items-center hover:bg-gray-50 dark:hover:bg-gray-700/30 transition duration-200"
+                      >
+                        
+                        <div className="w-full md:col-span-5 flex items-center gap-4">
+                          <div className="w-14 h-14 md:w-12 md:h-12 flex-shrink-0 bg-gray-100 dark:bg-gray-900 rounded-lg p-1 border border-gray-200 dark:border-gray-700">
+                            <img 
+                              src={share.item.image} 
+                              alt={share.item.name}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                          
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-gray-900 dark:text-white truncate text-sm md:text-base">
+                              {share.item.name}
+                            </p>
+                            <p className="text-xs md:text-sm font-medium text-green-600 dark:text-green-400">
+                              ${share.item.price}
+                            </p>
+                          </div>
+                        </div>
+            
+                        {/* 2. Statistika (Ko'rishlar va Sana) */}
+                        <div className="w-full md:col-span-3 flex md:flex-col items-center justify-between md:justify-center gap-2 text-sm">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-700">
+                            {share.views} {t.viewCount}
+                          </span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            {new Date(share.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+            
+                        {/* 3. Tugmalar (Actions) */}
+                        <div className="w-full md:col-span-4 flex items-center justify-end gap-2 mt-2 md:mt-0">
+                          
+          
+                        <button
+                            onClick={() => handleEditClick(share)}
+                            className="p-2 md:p-1.5 rounded-lg border transition-colors
+                              bg-gray-400 border-gray-300 text-gray-700 hover:bg-gray-100
+                              dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                          >
+                            <EditIcon/>
+                          </button>
+          
+                        <button
+                            onClick={() => handleDelete(share.shareId)}
+                            className="p-2 md:p-1.5  rounded-lg border transition-colors
+                              bg-gray-900 text-red-700 border-gray-300  hover:bg-gray-100
+                              dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                          >
+                            <DeleteOutlineIcon/>
+                          </button>
+          
+          
+          
+                          <button
+                            onClick={() => handleCopyLink(share.shareId)}
+                            className={`flex-1 md:flex-none px-4 py-2 md:py-1.5 rounded-lg text-xs md:text-sm font-medium transition-all shadow-sm text-white ${
+                              copiedId === share.shareId 
+                                ? 'bg-green-600 hover:bg-green-700 ring-2 ring-green-500/20' 
+                                : 'bg-blue-600 hover:bg-blue-700 ring-2 ring-blue-500/20'
+                            }`}
+                          >
+                             <FilterNoneIcon/>
+                           
+                          </button>
+                          
+                          <Link 
+                            href={`/marketplace/shared/${share.shareId}`}
+                            target="_blank"
+                            className="p-2 md:p-1.5 rounded-lg border transition-colors
+                              bg-white border-gray-300 text-gray-700 hover:bg-gray-100
+                              dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                            title="Sahifada ochish"
+                          >
+                            <OpenInNewIcon/>
+                          </Link>
+                        </div>
+            
+                      </div>
+                    ))}
+                  </div>
+               
+          
+          
+          
+                )}
+              </div>
+            </div>
+            </div>
             )}
 
             {activeTab === 'history' && (
