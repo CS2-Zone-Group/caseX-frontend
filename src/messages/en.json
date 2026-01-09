@@ -1,0 +1,97 @@
+{
+  "HomePage": {
+    "meta": {
+      "title": "CaseX - CS2 Skins Marketplace"
+    },
+    "hero": {
+      "badge": "Uzbekistan's #1 CS2 Marketplace",
+      "title": "Buy CS2 Skins",
+      "description": "Best prices, secure and fast. The most trusted CS2 skins marketplace in Uzbekistan.",
+      "marketplaceButton": "🛍️ Go to Marketplace",
+      "signUpButton": "Sign Up"
+    },
+    "stats": {
+      "skins": "Skins",
+      "users": "Users",
+      "support": "Support",
+      "secure": "Secure"
+    },
+    "features": {
+      "title": "WHY CASEX?",
+      "bestPrices": {
+        "title": "Best Prices",
+        "description": "Buy CS2 skins at the lowest prices in the market"
+      },
+      "securePayments": {
+        "title": "Secure Payments",
+        "description": "Secure payment via Click, Payme and other local payment systems"
+      },
+      "fastDelivery": {
+        "title": "Fast Delivery",
+        "description": "Get your skins within minutes"
+      }
+    },
+    "about": {
+      "title": "About CaseX",
+      "description": "CaseX - the first and most trusted CS2 skins marketplace in Uzbekistan. We provide gamers with a safe, fast and convenient way to buy and sell skins."
+    },
+    "footer": {
+      "description": "Uzbekistan CS2 skins marketplace",
+      "copyright": "All rights reserved."
+    }
+  },
+  "Navbar": {
+    "marketplace": "Marketplace",
+    "inventory": "Inventory",
+    "cart": "Cart",
+    "favorites": "Favorites",
+    "profile": "Profile",
+    "login": "Login",
+    "logout": "Logout",
+    "balance": "Balance",
+    "paymentHistory": "Payment History",
+    "adminPanel": "Admin Panel",
+    "depositTooltip": "Add funds"
+  },
+  "Header": {
+    "marketplace": "Marketplace",
+    "inventory": "Inventory",
+    "cart": "Cart",
+    "login": "Login",
+    "logout": "Logout",
+    "settingsTooltip": "Settings"
+  },
+  "PopularItems": {
+    "title": "POPULAR ITEMS",
+    "startFrom": "Start from:",
+    "viewAllItems": "View All Items",
+    "skinConditions": {
+      "factoryNew": "Factory New",
+      "minimalWear": "Minimal Wear",
+      "fieldTested": "Field-Tested",
+      "wellWorn": "Well-Worn",
+      "battleScarred": "Battle-Scarred"
+    }
+  },
+  "PaymentMethods": {
+    "title": "Secure Payment Methods",
+    "paymentMethods": {
+      "payme": "Payme",
+      "click": "Click",
+      "uzum": "Uzum",
+      "paynet": "Paynet",
+      "visa": "Visa",
+      "mastercard": "Mastercard",
+      "bitcoin": "Bitcoin",
+      "ethereum": "Ethereum",
+      "usdt": "USDT",
+      "more": "Others"
+    },
+    "moreMethods": "Various methods",
+    "transaction": "Transaction",
+    "fee": "FEE",
+    "securityText": "All payments are secure and encrypted. We do not store your financial information.",
+    "sslEncrypted": "SSL Encrypted",
+    "pciCertified": "PCI DSS Certified"
+  }
+}

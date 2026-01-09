@@ -1,0 +1,97 @@
+{
+  "HomePage": {
+    "meta": {
+      "title": "CaseX - CS2 Skinlari Marketplace"
+    },
+    "hero": {
+      "badge": "O'zbekiston #1 CS2 Marketplace",
+      "title": "CS2 Skinlarini Xarid Qiling",
+      "description": "Eng yaxshi narxlarda, xavfsiz va tez. O'zbekistondagi eng ishonchli CS2 skinlari marketplace.",
+      "marketplaceButton": "🛍️ Marketplace'ga O'tish",
+      "signUpButton": "Ro'yxatdan O'tish"
+    },
+    "stats": {
+      "skins": "Skinlar",
+      "users": "Foydalanuvchilar",
+      "support": "Qo'llab-quvvatlash",
+      "secure": "Xavfsiz"
+    },
+    "features": {
+      "title": "NIMA UCHUN CASEX?",
+      "bestPrices": {
+        "title": "Eng Yaxshi Narxlar",
+        "description": "Bozordagi eng arzon narxlarda CS2 skinlarini sotib oling"
+      },
+      "securePayments": {
+        "title": "Xavfsiz To'lovlar",
+        "description": "Click, Payme va boshqa mahalliy to'lov tizimlari orqali xavfsiz to'lang"
+      },
+      "fastDelivery": {
+        "title": "Tezkor Yetkazib Berish",
+        "description": "Skinlaringizni bir necha daqiqada qo'lingizga oling"
+      }
+    },
+    "about": {
+      "title": "CaseX Haqida",
+      "description": "CaseX - O'zbekistondagi birinchi va eng ishonchli CS2 skinlari marketplace. Biz o'yinchilarga xavfsiz, tez va qulay tarzda skinlar sotib olish va sotish imkoniyatini taqdim etamiz."
+    },
+    "footer": {
+      "description": "CS2 skinlari uchun O'zbekiston marketplace",
+      "copyright": "Barcha huquqlar himoyalangan."
+    }
+  },
+  "Navbar": {
+    "marketplace": "Marketplace",
+    "inventory": "Inventar",
+    "cart": "Savat",
+    "favorites": "Sevimlilar",
+    "profile": "Profil",
+    "login": "Kirish",
+    "logout": "Chiqish",
+    "balance": "Balans",
+    "paymentHistory": "To'lov tarixi",
+    "adminPanel": "Admin Panel",
+    "depositTooltip": "Balansni to'ldirish"
+  },
+  "PopularItems": {
+    "title": "MASHHUR MAHSULOTLAR",
+    "startFrom": "Boshlang'ich narx:",
+    "viewAllItems": "Barcha Mahsulotlar",
+    "skinConditions": {
+      "factoryNew": "Zavoddan yangi",
+      "minimalWear": "Biroz ishlatilgan",
+      "fieldTested": "Maydonda sinalgan",
+      "wellWorn": "Eskirgan",
+      "battleScarred": "Jangda toblangan"
+    }
+  },
+  "Header": {
+    "marketplace": "Marketplace",
+    "inventory": "Inventar",
+    "cart": "Savat",
+    "login": "Kirish",
+    "logout": "Chiqish",
+    "settingsTooltip": "Sozlamalar"
+  },
+  "PaymentMethods": {
+    "title": "Xavfsiz To'lov Usullari",
+    "paymentMethods": {
+      "payme": "Payme",
+      "click": "Click",
+      "uzum": "Uzum",
+      "paynet": "Paynet",
+      "visa": "Visa",
+      "mastercard": "Mastercard",
+      "bitcoin": "Bitcoin",
+      "ethereum": "Ethereum",
+      "usdt": "USDT",
+      "more": "Boshqalar"
+    },
+    "moreMethods": "Turli usullar",
+    "transaction": "Operatsiya",
+    "fee": "Komissiya",
+    "securityText": "Barcha to'lovlar xavfsiz va shifrlangan. Biz sizning moliyaviy ma'lumotlaringizni saqlamaymiz.",
+    "sslEncrypted": "SSL Shifrlangan",
+    "pciCertified": "PCI DSS Sertifikatlangan"
+  }
+}

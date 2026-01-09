@@ -1,0 +1,97 @@
+{
+  "HomePage": {
+    "meta": {
+      "title": "CaseX - Маркетплейс CS2 Скинов"
+    },
+    "hero": {
+      "badge": "#1 CS2 Маркетплейс Узбекистана",
+      "title": "Покупайте CS2 Скины",
+      "description": "По лучшим ценам, безопасно и быстро. Самый надежный маркетплейс CS2 скинов в Узбекистане.",
+      "marketplaceButton": "🛍️ Перейти в Маркетплейс",
+      "signUpButton": "Регистрация"
+    },
+    "stats": {
+      "skins": "Скинов",
+      "users": "Пользователей",
+      "support": "Поддержка",
+      "secure": "Безопасно"
+    },
+    "features": {
+      "title": "ПОЧЕМУ CASEX?",
+      "bestPrices": {
+        "title": "Лучшие Цены",
+        "description": "Покупайте CS2 скины по самым низким ценам на рынке"
+      },
+      "securePayments": {
+        "title": "Безопасные Платежи",
+        "description": "Безопасная оплата через Click, Payme и другие местные платежные системы"
+      },
+      "fastDelivery": {
+        "title": "Быстрая Доставка",
+        "description": "Получите свои скины в течение нескольких минут"
+      }
+    },
+    "about": {
+      "title": "О CaseX",
+      "description": "CaseX - первый и самый надежный маркетплейс CS2 скинов в Узбекистане. Мы предоставляем игрокам возможность безопасно, быстро и удобно покупать и продавать скины."
+    },
+    "footer": {
+      "description": "Узбекский маркетплейс CS2 скинов",
+      "copyright": "Все права защищены."
+    }
+  },
+  "Navbar": {
+    "marketplace": "Маркетплейс",
+    "inventory": "Инвентарь",
+    "cart": "Корзина",
+    "favorites": "Избранное",
+    "profile": "Профиль",
+    "login": "Войти",
+    "logout": "Выйти",
+    "balance": "Баланс",
+    "paymentHistory": "История платежей",
+    "adminPanel": "Админ Панель",
+    "depositTooltip": "Пополнить баланс"
+  },
+  "Header": {
+    "marketplace": "Маркетплейс",
+    "inventory": "Инвентарь",
+    "cart": "Корзина",
+    "login": "Войти",
+    "logout": "Выйти",
+    "settingsTooltip": "Настройки"
+  },
+  "PopularItems": {
+    "title": "ПОПУЛЯРНЫЕ ТОВАРЫ",
+    "startFrom": "Начиная от:",
+    "viewAllItems": "Посмотреть все",
+    "skinConditions": {
+      "factoryNew": "Прямо с завода",
+      "minimalWear": "Немного поношенное",
+      "fieldTested": "После полевых испытаний",
+      "wellWorn": "Поношенное",
+      "battleScarred": "Закаленное в боях"
+    }
+  },
+  "PaymentMethods": {
+    "title": "Безопасные Способы Оплаты",
+    "paymentMethods": {
+      "payme": "Payme",
+      "click": "Click",
+      "uzum": "Uzum",
+      "paynet": "Paynet",
+      "visa": "Visa",
+      "mastercard": "Mastercard",
+      "bitcoin": "Bitcoin",
+      "ethereum": "Ethereum",
+      "usdt": "USDT",
+      "more": "Другие"
+    },
+    "moreMethods": "Различные методы",
+    "transaction": "Транзакция",
+    "fee": "Комиссия",
+    "securityText": "Все платежи безопасны и зашифрованы. Мы не храним ваши финансовые данные.",
+    "sslEncrypted": "SSL Зашифровано",
+    "pciCertified": "PCI DSS Сертифицировано"
+  }
+}
