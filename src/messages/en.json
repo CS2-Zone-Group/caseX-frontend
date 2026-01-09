@@ -93,5 +93,136 @@
     "securityText": "All payments are secure and encrypted. We do not store your financial information.",
     "sslEncrypted": "SSL Encrypted",
     "pciCertified": "PCI DSS Certified"
+  },
+  "SkinDetailsModal": {
+    "itemDetails": "ITEM DETAILS",
+    "salesInfo": "SALES INFO",
+    "viewAtSteam": "View at Steam",
+    "price": "Price",
+    "tradeLock": "Trade lock",
+    "itemLocation": "Item location",
+    "itemType": "Item type",
+    "exterior": "Exterior",
+    "rarity": "Rarity",
+    "collection": "Collection",
+    "floatValue": "Float Value",
+    "tradeProtection": "Trade Protection",
+    "tradeProtectionText": "This item is protected by our secure trading system",
+    "buyNow": "Buy Now",
+    "addToCart": "Add to Cart",
+    "inspectInGame": "Inspect in Game",
+    "salesHistory": "Sales History",
+    "recentSales": "Recent sales",
+    "sellingPrice": "Selling price",
+    "operation": "Operation",
+    "dateTime": "Date/Time",
+    "share": "Share",
+    "favorite": "Favorite",
+    "noImageAvailable": "No Image Available",
+    "description": "Description",
+    "noTradeLock": "No trade lock",
+    "steam": "Steam",
+    "skinConditions": {
+      "factoryNew": "Factory New",
+      "minimalWear": "Minimal Wear",
+      "fieldTested": "Field-Tested",
+      "wellWorn": "Well-Worn",
+      "battleScarred": "Battle-Scarred"
+    },
+    "salesChartPlaceholder": "Sales chart will be displayed here",
+    "noSalesHistory": "No sales history available for this item"
+  },
+  "SettingsModal": {
+    "title": "Settings",
+    "theme": "Theme",
+    "language": "Language",
+    "currency": "Currency",
+    "save": "Save",
+    "updating": "Updating...",
+    "currentRates": "Current rates (CBU):",
+    "baseCurrency": "Base currency: UZS (Uzbek Som)",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "languages": {
+      "uz": "O'zbek",
+      "ru": "Русский",
+      "en": "English"
+    }
+  },
+  "MarketplaceFilters": {
+    "title": "Filters",
+    "search": "Search...",
+    "sort": "Sort",
+    "rarity": "Rarity",
+    "weaponType": "Weapon Type",
+    "exterior": "Exterior",
+    "priceRange": "Price Range",
+    "resetFilters": "Reset Filters",
+    "sortOptions": {
+      "newest": "Newest",
+      "cheapest": "Cheapest",
+      "expensive": "Most Expensive",
+      "nameAZ": "Name A-Z"
+    },
+    "rarityOptions": {
+      "all": "All rarities",
+      "consumer": "Consumer Grade",
+      "industrial": "Industrial Grade",
+      "milspec": "Mil-Spec",
+      "restricted": "Restricted",
+      "classified": "Classified",
+      "covert": "Covert",
+      "contraband": "Contraband"
+    },
+    "weaponTypes": {
+      "all": "All Weapons",
+      "pistol": "Pistols",
+      "rifle": "Rifles",
+      "smg": "SMGs",
+      "sniper": "Snipers",
+      "shotgun": "Shotguns",
+      "knife": "Knives",
+      "gloves": "Gloves"
+    },
+    "exteriorOptions": {
+      "all": "All Conditions",
+      "factoryNew": "Factory New",
+      "minimalWear": "Minimal Wear",
+      "fieldTested": "Field-Tested",
+      "wellWorn": "Well-Worn",
+      "battleScarred": "Battle-Scarred"
+    }
+  },
+  "InventoryFilters": {
+    "title": "Filters",
+    "searchInventory": "Search inventory",
+    "proSkins": "Pro Skins",
+    "new": "NEW",
+    "itemsLocation": "Items' location",
+    "tradeLock": "Trade lock (by days)",
+    "exterior": "Exterior",
+    "extra": "Extra",
+    "itemsCategory": "Items category",
+    "collection": "Collection",
+    "resetFilters": "Reset Filters",
+    "exteriorOptions": {
+      "all": "All",
+      "factoryNew": "Factory New",
+      "minimalWear": "Minimal Wear",
+      "fieldTested": "Field-Tested",
+      "wellWorn": "Well-Worn",
+      "battleScarred": "Battle-Scarred"
+    },
+    "categoryOptions": {
+      "pistols": "Pistols",
+      "rifles": "Rifles",
+      "smgs": "SMGs",
+      "snipers": "Snipers",
+      "knives": "Knives",
+      "gloves": "Gloves"
+    }
   }
 }

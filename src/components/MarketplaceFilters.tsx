@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useSettingsStore } from "@/store/settingsStore";
-import { translations } from "@/lib/translations";
 import { useFilterStore } from "@/store/filterStore";
+import { useTranslations } from "next-intl";
 
 interface MarketplaceFiltersProps {
   onFilterChange?: (filters: any) => void;
@@ -14,8 +13,7 @@ export default function MarketplaceFilters({
   onFilterChange,
   filters,
 }: MarketplaceFiltersProps) {
-  const { language } = useSettingsStore();
-  const t = translations[language];
+  const t = useTranslations("MarketplaceFilters");
   const [isOpen, setIsOpen] = useState(true);
   const [sortOpen, setSortOpen] = useState(false);
   const [rarityOpen, setRarityOpen] = useState(false);
@@ -37,195 +35,34 @@ export default function MarketplaceFilters({
   } = useFilterStore();
 
   const rarityOptions = [
-    {
-      label: t.allRarities,
-      value: "",
-      uz: "Barcha raritylar",
-      ru: "Все редкости",
-      en: "All rarities",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Consumer Grade"
-          : language === "ru"
-          ? "Потребительский"
-          : "Consumer Grade",
-      value: "consumer",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Industrial Grade"
-          : language === "ru"
-          ? "Промышленный"
-          : "Industrial Grade",
-      value: "industrial",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Mil-Spec"
-          : language === "ru"
-          ? "Армейский"
-          : "Mil-Spec",
-      value: "milspec",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Restricted"
-          : language === "ru"
-          ? "Запрещённый"
-          : "Restricted",
-      value: "restricted",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Classified"
-          : language === "ru"
-          ? "Засекреченный"
-          : "Classified",
-      value: "classified",
-    },
-    {
-      label:
-        language === "uz" ? "Covert" : language === "ru" ? "Тайный" : "Covert",
-      value: "covert",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Contraband"
-          : language === "ru"
-          ? "Контрабанда"
-          : "Contraband",
-      value: "contraband",
-    },
+    { label: t("rarityOptions.all"), value: "" },
+    { label: t("rarityOptions.consumer"), value: "consumer" },
+    { label: t("rarityOptions.industrial"), value: "industrial" },
+    { label: t("rarityOptions.milspec"), value: "milspec" },
+    { label: t("rarityOptions.restricted"), value: "restricted" },
+    { label: t("rarityOptions.classified"), value: "classified" },
+    { label: t("rarityOptions.covert"), value: "covert" },
+    { label: t("rarityOptions.contraband"), value: "contraband" },
   ];
 
   const weaponTypes = [
-    {
-      label:
-        language === "uz"
-          ? "Barcha qurollar"
-          : language === "ru"
-          ? "Все оружия"
-          : "All Weapons",
-      value: "",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Pistoletlar"
-          : language === "ru"
-          ? "Пистолеты"
-          : "Pistols",
-      value: "pistol",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Miltiqlar"
-          : language === "ru"
-          ? "Винтовки"
-          : "Rifles",
-      value: "rifle",
-    },
-    {
-      label: language === "uz" ? "SMG" : language === "ru" ? "ПП" : "SMGs",
-      value: "smg",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Snayperlar"
-          : language === "ru"
-          ? "Снайперские"
-          : "Snipers",
-      value: "sniper",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Ov miltiqlar"
-          : language === "ru"
-          ? "Дробовики"
-          : "Shotguns",
-      value: "shotgun",
-    },
-    {
-      label:
-        language === "uz" ? "Pichoqlar" : language === "ru" ? "Ножи" : "Knives",
-      value: "knife",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Qo'lqoplar"
-          : language === "ru"
-          ? "Перчатки"
-          : "Gloves",
-      value: "gloves",
-    },
+    { label: t("weaponTypes.all"), value: "" },
+    { label: t("weaponTypes.pistol"), value: "pistol" },
+    { label: t("weaponTypes.rifle"), value: "rifle" },
+    { label: t("weaponTypes.smg"), value: "smg" },
+    { label: t("weaponTypes.sniper"), value: "sniper" },
+    { label: t("weaponTypes.shotgun"), value: "shotgun" },
+    { label: t("weaponTypes.knife"), value: "knife" },
+    { label: t("weaponTypes.gloves"), value: "gloves" },
   ];
 
   const exteriorOptions = [
-    {
-      label:
-        language === "uz"
-          ? "Barcha holatlar"
-          : language === "ru"
-          ? "Все состояния"
-          : "All Conditions",
-      value: "",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Zavod yangi"
-          : language === "ru"
-          ? "Прямо с завода"
-          : "Factory New",
-      value: "Factory New",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Kam eskirgan"
-          : language === "ru"
-          ? "Немного поношенное"
-          : "Minimal Wear",
-      value: "Minimal Wear",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Maydon sinovdan o'tgan"
-          : language === "ru"
-          ? "После полевых испытаний"
-          : "Field-Tested",
-      value: "Field-Tested",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Yaxshi eskirgan"
-          : language === "ru"
-          ? "Поношенное"
-          : "Well-Worn",
-      value: "Well-Worn",
-    },
-    {
-      label:
-        language === "uz"
-          ? "Jang izlari"
-          : language === "ru"
-          ? "Закалённое в боях"
-          : "Battle-Scarred",
-      value: "Battle-Scarred",
-    },
+    { label: t("exteriorOptions.all"), value: "" },
+    { label: t("exteriorOptions.factoryNew"), value: "Factory New" },
+    { label: t("exteriorOptions.minimalWear"), value: "Minimal Wear" },
+    { label: t("exteriorOptions.fieldTested"), value: "Field-Tested" },
+    { label: t("exteriorOptions.wellWorn"), value: "Well-Worn" },
+    { label: t("exteriorOptions.battleScarred"), value: "Battle-Scarred" },
   ];
 
   const handleFilterChange = (key: string, value: any) => {
@@ -234,22 +71,10 @@ export default function MarketplaceFilters({
   };
 
   const sortOptions = [
-    {
-      label: t.newest,
-      value: "createdAt-DESC",
-    },
-    {
-      label: t.cheapest,
-      value: "price-ASC",
-    },
-    {
-      label: t.expensive,
-      value: "price-DESC",
-    },
-    {
-      label: t.nameAZ,
-      value: "name-ASC",
-    },
+    { label: t("sortOptions.newest"), value: "createdAt-DESC" },
+    { label: t("sortOptions.cheapest"), value: "price-ASC" },
+    { label: t("sortOptions.expensive"), value: "price-DESC" },
+    { label: t("sortOptions.nameAZ"), value: "name-ASC" },
   ];
 
   return (
@@ -257,11 +82,7 @@ export default function MarketplaceFilters({
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white">
-          {language === "uz"
-            ? "Filtrlar"
-            : language === "ru"
-            ? "Фильтры"
-            : "Filters"}
+          {t("title")}
         </h2>
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -290,7 +111,7 @@ export default function MarketplaceFilters({
           <div className="relative">
             <input
               type="text"
-              placeholder={t.search}
+              placeholder={t("search")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-1.5 pr-9 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm h-8"
@@ -316,13 +137,7 @@ export default function MarketplaceFilters({
               onClick={() => setSortOpen(!sortOpen)}
               className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span className="text-sm font-medium">
-                {language === "uz"
-                  ? "Saralash"
-                  : language === "ru"
-                  ? "Сортировка"
-                  : "Sort"}
-              </span>
+              <span className="text-sm font-medium">{t("sort")}</span>
               <svg
                 className={`w-5 h-5 transition-transform ${
                   sortOpen ? "rotate-180" : ""
@@ -360,13 +175,7 @@ export default function MarketplaceFilters({
               onClick={() => setRarityOpen(!rarityOpen)}
               className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span className="text-sm font-medium">
-                {language === "uz"
-                  ? "Kamyoblik"
-                  : language === "ru"
-                  ? "Редкость"
-                  : "Rarity"}
-              </span>
+              <span className="text-sm font-medium">{t("rarity")}</span>
               <svg
                 className={`w-5 h-5 transition-transform ${
                   rarityOpen ? "rotate-180" : ""
@@ -404,13 +213,7 @@ export default function MarketplaceFilters({
               onClick={() => setWeaponTypeOpen(!weaponTypeOpen)}
               className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span className="text-sm font-medium">
-                {language === "uz"
-                  ? "Qurol turi"
-                  : language === "ru"
-                  ? "Тип оружия"
-                  : "Weapon Type"}
-              </span>
+              <span className="text-sm font-medium">{t("weaponType")}</span>
               <svg
                 className={`w-5 h-5 transition-transform ${
                   weaponTypeOpen ? "rotate-180" : ""
@@ -448,13 +251,7 @@ export default function MarketplaceFilters({
               onClick={() => setExteriorOpen(!exteriorOpen)}
               className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span className="text-sm font-medium">
-                {language === "uz"
-                  ? "Holat"
-                  : language === "ru"
-                  ? "Состояние"
-                  : "Exterior"}
-              </span>
+              <span className="text-sm font-medium">{t("exterior")}</span>
               <svg
                 className={`w-5 h-5 transition-transform ${
                   exteriorOpen ? "rotate-180" : ""
@@ -492,13 +289,7 @@ export default function MarketplaceFilters({
               onClick={() => setPriceRangeOpen(!priceRangeOpen)}
               className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span className="text-sm font-medium">
-                {language === "uz"
-                  ? "Narx oralig'i"
-                  : language === "ru"
-                  ? "Диапазон цен"
-                  : "Price Range"}
-              </span>
+              <span className="text-sm font-medium">{t("priceRange")}</span>
               <svg
                 className={`w-5 h-5 transition-transform ${
                   priceRangeOpen ? "rotate-180" : ""
@@ -544,11 +335,7 @@ export default function MarketplaceFilters({
             onClick={() => resetFilters()}
             className="w-full py-1.5 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition text-sm h-8"
           >
-            {language === "uz"
-              ? "Filtrlarni tozalash"
-              : language === "ru"
-              ? "Сбросить фильтры"
-              : "Reset Filters"}
+            {t("resetFilters")}
           </button>
         </div>
       )}

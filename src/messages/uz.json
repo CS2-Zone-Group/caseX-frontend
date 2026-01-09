@@ -93,5 +93,136 @@
     "securityText": "Barcha to'lovlar xavfsiz va shifrlangan. Biz sizning moliyaviy ma'lumotlaringizni saqlamaymiz.",
     "sslEncrypted": "SSL Shifrlangan",
     "pciCertified": "PCI DSS Sertifikatlangan"
+  },
+  "SkinDetailsModal": {
+    "itemDetails": "BUYUM TAFSILOTLARI",
+    "salesInfo": "SOTUV MALUMOTLARI",
+    "viewAtSteam": "Steam'da ko'rish",
+    "price": "Narx",
+    "tradeLock": "Savdo bloki",
+    "itemLocation": "Buyum joylashuvi",
+    "itemType": "Buyum turi",
+    "exterior": "Tashqi ko'rinish",
+    "rarity": "Kamyoblik",
+    "collection": "Kolleksiya",
+    "floatValue": "Float qiymati",
+    "tradeProtection": "Savdo himoyasi",
+    "tradeProtectionText": "Bu buyum bizning xavfsiz savdo tizimimiz bilan himoyalangan",
+    "buyNow": "Hozir sotib olish",
+    "addToCart": "Savatga qo'shish",
+    "inspectInGame": "O'yinda ko'rish",
+    "salesHistory": "Sotuv tarixi",
+    "recentSales": "So'nggi sotuvlar",
+    "sellingPrice": "Sotuv narxi",
+    "operation": "Operatsiya",
+    "dateTime": "Sana/Vaqt",
+    "share": "Ulashish",
+    "favorite": "Sevimli",
+    "noImageAvailable": "Rasm mavjud emas",
+    "description": "Tavsif",
+    "noTradeLock": "Savdo bloki yo'q",
+    "steam": "Steam",
+    "skinConditions": {
+      "factoryNew": "Zavod yangi",
+      "minimalWear": "Kam eskirgan",
+      "fieldTested": "Sinab ko'rilgan",
+      "wellWorn": "Yaxshi eskirgan",
+      "battleScarred": "Jang eskirgan"
+    },
+    "salesChartPlaceholder": "Bu yerda sotuv grafigi ko'rsatiladi",
+    "noSalesHistory": "Bu buyum uchun sotuv tarixi mavjud emas"
+  },
+  "SettingsModal": {
+    "title": "Sozlamalar",
+    "theme": "Mavzu",
+    "language": "Til",
+    "currency": "Valyuta",
+    "save": "Saqlash",
+    "updating": "Yangilanmoqda...",
+    "currentRates": "Joriy kurslar (CBU):",
+    "baseCurrency": "Asosiy valyuta: UZS (O'zbek so'mi)",
+    "themes": {
+      "light": "Yorug'",
+      "dark": "Qorong'i",
+      "system": "Tizim"
+    },
+    "languages": {
+      "uz": "O'zbek",
+      "ru": "Русский",
+      "en": "English"
+    }
+  },
+  "MarketplaceFilters": {
+    "title": "Filtrlar",
+    "search": "Qidirish...",
+    "sort": "Saralash",
+    "rarity": "Kamyoblik",
+    "weaponType": "Qurol turi",
+    "exterior": "Holat",
+    "priceRange": "Narx oralig'i",
+    "resetFilters": "Filtrlarni tozalash",
+    "sortOptions": {
+      "newest": "Yangi",
+      "cheapest": "Arzon",
+      "expensive": "Qimmat",
+      "nameAZ": "Nomi A-Z"
+    },
+    "rarityOptions": {
+      "all": "Barcha raritylar",
+      "consumer": "Consumer Grade",
+      "industrial": "Industrial Grade",
+      "milspec": "Mil-Spec",
+      "restricted": "Restricted",
+      "classified": "Classified",
+      "covert": "Covert",
+      "contraband": "Contraband"
+    },
+    "weaponTypes": {
+      "all": "Barcha qurollar",
+      "pistol": "Pistoletlar",
+      "rifle": "Miltiqlar",
+      "smg": "SMG",
+      "sniper": "Snayperlar",
+      "shotgun": "Ov miltiqlar",
+      "knife": "Pichoqlar",
+      "gloves": "Qo'lqoplar"
+    },
+    "exteriorOptions": {
+      "all": "Barcha holatlar",
+      "factoryNew": "Zavod yangi",
+      "minimalWear": "Kam eskirgan",
+      "fieldTested": "Maydon sinovdan o'tgan",
+      "wellWorn": "Yaxshi eskirgan",
+      "battleScarred": "Jang izlari"
+    }
+  },
+  "InventoryFilters": {
+    "title": "Filtrlar",
+    "searchInventory": "Inventarda qidirish",
+    "proSkins": "Pro skinlar",
+    "new": "YANGI",
+    "itemsLocation": "Buyumlar joylashuvi",
+    "tradeLock": "Savdo bloki (kunlarda)",
+    "exterior": "Holat",
+    "extra": "Qo'shimcha",
+    "itemsCategory": "Buyumlar kategoriyasi",
+    "collection": "Kolleksiya",
+    "resetFilters": "Filtrlarni tozalash",
+    "exteriorOptions": {
+      "all": "Barchasi",
+      "factoryNew": "Zavod yangi",
+      "minimalWear": "Kam eskirgan",
+      "fieldTested": "Maydon sinovdan o'tgan",
+      "wellWorn": "Yaxshi eskirgan",
+      "battleScarred": "Jang izlari"
+    },
+    "categoryOptions": {
+      "pistols": "Pistoletlar",
+      "rifles": "Miltiqlar",
+      "smgs": "SMG",
+      "snipers": "Snayperlar",
+      "knives": "Pichoqlar",
+      "gloves": "Qo'lqoplar"
+    }
   }
 }

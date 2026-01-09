@@ -93,5 +93,136 @@
     "securityText": "Все платежи безопасны и зашифрованы. Мы не храним ваши финансовые данные.",
     "sslEncrypted": "SSL Зашифровано",
     "pciCertified": "PCI DSS Сертифицировано"
+  },
+  "SkinDetailsModal": {
+    "itemDetails": "ДЕТАЛИ ПРЕДМЕТА",
+    "salesInfo": "ИНФОРМАЦИЯ О ПРОДАЖАХ",
+    "viewAtSteam": "Посмотреть в Steam",
+    "price": "Цена",
+    "tradeLock": "Блокировка торговли",
+    "itemLocation": "Местоположение предмета",
+    "itemType": "Тип предмета",
+    "exterior": "Внешний вид",
+    "rarity": "Редкость",
+    "collection": "Коллекция",
+    "floatValue": "Значение Float",
+    "tradeProtection": "Защита торговли",
+    "tradeProtectionText": "Этот предмет защищен нашей безопасной торговой системой",
+    "buyNow": "Купить сейчас",
+    "addToCart": "Добавить в корзину",
+    "inspectInGame": "Осмотреть в игре",
+    "salesHistory": "История продаж",
+    "recentSales": "Недавние продажи",
+    "sellingPrice": "Цена продажи",
+    "operation": "Операция",
+    "dateTime": "Дата/Время",
+    "share": "Поделиться",
+    "favorite": "Избранное",
+    "noImageAvailable": "Изображение недоступно",
+    "description": "Описание",
+    "noTradeLock": "Без блокировки торговли",
+    "steam": "Steam",
+    "skinConditions": {
+      "factoryNew": "Прямо с завода",
+      "minimalWear": "Немного поношенное",
+      "fieldTested": "После полевых испытаний",
+      "wellWorn": "Поношенное в боях",
+      "battleScarred": "Закаленное в боях"
+    },
+    "salesChartPlaceholder": "Здесь будет отображаться график продаж",
+    "noSalesHistory": "История продаж для этого предмета недоступна"
+  },
+  "SettingsModal": {
+    "title": "Настройки",
+    "theme": "Тема",
+    "language": "Язык",
+    "currency": "Валюта",
+    "save": "Сохранить",
+    "updating": "Обновление...",
+    "currentRates": "Текущие курсы (ЦБУ):",
+    "baseCurrency": "Базовая валюта: UZS (Узбекский сум)",
+    "themes": {
+      "light": "Светлая",
+      "dark": "Темная",
+      "system": "Система"
+    },
+    "languages": {
+      "uz": "O'zbek",
+      "ru": "Русский",
+      "en": "English"
+    }
+  },
+  "MarketplaceFilters": {
+    "title": "Фильтры",
+    "search": "Поиск...",
+    "sort": "Сортировка",
+    "rarity": "Редкость",
+    "weaponType": "Тип оружия",
+    "exterior": "Состояние",
+    "priceRange": "Диапазон цен",
+    "resetFilters": "Сбросить фильтры",
+    "sortOptions": {
+      "newest": "Новые",
+      "cheapest": "Дешевые",
+      "expensive": "Дорогие",
+      "nameAZ": "По имени А-Я"
+    },
+    "rarityOptions": {
+      "all": "Все редкости",
+      "consumer": "Потребительский",
+      "industrial": "Промышленный",
+      "milspec": "Армейский",
+      "restricted": "Запрещённый",
+      "classified": "Засекреченный",
+      "covert": "Тайный",
+      "contraband": "Контрабанда"
+    },
+    "weaponTypes": {
+      "all": "Все оружия",
+      "pistol": "Пистолеты",
+      "rifle": "Винтовки",
+      "smg": "ПП",
+      "sniper": "Снайперские",
+      "shotgun": "Дробовики",
+      "knife": "Ножи",
+      "gloves": "Перчатки"
+    },
+    "exteriorOptions": {
+      "all": "Все состояния",
+      "factoryNew": "Прямо с завода",
+      "minimalWear": "Немного поношенное",
+      "fieldTested": "После полевых испытаний",
+      "wellWorn": "Поношенное",
+      "battleScarred": "Закалённое в боях"
+    }
+  },
+  "InventoryFilters": {
+    "title": "Фильтры",
+    "searchInventory": "Поиск в инвентаре",
+    "proSkins": "Про скины",
+    "new": "НОВОЕ",
+    "itemsLocation": "Местоположение предметов",
+    "tradeLock": "Блокировка торговли (в днях)",
+    "exterior": "Состояние",
+    "extra": "Дополнительно",
+    "itemsCategory": "Категория предметов",
+    "collection": "Коллекция",
+    "resetFilters": "Сбросить фильтры",
+    "exteriorOptions": {
+      "all": "Все",
+      "factoryNew": "Прямо с завода",
+      "minimalWear": "Немного поношенное",
+      "fieldTested": "После полевых испытаний",
+      "wellWorn": "Поношенное",
+      "battleScarred": "Закалённое в боях"
+    },
+    "categoryOptions": {
+      "pistols": "Пистолеты",
+      "rifles": "Винтовки",
+      "smgs": "ПП",
+      "snipers": "Снайперские",
+      "knives": "Ножи",
+      "gloves": "Перчатки"
+    }
   }
 }

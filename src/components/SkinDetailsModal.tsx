@@ -10,6 +10,7 @@ import ShareIcon from "@mui/icons-material/Share";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckIcon from "@mui/icons-material/Check";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useTranslations } from "next-intl";
 
 interface SkinDetailsModalProps {
   isOpen: boolean;
@@ -45,101 +46,7 @@ export default function SkinDetailsModal({
   const [copied, setCopied] = useState(false);
   const [url, setUrl] = useState("");
   const { language } = useSettingsStore();
-
-  const translations = {
-    en: {
-      itemDetails: "ITEM DETAILS",
-      salesInfo: "SALES INFO",
-      viewAtSteam: "View at Steam",
-      price: "Price",
-      tradeLock: "Trade lock",
-      itemLocation: "Item location",
-      itemType: "Item type",
-      exterior: "Exterior",
-      rarity: "Rarity",
-      collection: "Collection",
-      floatValue: "Float Value",
-      tradeProtection: "Trade Protection",
-      tradeProtectionText:
-        "This item is protected by our secure trading system",
-      buyNow: "Buy Now",
-      addToCart: "Add to Cart",
-      inspectInGame: "Inspect in Game",
-      salesHistory: "Sales History",
-      recentSales: "Recent sales",
-      sellingPrice: "Selling price",
-      operation: "Operation",
-      dateTime: "Date/Time",
-      share: "Share",
-      favorite: "Favorite",
-      noImageAvailable: "No Image Available",
-      description: "Description",
-      noTradeLock: "No trade lock",
-      steam: "Steam",
-    },
-    ru: {
-      itemDetails: "ДЕТАЛИ ПРЕДМЕТА",
-      salesInfo: "ИНФОРМАЦИЯ О ПРОДАЖАХ",
-      viewAtSteam: "Посмотреть в Steam",
-      price: "Цена",
-      tradeLock: "Блокировка торговли",
-      itemLocation: "Местоположение предмета",
-      itemType: "Тип предмета",
-      exterior: "Внешний вид",
-      rarity: "Редкость",
-      collection: "Коллекция",
-      floatValue: "Значение Float",
-      tradeProtection: "Защита торговли",
-      tradeProtectionText:
-        "Этот предмет защищен нашей безопасной торговой системой",
-      buyNow: "Купить сейчас",
-      addToCart: "Добавить в корзину",
-      inspectInGame: "Осмотреть в игре",
-      salesHistory: "История продаж",
-      recentSales: "Недавние продажи",
-      sellingPrice: "Цена продажи",
-      operation: "Операция",
-      dateTime: "Дата/Время",
-      share: "Поделиться",
-      favorite: "Избранное",
-      noImageAvailable: "Изображение недоступно",
-      description: "Описание",
-      noTradeLock: "Без блокировки торговли",
-      steam: "Steam",
-    },
-    uz: {
-      itemDetails: "BUYUM TAFSILOTLARI",
-      salesInfo: "SOTUV MALUMOTLARI",
-      viewAtSteam: "Steam'da ko'rish",
-      price: "Narx",
-      tradeLock: "Savdo bloki",
-      itemLocation: "Buyum joylashuvi",
-      itemType: "Buyum turi",
-      exterior: "Tashqi ko'rinish",
-      rarity: "Kamyoblik",
-      collection: "Kolleksiya",
-      floatValue: "Float qiymati",
-      tradeProtection: "Savdo himoyasi",
-      tradeProtectionText:
-        "Bu buyum bizning xavfsiz savdo tizimimiz bilan himoyalangan",
-      buyNow: "Hozir sotib olish",
-      addToCart: "Savatga qo'shish",
-      inspectInGame: "O'yinda ko'rish",
-      salesHistory: "Sotuv tarixi",
-      recentSales: "So'nggi sotuvlar",
-      sellingPrice: "Sotuv narxi",
-      operation: "Operatsiya",
-      dateTime: "Sana/Vaqt",
-      share: "Ulashish",
-      favorite: "Sevimli",
-      noImageAvailable: "Rasm mavjud emas",
-      description: "Tavsif",
-      noTradeLock: "Savdo bloki yo'q",
-      steam: "Steam",
-    },
-  };
-
-  const t = translations[language];
+  const t = useTranslations("SkinDetailsModal");
 
   const handleGenerateLink = async () => {
     setLoading(true);
@@ -199,35 +106,11 @@ export default function SkinDetailsModal({
   if (!isOpen || !skin) return null;
 
   const getFloatCondition = (floatValue: number) => {
-    if (floatValue < 0.07)
-      return language === "uz"
-        ? "Zavod yangi"
-        : language === "ru"
-        ? "Прямо с завода"
-        : "Factory New";
-    if (floatValue < 0.15)
-      return language === "uz"
-        ? "Kam eskirgan"
-        : language === "ru"
-        ? "Немного поношенное"
-        : "Minimal Wear";
-    if (floatValue < 0.38)
-      return language === "uz"
-        ? "Sinab ko'rilgan"
-        : language === "ru"
-        ? "После полевых испытаний"
-        : "Field-Tested";
-    if (floatValue < 0.45)
-      return language === "uz"
-        ? "Yaxshi eskirgan"
-        : language === "ru"
-        ? "Поношенное в боях"
-        : "Well-Worn";
-    return language === "uz"
-      ? "Jang eskirgan"
-      : language === "ru"
-      ? "Закаленное в боях"
-      : "Battle-Scarred";
+    if (floatValue < 0.07) return t("skinConditions.factoryNew");
+    if (floatValue < 0.15) return t("skinConditions.minimalWear");
+    if (floatValue < 0.38) return t("skinConditions.fieldTested");
+    if (floatValue < 0.45) return t("skinConditions.wellWorn");
+    return t("skinConditions.battleScarred");
   };
 
   return (
@@ -255,7 +138,7 @@ export default function SkinDetailsModal({
                     : "text-gray-400 dark:text-gray-500 border-transparent hover:text-gray-600 dark:hover:text-gray-300"
                 }`}
               >
-                {t.itemDetails}
+                {t("itemDetails")}
               </button>
               <button
                 onClick={() => setActiveTab("sales")}
@@ -265,7 +148,7 @@ export default function SkinDetailsModal({
                     : "text-gray-400 dark:text-gray-500 border-transparent hover:text-gray-600 dark:hover:text-gray-300"
                 }`}
               >
-                {t.salesInfo}
+                {t("salesInfo")}
               </button>
             </div>
 
@@ -274,7 +157,7 @@ export default function SkinDetailsModal({
                 <button
                   onClick={handleGenerateLink}
                   className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                  title={t.share}
+                  title={t("share")}
                 >
                   {loading ? (
                     <CircularProgress size={20} color="inherit" />
@@ -361,13 +244,15 @@ export default function SkinDetailsModal({
                             target.style.display = "none";
                             const parent = target.parentElement;
                             if (parent) {
-                              parent.innerHTML = `<div class="text-gray-400 dark:text-gray-500">${t.noImageAvailable}</div>`;
+                              parent.innerHTML = `<div class="text-gray-400 dark:text-gray-500">${t(
+                                "noImageAvailable"
+                              )}</div>`;
                             }
                           }}
                         />
                       ) : (
                         <div className="text-gray-400 dark:text-gray-500">
-                          {t.noImageAvailable}
+                          {t("noImageAvailable")}
                         </div>
                       )}
                     </div>
@@ -382,7 +267,7 @@ export default function SkinDetailsModal({
                           window.open(steamUrl, "_blank");
                         }}
                       >
-                        {t.viewAtSteam}
+                        {t("viewAtSteam")}
                       </button>
                       <button
                         className="flex-1 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
@@ -411,7 +296,7 @@ export default function SkinDetailsModal({
                             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                           />
                         </svg>
-                        <span>{t.inspectInGame}</span>
+                        <span>{t("inspectInGame")}</span>
                       </button>
                     </div>
                   </div>
@@ -432,18 +317,18 @@ export default function SkinDetailsModal({
                         />
                       </svg>
                       <span className="text-blue-600 dark:text-blue-400 font-medium">
-                        {t.tradeProtection}
+                        {t("tradeProtection")}
                       </span>
                     </div>
                     <p className="text-blue-700 dark:text-blue-300 text-sm">
-                      {t.tradeProtectionText}
+                      {t("tradeProtectionText")}
                     </p>
                   </div>
 
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-gray-600 dark:text-gray-400">
-                        {t.price}
+                        {t("price")}
                       </span>
                       <div className="flex items-center space-x-2">
                         <span className="text-green-500">💎</span>
@@ -464,25 +349,25 @@ export default function SkinDetailsModal({
                   <div className="grid grid-cols-1 gap-4">
                     <div>
                       <span className="text-gray-600 dark:text-gray-400 block mb-1">
-                        {t.tradeLock}:
+                        {t("tradeLock")}:
                       </span>
                       <span className="text-gray-900 dark:text-white">
-                        {t.noTradeLock}
+                        {t("noTradeLock")}
                       </span>
                     </div>
 
                     <div>
                       <span className="text-gray-600 dark:text-gray-400 block mb-1">
-                        {t.itemLocation}:
+                        {t("itemLocation")}:
                       </span>
                       <span className="text-gray-900 dark:text-white">
-                        {t.steam}
+                        {t("steam")}
                       </span>
                     </div>
 
                     <div>
                       <span className="text-gray-600 dark:text-gray-400 block mb-1">
-                        {t.itemType}:
+                        {t("itemType")}:
                       </span>
                       <span className="text-gray-900 dark:text-white">
                         {skin.weaponType}
@@ -491,7 +376,7 @@ export default function SkinDetailsModal({
 
                     <div>
                       <span className="text-gray-600 dark:text-gray-400 block mb-1">
-                        {t.exterior}:
+                        {t("exterior")}:
                       </span>
                       <span className="text-gray-900 dark:text-white">
                         {skin.exterior}
@@ -500,7 +385,7 @@ export default function SkinDetailsModal({
 
                     <div>
                       <span className="text-gray-600 dark:text-gray-400 block mb-1">
-                        {t.rarity}:
+                        {t("rarity")}:
                       </span>
                       <span className="text-gray-900 dark:text-white">
                         {skin.rarity}
@@ -510,7 +395,7 @@ export default function SkinDetailsModal({
                     {skin.float !== undefined && (
                       <div>
                         <span className="text-gray-600 dark:text-gray-400 block mb-2">
-                          {t.floatValue}:
+                          {t("floatValue")}:
                         </span>
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
@@ -560,7 +445,7 @@ export default function SkinDetailsModal({
                     {skin.collection && (
                       <div>
                         <span className="text-gray-600 dark:text-gray-400 block mb-1">
-                          {t.collection}:
+                          {t("collection")}:
                         </span>
                         <span className="text-gray-900 dark:text-white">
                           {skin.collection}
@@ -571,7 +456,7 @@ export default function SkinDetailsModal({
                     {skin.description && (
                       <div>
                         <span className="text-gray-600 dark:text-gray-400 block mb-1">
-                          {t.description}:
+                          {t("description")}:
                         </span>
                         <span className="text-gray-900 dark:text-white">
                           {skin.description}
@@ -588,7 +473,7 @@ export default function SkinDetailsModal({
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                      {t.salesHistory}
+                      {t("salesHistory")}
                     </h3>
                     <div className="flex space-x-2">
                       <button className="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded">
@@ -621,7 +506,7 @@ export default function SkinDetailsModal({
                           d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                         />
                       </svg>
-                      <p>Sales chart will be displayed here</p>
+                      <p>{t("salesChartPlaceholder")}</p>
                     </div>
                   </div>
                 </div>
@@ -629,7 +514,7 @@ export default function SkinDetailsModal({
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                      {t.recentSales}
+                      {t("recentSales")}
                     </h3>
                     <button className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-white">
                       <svg
@@ -650,13 +535,13 @@ export default function SkinDetailsModal({
 
                   <div className="space-y-2">
                     <div className="grid grid-cols-3 gap-4 text-gray-600 dark:text-gray-400 text-sm font-medium pb-2 border-b border-gray-200 dark:border-gray-700">
-                      <span>{t.sellingPrice}</span>
-                      <span>{t.operation}</span>
-                      <span>{t.dateTime}</span>
+                      <span>{t("sellingPrice")}</span>
+                      <span>{t("operation")}</span>
+                      <span>{t("dateTime")}</span>
                     </div>
 
                     <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                      <p>No sales history available for this item</p>
+                      <p>{t("noSalesHistory")}</p>
                     </div>
                   </div>
                 </div>
@@ -679,7 +564,7 @@ export default function SkinDetailsModal({
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m6 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"
                 />
               </svg>
-              <span>{t.addToCart}</span>
+              <span>{t("addToCart")}</span>
             </button>
             <button className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transition-all flex items-center justify-center space-x-2">
               <svg
@@ -695,7 +580,7 @@ export default function SkinDetailsModal({
                   d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
                 />
               </svg>
-              <span>{t.buyNow}</span>
+              <span>{t("buyNow")}</span>
             </button>
           </div>
         </div>
