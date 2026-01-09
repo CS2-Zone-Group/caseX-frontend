@@ -1,0 +1,228 @@
+{
+  "HomePage": {
+    "meta": {
+      "title": "CaseX - CS2 Skinlari Marketplace"
+    },
+    "hero": {
+      "badge": "O'zbekiston #1 CS2 Marketplace",
+      "title": "CS2 Skinlarini Xarid Qiling",
+      "description": "Eng yaxshi narxlarda, xavfsiz va tez. O'zbekistondagi eng ishonchli CS2 skinlari marketplace.",
+      "marketplaceButton": "🛍️ Marketplace'ga O'tish",
+      "signUpButton": "Ro'yxatdan O'tish"
+    },
+    "stats": {
+      "skins": "Skinlar",
+      "users": "Foydalanuvchilar",
+      "support": "Qo'llab-quvvatlash",
+      "secure": "Xavfsiz"
+    },
+    "features": {
+      "title": "NIMA UCHUN CASEX?",
+      "bestPrices": {
+        "title": "Eng Yaxshi Narxlar",
+        "description": "Bozordagi eng arzon narxlarda CS2 skinlarini sotib oling"
+      },
+      "securePayments": {
+        "title": "Xavfsiz To'lovlar",
+        "description": "Click, Payme va boshqa mahalliy to'lov tizimlari orqali xavfsiz to'lang"
+      },
+      "fastDelivery": {
+        "title": "Tezkor Yetkazib Berish",
+        "description": "Skinlaringizni bir necha daqiqada qo'lingizga oling"
+      }
+    },
+    "about": {
+      "title": "CaseX Haqida",
+      "description": "CaseX - O'zbekistondagi birinchi va eng ishonchli CS2 skinlari marketplace. Biz o'yinchilarga xavfsiz, tez va qulay tarzda skinlar sotib olish va sotish imkoniyatini taqdim etamiz."
+    },
+    "footer": {
+      "description": "CS2 skinlari uchun O'zbekiston marketplace",
+      "copyright": "Barcha huquqlar himoyalangan."
+    }
+  },
+  "Navbar": {
+    "marketplace": "Marketplace",
+    "inventory": "Inventar",
+    "cart": "Savat",
+    "favorites": "Sevimlilar",
+    "profile": "Profil",
+    "login": "Kirish",
+    "logout": "Chiqish",
+    "balance": "Balans",
+    "paymentHistory": "To'lov tarixi",
+    "adminPanel": "Admin Panel",
+    "depositTooltip": "Balansni to'ldirish"
+  },
+  "PopularItems": {
+    "title": "MASHHUR MAHSULOTLAR",
+    "startFrom": "Boshlang'ich narx:",
+    "viewAllItems": "Barcha Mahsulotlar",
+    "skinConditions": {
+      "factoryNew": "Zavoddan yangi",
+      "minimalWear": "Biroz ishlatilgan",
+      "fieldTested": "Maydonda sinalgan",
+      "wellWorn": "Eskirgan",
+      "battleScarred": "Jangda toblangan"
+    }
+  },
+  "Header": {
+    "marketplace": "Marketplace",
+    "inventory": "Inventar",
+    "cart": "Savat",
+    "login": "Kirish",
+    "logout": "Chiqish",
+    "settingsTooltip": "Sozlamalar"
+  },
+  "PaymentMethods": {
+    "title": "Xavfsiz To'lov Usullari",
+    "paymentMethods": {
+      "payme": "Payme",
+      "click": "Click",
+      "uzum": "Uzum",
+      "paynet": "Paynet",
+      "visa": "Visa",
+      "mastercard": "Mastercard",
+      "bitcoin": "Bitcoin",
+      "ethereum": "Ethereum",
+      "usdt": "USDT",
+      "more": "Boshqalar"
+    },
+    "moreMethods": "Turli usullar",
+    "transaction": "Operatsiya",
+    "fee": "Komissiya",
+    "securityText": "Barcha to'lovlar xavfsiz va shifrlangan. Biz sizning moliyaviy ma'lumotlaringizni saqlamaymiz.",
+    "sslEncrypted": "SSL Shifrlangan",
+    "pciCertified": "PCI DSS Sertifikatlangan"
+  },
+  "SkinDetailsModal": {
+    "itemDetails": "BUYUM TAFSILOTLARI",
+    "salesInfo": "SOTUV MALUMOTLARI",
+    "viewAtSteam": "Steam'da ko'rish",
+    "price": "Narx",
+    "tradeLock": "Savdo bloki",
+    "itemLocation": "Buyum joylashuvi",
+    "itemType": "Buyum turi",
+    "exterior": "Tashqi ko'rinish",
+    "rarity": "Kamyoblik",
+    "collection": "Kolleksiya",
+    "floatValue": "Float qiymati",
+    "tradeProtection": "Savdo himoyasi",
+    "tradeProtectionText": "Bu buyum bizning xavfsiz savdo tizimimiz bilan himoyalangan",
+    "buyNow": "Hozir sotib olish",
+    "addToCart": "Savatga qo'shish",
+    "inspectInGame": "O'yinda ko'rish",
+    "salesHistory": "Sotuv tarixi",
+    "recentSales": "So'nggi sotuvlar",
+    "sellingPrice": "Sotuv narxi",
+    "operation": "Operatsiya",
+    "dateTime": "Sana/Vaqt",
+    "share": "Ulashish",
+    "favorite": "Sevimli",
+    "noImageAvailable": "Rasm mavjud emas",
+    "description": "Tavsif",
+    "noTradeLock": "Savdo bloki yo'q",
+    "steam": "Steam",
+    "skinConditions": {
+      "factoryNew": "Zavod yangi",
+      "minimalWear": "Kam eskirgan",
+      "fieldTested": "Sinab ko'rilgan",
+      "wellWorn": "Yaxshi eskirgan",
+      "battleScarred": "Jang eskirgan"
+    },
+    "salesChartPlaceholder": "Bu yerda sotuv grafigi ko'rsatiladi",
+    "noSalesHistory": "Bu buyum uchun sotuv tarixi mavjud emas"
+  },
+  "SettingsModal": {
+    "title": "Sozlamalar",
+    "theme": "Mavzu",
+    "language": "Til",
+    "currency": "Valyuta",
+    "save": "Saqlash",
+    "updating": "Yangilanmoqda...",
+    "currentRates": "Joriy kurslar (CBU):",
+    "baseCurrency": "Asosiy valyuta: UZS (O'zbek so'mi)",
+    "themes": {
+      "light": "Yorug'",
+      "dark": "Qorong'i",
+      "system": "Tizim"
+    },
+    "languages": {
+      "uz": "O'zbek",
+      "ru": "Русский",
+      "en": "English"
+    }
+  },
+  "MarketplaceFilters": {
+    "title": "Filtrlar",
+    "search": "Qidirish...",
+    "sort": "Saralash",
+    "rarity": "Kamyoblik",
+    "weaponType": "Qurol turi",
+    "exterior": "Holat",
+    "priceRange": "Narx oralig'i",
+    "resetFilters": "Filtrlarni tozalash",
+    "sortOptions": {
+      "newest": "Yangi",
+      "cheapest": "Arzon",
+      "expensive": "Qimmat",
+      "nameAZ": "Nomi A-Z"
+    },
+    "rarityOptions": {
+      "all": "Barcha raritylar",
+      "consumer": "Consumer Grade",
+      "industrial": "Industrial Grade",
+      "milspec": "Mil-Spec",
+      "restricted": "Restricted",
+      "classified": "Classified",
+      "covert": "Covert",
+      "contraband": "Contraband"
+    },
+    "weaponTypes": {
+      "all": "Barcha qurollar",
+      "pistol": "Pistoletlar",
+      "rifle": "Miltiqlar",
+      "smg": "SMG",
+      "sniper": "Snayperlar",
+      "shotgun": "Ov miltiqlar",
+      "knife": "Pichoqlar",
+      "gloves": "Qo'lqoplar"
+    },
+    "exteriorOptions": {
+      "all": "Barcha holatlar",
+      "factoryNew": "Zavod yangi",
+      "minimalWear": "Kam eskirgan",
+      "fieldTested": "Maydon sinovdan o'tgan",
+      "wellWorn": "Yaxshi eskirgan",
+      "battleScarred": "Jang izlari"
+    }
+  },
+  "InventoryFilters": {
+    "title": "Filtrlar",
+    "searchInventory": "Inventarda qidirish",
+    "proSkins": "Pro skinlar",
+    "new": "YANGI",
+    "itemsLocation": "Buyumlar joylashuvi",
+    "tradeLock": "Savdo bloki (kunlarda)",
+    "exterior": "Holat",
+    "extra": "Qo'shimcha",
+    "itemsCategory": "Buyumlar kategoriyasi",
+    "collection": "Kolleksiya",
+    "resetFilters": "Filtrlarni tozalash",
+    "exteriorOptions": {
+      "all": "Barchasi",
+      "factoryNew": "Zavod yangi",
+      "minimalWear": "Kam eskirgan",
+      "fieldTested": "Maydon sinovdan o'tgan",
+      "wellWorn": "Yaxshi eskirgan",
+      "battleScarred": "Jang izlari"
+    },
+    "categoryOptions": {
+      "pistols": "Pistoletlar",
+      "rifles": "Miltiqlar",
+      "smgs": "SMG",
+      "snipers": "Snayperlar",
+      "knives": "Pichoqlar",
+      "gloves": "Qo'lqoplar"
+    }
+  }
+}

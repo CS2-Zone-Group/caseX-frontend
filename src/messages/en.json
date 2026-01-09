@@ -1,0 +1,228 @@
+{
+  "HomePage": {
+    "meta": {
+      "title": "CaseX - CS2 Skins Marketplace"
+    },
+    "hero": {
+      "badge": "Uzbekistan's #1 CS2 Marketplace",
+      "title": "Buy CS2 Skins",
+      "description": "Best prices, secure and fast. The most trusted CS2 skins marketplace in Uzbekistan.",
+      "marketplaceButton": "🛍️ Go to Marketplace",
+      "signUpButton": "Sign Up"
+    },
+    "stats": {
+      "skins": "Skins",
+      "users": "Users",
+      "support": "Support",
+      "secure": "Secure"
+    },
+    "features": {
+      "title": "WHY CASEX?",
+      "bestPrices": {
+        "title": "Best Prices",
+        "description": "Buy CS2 skins at the lowest prices in the market"
+      },
+      "securePayments": {
+        "title": "Secure Payments",
+        "description": "Secure payment via Click, Payme and other local payment systems"
+      },
+      "fastDelivery": {
+        "title": "Fast Delivery",
+        "description": "Get your skins within minutes"
+      }
+    },
+    "about": {
+      "title": "About CaseX",
+      "description": "CaseX - the first and most trusted CS2 skins marketplace in Uzbekistan. We provide gamers with a safe, fast and convenient way to buy and sell skins."
+    },
+    "footer": {
+      "description": "Uzbekistan CS2 skins marketplace",
+      "copyright": "All rights reserved."
+    }
+  },
+  "Navbar": {
+    "marketplace": "Marketplace",
+    "inventory": "Inventory",
+    "cart": "Cart",
+    "favorites": "Favorites",
+    "profile": "Profile",
+    "login": "Login",
+    "logout": "Logout",
+    "balance": "Balance",
+    "paymentHistory": "Payment History",
+    "adminPanel": "Admin Panel",
+    "depositTooltip": "Add funds"
+  },
+  "Header": {
+    "marketplace": "Marketplace",
+    "inventory": "Inventory",
+    "cart": "Cart",
+    "login": "Login",
+    "logout": "Logout",
+    "settingsTooltip": "Settings"
+  },
+  "PopularItems": {
+    "title": "POPULAR ITEMS",
+    "startFrom": "Start from:",
+    "viewAllItems": "View All Items",
+    "skinConditions": {
+      "factoryNew": "Factory New",
+      "minimalWear": "Minimal Wear",
+      "fieldTested": "Field-Tested",
+      "wellWorn": "Well-Worn",
+      "battleScarred": "Battle-Scarred"
+    }
+  },
+  "PaymentMethods": {
+    "title": "Secure Payment Methods",
+    "paymentMethods": {
+      "payme": "Payme",
+      "click": "Click",
+      "uzum": "Uzum",
+      "paynet": "Paynet",
+      "visa": "Visa",
+      "mastercard": "Mastercard",
+      "bitcoin": "Bitcoin",
+      "ethereum": "Ethereum",
+      "usdt": "USDT",
+      "more": "Others"
+    },
+    "moreMethods": "Various methods",
+    "transaction": "Transaction",
+    "fee": "FEE",
+    "securityText": "All payments are secure and encrypted. We do not store your financial information.",
+    "sslEncrypted": "SSL Encrypted",
+    "pciCertified": "PCI DSS Certified"
+  },
+  "SkinDetailsModal": {
+    "itemDetails": "ITEM DETAILS",
+    "salesInfo": "SALES INFO",
+    "viewAtSteam": "View at Steam",
+    "price": "Price",
+    "tradeLock": "Trade lock",
+    "itemLocation": "Item location",
+    "itemType": "Item type",
+    "exterior": "Exterior",
+    "rarity": "Rarity",
+    "collection": "Collection",
+    "floatValue": "Float Value",
+    "tradeProtection": "Trade Protection",
+    "tradeProtectionText": "This item is protected by our secure trading system",
+    "buyNow": "Buy Now",
+    "addToCart": "Add to Cart",
+    "inspectInGame": "Inspect in Game",
+    "salesHistory": "Sales History",
+    "recentSales": "Recent sales",
+    "sellingPrice": "Selling price",
+    "operation": "Operation",
+    "dateTime": "Date/Time",
+    "share": "Share",
+    "favorite": "Favorite",
+    "noImageAvailable": "No Image Available",
+    "description": "Description",
+    "noTradeLock": "No trade lock",
+    "steam": "Steam",
+    "skinConditions": {
+      "factoryNew": "Factory New",
+      "minimalWear": "Minimal Wear",
+      "fieldTested": "Field-Tested",
+      "wellWorn": "Well-Worn",
+      "battleScarred": "Battle-Scarred"
+    },
+    "salesChartPlaceholder": "Sales chart will be displayed here",
+    "noSalesHistory": "No sales history available for this item"
+  },
+  "SettingsModal": {
+    "title": "Settings",
+    "theme": "Theme",
+    "language": "Language",
+    "currency": "Currency",
+    "save": "Save",
+    "updating": "Updating...",
+    "currentRates": "Current rates (CBU):",
+    "baseCurrency": "Base currency: UZS (Uzbek Som)",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "languages": {
+      "uz": "O'zbek",
+      "ru": "Русский",
+      "en": "English"
+    }
+  },
+  "MarketplaceFilters": {
+    "title": "Filters",
+    "search": "Search...",
+    "sort": "Sort",
+    "rarity": "Rarity",
+    "weaponType": "Weapon Type",
+    "exterior": "Exterior",
+    "priceRange": "Price Range",
+    "resetFilters": "Reset Filters",
+    "sortOptions": {
+      "newest": "Newest",
+      "cheapest": "Cheapest",
+      "expensive": "Most Expensive",
+      "nameAZ": "Name A-Z"
+    },
+    "rarityOptions": {
+      "all": "All rarities",
+      "consumer": "Consumer Grade",
+      "industrial": "Industrial Grade",
+      "milspec": "Mil-Spec",
+      "restricted": "Restricted",
+      "classified": "Classified",
+      "covert": "Covert",
+      "contraband": "Contraband"
+    },
+    "weaponTypes": {
+      "all": "All Weapons",
+      "pistol": "Pistols",
+      "rifle": "Rifles",
+      "smg": "SMGs",
+      "sniper": "Snipers",
+      "shotgun": "Shotguns",
+      "knife": "Knives",
+      "gloves": "Gloves"
+    },
+    "exteriorOptions": {
+      "all": "All Conditions",
+      "factoryNew": "Factory New",
+      "minimalWear": "Minimal Wear",
+      "fieldTested": "Field-Tested",
+      "wellWorn": "Well-Worn",
+      "battleScarred": "Battle-Scarred"
+    }
+  },
+  "InventoryFilters": {
+    "title": "Filters",
+    "searchInventory": "Search inventory",
+    "proSkins": "Pro Skins",
+    "new": "NEW",
+    "itemsLocation": "Items' location",
+    "tradeLock": "Trade lock (by days)",
+    "exterior": "Exterior",
+    "extra": "Extra",
+    "itemsCategory": "Items category",
+    "collection": "Collection",
+    "resetFilters": "Reset Filters",
+    "exteriorOptions": {
+      "all": "All",
+      "factoryNew": "Factory New",
+      "minimalWear": "Minimal Wear",
+      "fieldTested": "Field-Tested",
+      "wellWorn": "Well-Worn",
+      "battleScarred": "Battle-Scarred"
+    },
+    "categoryOptions": {
+      "pistols": "Pistols",
+      "rifles": "Rifles",
+      "smgs": "SMGs",
+      "snipers": "Snipers",
+      "knives": "Knives",
+      "gloves": "Gloves"
+    }
+  }
+}
