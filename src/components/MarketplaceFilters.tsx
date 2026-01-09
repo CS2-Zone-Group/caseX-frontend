@@ -1,129 +1,68 @@
-'use client';
+"use client";
 
-import {  useState } from 'react';
-import { useSettingsStore } from '@/store/settingsStore';
-import { translations } from '@/lib/translations';
-import { useFilterStore } from '@/store/filterStore';
+import { useState } from "react";
+import { useFilterStore } from "@/store/filterStore";
+import { useTranslations } from "next-intl";
 
 interface MarketplaceFiltersProps {
   onFilterChange?: (filters: any) => void;
   filters: any;
 }
 
-export default function MarketplaceFilters({ onFilterChange, filters }: MarketplaceFiltersProps) {
-  const { language } = useSettingsStore();
-  const t = translations[language];
+export default function MarketplaceFilters({
+  onFilterChange,
+  filters,
+}: MarketplaceFiltersProps) {
+  const t = useTranslations("MarketplaceFilters");
   const [isOpen, setIsOpen] = useState(true);
   const [sortOpen, setSortOpen] = useState(false);
   const [rarityOpen, setRarityOpen] = useState(false);
   const [weaponTypeOpen, setWeaponTypeOpen] = useState(false);
   const [exteriorOpen, setExteriorOpen] = useState(false);
   const [priceRangeOpen, setPriceRangeOpen] = useState(false);
-  const {searchQuery,sortBy,rarity,weaponType,condition,priceRange,setFilter,setPriceRange,setSearchQuery,setSortBy,resetFilters}=useFilterStore()
-  
-
-
-
-
+  const {
+    searchQuery,
+    sortBy,
+    rarity,
+    weaponType,
+    condition,
+    priceRange,
+    setFilter,
+    setPriceRange,
+    setSearchQuery,
+    setSortBy,
+    resetFilters,
+  } = useFilterStore();
 
   const rarityOptions = [
-    { 
-      label: t.allRarities, 
-      value: '',
-      uz: 'Barcha raritylar',
-      ru: 'Все редкости',
-      en: 'All rarities'
-    },
-    { 
-      label: language === 'uz' ? 'Consumer Grade' : language === 'ru' ? 'Потребительский' : 'Consumer Grade', 
-      value: 'consumer' 
-    },
-    { 
-      label: language === 'uz' ? 'Industrial Grade' : language === 'ru' ? 'Промышленный' : 'Industrial Grade', 
-      value: 'industrial' 
-    },
-    { 
-      label: language === 'uz' ? 'Mil-Spec' : language === 'ru' ? 'Армейский' : 'Mil-Spec', 
-      value: 'milspec' 
-    },
-    { 
-      label: language === 'uz' ? 'Restricted' : language === 'ru' ? 'Запрещённый' : 'Restricted', 
-      value: 'restricted' 
-    },
-    { 
-      label: language === 'uz' ? 'Classified' : language === 'ru' ? 'Засекреченный' : 'Classified', 
-      value: 'classified' 
-    },
-    { 
-      label: language === 'uz' ? 'Covert' : language === 'ru' ? 'Тайный' : 'Covert', 
-      value: 'covert' 
-    },
-    { 
-      label: language === 'uz' ? 'Contraband' : language === 'ru' ? 'Контрабанда' : 'Contraband', 
-      value: 'contraband' 
-    }
+    { label: t("rarityOptions.all"), value: "" },
+    { label: t("rarityOptions.consumer"), value: "consumer" },
+    { label: t("rarityOptions.industrial"), value: "industrial" },
+    { label: t("rarityOptions.milspec"), value: "milspec" },
+    { label: t("rarityOptions.restricted"), value: "restricted" },
+    { label: t("rarityOptions.classified"), value: "classified" },
+    { label: t("rarityOptions.covert"), value: "covert" },
+    { label: t("rarityOptions.contraband"), value: "contraband" },
   ];
 
   const weaponTypes = [
-    { 
-      label: language === 'uz' ? 'Barcha qurollar' : language === 'ru' ? 'Все оружия' : 'All Weapons', 
-      value: '' 
-    },
-    { 
-      label: language === 'uz' ? 'Pistoletlar' : language === 'ru' ? 'Пистолеты' : 'Pistols', 
-      value: 'pistol' 
-    },
-    { 
-      label: language === 'uz' ? 'Miltiqlar' : language === 'ru' ? 'Винтовки' : 'Rifles', 
-      value: 'rifle' 
-    },
-    { 
-      label: language === 'uz' ? 'SMG' : language === 'ru' ? 'ПП' : 'SMGs', 
-      value: 'smg' 
-    },
-    { 
-      label: language === 'uz' ? 'Snayperlar' : language === 'ru' ? 'Снайперские' : 'Snipers', 
-      value: 'sniper' 
-    },
-    { 
-      label: language === 'uz' ? 'Ov miltiqlar' : language === 'ru' ? 'Дробовики' : 'Shotguns', 
-      value: 'shotgun' 
-    },
-    { 
-      label: language === 'uz' ? 'Pichoqlar' : language === 'ru' ? 'Ножи' : 'Knives', 
-      value: 'knife' 
-    },
-    { 
-      label: language === 'uz' ? 'Qo\'lqoplar' : language === 'ru' ? 'Перчатки' : 'Gloves', 
-      value: 'gloves' 
-    }
+    { label: t("weaponTypes.all"), value: "" },
+    { label: t("weaponTypes.pistol"), value: "pistol" },
+    { label: t("weaponTypes.rifle"), value: "rifle" },
+    { label: t("weaponTypes.smg"), value: "smg" },
+    { label: t("weaponTypes.sniper"), value: "sniper" },
+    { label: t("weaponTypes.shotgun"), value: "shotgun" },
+    { label: t("weaponTypes.knife"), value: "knife" },
+    { label: t("weaponTypes.gloves"), value: "gloves" },
   ];
 
   const exteriorOptions = [
-    { 
-      label: language === 'uz' ? 'Barcha holatlar' : language === 'ru' ? 'Все состояния' : 'All Conditions', 
-      value: '' 
-    },
-    { 
-      label: language === 'uz' ? 'Zavod yangi' : language === 'ru' ? 'Прямо с завода' : 'Factory New', 
-      value: 'Factory New' 
-    },
-    { 
-      label: language === 'uz' ? 'Kam eskirgan' : language === 'ru' ? 'Немного поношенное' : 'Minimal Wear', 
-      value: 'Minimal Wear' 
-    },
-    { 
-      label: language === 'uz' ? 'Maydon sinovdan o\'tgan' : language === 'ru' ? 'После полевых испытаний' : 'Field-Tested', 
-      value: 'Field-Tested' 
-    },
-    { 
-      label: language === 'uz' ? 'Yaxshi eskirgan' : language === 'ru' ? 'Поношенное' : 'Well-Worn', 
-      value: 'Well-Worn' 
-    },
-    { 
-      label: language === 'uz' ? 'Jang izlari' : language === 'ru' ? 'Закалённое в боях' : 'Battle-Scarred', 
-      value: 'Battle-Scarred' 
-    }
+    { label: t("exteriorOptions.all"), value: "" },
+    { label: t("exteriorOptions.factoryNew"), value: "Factory New" },
+    { label: t("exteriorOptions.minimalWear"), value: "Minimal Wear" },
+    { label: t("exteriorOptions.fieldTested"), value: "Field-Tested" },
+    { label: t("exteriorOptions.wellWorn"), value: "Well-Worn" },
+    { label: t("exteriorOptions.battleScarred"), value: "Battle-Scarred" },
   ];
 
   const handleFilterChange = (key: string, value: any) => {
@@ -132,22 +71,10 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
   };
 
   const sortOptions = [
-    { 
-      label: t.newest, 
-      value: 'createdAt-DESC' 
-    },
-    { 
-      label: t.cheapest, 
-      value: 'price-ASC' 
-    },
-    { 
-      label: t.expensive, 
-      value: 'price-DESC' 
-    },
-    { 
-      label: t.nameAZ, 
-      value: 'name-ASC' 
-    }
+    { label: t("sortOptions.newest"), value: "createdAt-DESC" },
+    { label: t("sortOptions.cheapest"), value: "price-ASC" },
+    { label: t("sortOptions.expensive"), value: "price-DESC" },
+    { label: t("sortOptions.nameAZ"), value: "name-ASC" },
   ];
 
   return (
@@ -155,76 +82,121 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white">
-          {language === 'uz' ? 'Filtrlar' : language === 'ru' ? 'Фильтры' : 'Filters'}
+          {t("title")}
         </h2>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white lg:hidden"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+            />
           </svg>
         </button>
       </div>
 
-      {(isOpen || (typeof window !== 'undefined' && window.innerWidth >= 1024)) && (
+      {(isOpen ||
+        (typeof window !== "undefined" && window.innerWidth >= 1024)) && (
         <div className="space-y-4">
           {/* Search */}
           <div className="relative">
             <input
               type="text"
-              placeholder={t.search}
+              placeholder={t("search")}
               value={searchQuery}
-              onChange={(e) => setSearchQuery( e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-1.5 pr-9 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm h-8"
             />
-            <svg className="absolute right-2.5 top-2 w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg
+              className="absolute right-2.5 top-2 w-4 h-4 text-gray-400 dark:text-gray-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
           </div>
 
           {/* Sort */}
           <div>
-            <button 
+            <button
               onClick={() => setSortOpen(!sortOpen)}
               className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span className="text-sm font-medium">{language === 'uz' ? 'Saralash' : language === 'ru' ? 'Сортировка' : 'Sort'}</span>
-              <svg className={`w-5 h-5 transition-transform ${sortOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              <span className="text-sm font-medium">{t("sort")}</span>
+              <svg
+                className={`w-5 h-5 transition-transform ${
+                  sortOpen ? "rotate-180" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
-           {sortOpen && (
-                 <select
-                        value={sortBy} 
-                        onChange={(e) => setSortBy(e.target.value)}   
-                        className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-3 pr-10 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2 text-sm h-8 appearance-none bg-no-repeat bg-right bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center]"
-                      >
-                        {sortOptions.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                </select>
-                    )}
+            {sortOpen && (
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-3 pr-10 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2 text-sm h-8 appearance-none bg-no-repeat bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center]"
+              >
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           {/* Rarity */}
           <div>
-            <button 
+            <button
               onClick={() => setRarityOpen(!rarityOpen)}
               className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span className="text-sm font-medium">{language === 'uz' ? 'Kamyoblik' : language === 'ru' ? 'Редкость' : 'Rarity'}</span>
-              <svg className={`w-5 h-5 transition-transform ${rarityOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              <span className="text-sm font-medium">{t("rarity")}</span>
+              <svg
+                className={`w-5 h-5 transition-transform ${
+                  rarityOpen ? "rotate-180" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
             {rarityOpen && (
               <select
-                value={rarity||''}
-                onChange={(e) => setFilter('rarity', e.target.value)}
-                className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-3 pr-10 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2 text-sm h-8 appearance-none bg-no-repeat bg-right bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center]"
+                value={rarity || ""}
+                onChange={(e) => setFilter("rarity", e.target.value)}
+                className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-3 pr-10 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2 text-sm h-8 appearance-none bg-no-repeat bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center]"
               >
                 {rarityOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -237,20 +209,32 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
 
           {/* Weapon Type */}
           <div>
-            <button 
+            <button
               onClick={() => setWeaponTypeOpen(!weaponTypeOpen)}
               className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span className="text-sm font-medium">{language === 'uz' ? 'Qurol turi' : language === 'ru' ? 'Тип оружия' : 'Weapon Type'}</span>
-              <svg className={`w-5 h-5 transition-transform ${weaponTypeOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              <span className="text-sm font-medium">{t("weaponType")}</span>
+              <svg
+                className={`w-5 h-5 transition-transform ${
+                  weaponTypeOpen ? "rotate-180" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
             {weaponTypeOpen && (
               <select
-                value={weaponType||''}
-                onChange={(e) => setFilter('weaponType', e.target.value)}
-                className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-3 pr-10 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2 text-sm h-8 appearance-none bg-no-repeat bg-right bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center]"
+                value={weaponType || ""}
+                onChange={(e) => setFilter("weaponType", e.target.value)}
+                className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-3 pr-10 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2 text-sm h-8 appearance-none bg-no-repeat bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center]"
               >
                 {weaponTypes.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -263,20 +247,32 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
 
           {/* Exterior */}
           <div>
-            <button 
+            <button
               onClick={() => setExteriorOpen(!exteriorOpen)}
               className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span className="text-sm font-medium">{language === 'uz' ? 'Holat' : language === 'ru' ? 'Состояние' : 'Exterior'}</span>
-              <svg className={`w-5 h-5 transition-transform ${exteriorOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              <span className="text-sm font-medium">{t("exterior")}</span>
+              <svg
+                className={`w-5 h-5 transition-transform ${
+                  exteriorOpen ? "rotate-180" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
             {exteriorOpen && (
               <select
-                value={condition||''}
-                onChange={(e) => setFilter('condition', e.target.value)}
-                className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-3 pr-10 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2 text-sm h-8 appearance-none bg-no-repeat bg-right bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center]"
+                value={condition || ""}
+                onChange={(e) => setFilter("condition", e.target.value)}
+                className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-3 pr-10 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 mt-2 text-sm h-8 appearance-none bg-no-repeat bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center]"
               >
                 {exteriorOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -289,13 +285,25 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
 
           {/* Price Range */}
           <div>
-            <button 
+            <button
               onClick={() => setPriceRangeOpen(!priceRangeOpen)}
               className="w-full flex items-center justify-between text-gray-900 dark:text-white py-1.5"
             >
-              <span className="text-sm font-medium">{language === 'uz' ? 'Narx oralig\'i' : language === 'ru' ? 'Диапазон цен' : 'Price Range'}</span>
-              <svg className={`w-5 h-5 transition-transform ${priceRangeOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              <span className="text-sm font-medium">{t("priceRange")}</span>
+              <svg
+                className={`w-5 h-5 transition-transform ${
+                  priceRangeOpen ? "rotate-180" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
             {priceRangeOpen && (
@@ -303,15 +311,19 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
                 <input
                   type="number"
                   placeholder="Min"
-                  value={priceRange.min || ''}
-                  onChange={(e) => setPriceRange(Number(e.target.value) || 0, priceRange.max)}
+                  value={priceRange.min || ""}
+                  onChange={(e) =>
+                    setPriceRange(Number(e.target.value) || 0, priceRange.max)
+                  }
                   className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm h-8"
                 />
                 <input
                   type="number"
                   placeholder="Max"
-                  value={priceRange.max || ''}
-                  onChange={(e) => setPriceRange(priceRange.min, Number(e.target.value) || 0)}
+                  value={priceRange.max || ""}
+                  onChange={(e) =>
+                    setPriceRange(priceRange.min, Number(e.target.value) || 0)
+                  }
                   className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm h-8"
                 />
               </div>
@@ -319,11 +331,11 @@ export default function MarketplaceFilters({ onFilterChange, filters }: Marketpl
           </div>
 
           {/* Reset Button */}
-          <button 
-            onClick={() =>resetFilters()}
+          <button
+            onClick={() => resetFilters()}
             className="w-full py-1.5 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition text-sm h-8"
           >
-            {language === 'uz' ? 'Filtrlarni tozalash' : language === 'ru' ? 'Сбросить фильтры' : 'Reset Filters'}
+            {t("resetFilters")}
           </button>
         </div>
       )}

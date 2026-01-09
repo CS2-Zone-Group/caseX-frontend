@@ -2,26 +2,23 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { Link } from "@/i18n/routing";
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
-export default function RegisterPage() {
+export default function LoginPage() {
   const router = useRouter();
   const { setAuth } = useAuthStore();
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
+    identifier: '',
     password: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [message, setMessage] = useState('');
 
   // Update document title
   useEffect(() => {
-    document.title = 'Ro\'yxatdan O\'tish - CaseX';
+    document.title = 'Kirish - CaseX';
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,19 +27,11 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const { data } = await api.post('/auth/register', formData);
-      
-      if (data.access_token) {
-        // Agar token qaytsa (email verification yo'q)
-        setAuth(data.user, data.access_token);
-        router.push('/marketplace');
-      } else {
-        // Email verification kerak
-        setSuccess(true);
-        setMessage(data.message || 'Email manzilingizga tasdiqlash havolasi yuborildi');
-      }
+      const { data } = await api.post('/auth/login', formData);
+      setAuth(data.user, data.access_token);
+      router.push('/marketplace');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Ro\'yxatdan o\'tishda xatolik');
+      setError(err.response?.data?.message || 'Email yoki parol noto\'g\'ri');
     } finally {
       setLoading(false);
     }
@@ -58,69 +47,36 @@ export default function RegisterPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="text-center text-3xl font-bold">
-            Ro'yxatdan o'tish
+            Tizimga kirish
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
             Yoki{' '}
-            <Link href="/auth/login" className="text-primary-600 hover:text-primary-500">
-              tizimga kiring
+            <Link href="/auth/register" className="text-primary-600 hover:text-primary-500">
+              ro'yxatdan o'ting
             </Link>
           </p>
         </div>
 
-        {success ? (
-          <div className="text-center space-y-4">
-            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-600 dark:text-green-400 px-4 py-3 rounded">
-              {message}
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {error && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded">
+              {error}
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Email manzilingizni tekshiring va tasdiqlash havolasini bosing.
-            </p>
-            <Link
-              href="/auth/login"
-              className="inline-block px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-            >
-              Login sahifasiga o'tish
-            </Link>
-          </div>
-        ) : (
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded">
-                {error}
-              </div>
-            )}
+          )}
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium mb-2">
-                Username
+              <label htmlFor="identifier" className="block text-sm font-medium mb-2">
+                Email yoki Username
               </label>
               <input
-                id="username"
+                id="identifier"
                 type="text"
                 required
-                minLength={3}
-                maxLength={20}
-                value={formData.username}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                value={formData.identifier}
+                onChange={(e) => setFormData({ ...formData, identifier: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800"
-                placeholder="john_doe"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800"
-                placeholder="john@example.com"
+                placeholder="john@example.com yoki username"
               />
             </div>
 
@@ -132,13 +88,11 @@ export default function RegisterPage() {
                 id="password"
                 type="password"
                 required
-                minLength={6}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800"
                 placeholder="••••••••"
               />
-              <p className="mt-1 text-xs text-gray-500">Kamida 6 ta belgi</p>
             </div>
           </div>
 
@@ -147,7 +101,7 @@ export default function RegisterPage() {
             disabled={loading}
             className="w-full py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Yuklanmoqda...' : 'Ro\'yxatdan o\'tish'}
+            {loading ? 'Yuklanmoqda...' : 'Kirish'}
           </button>
 
           <div className="relative">
@@ -167,7 +121,6 @@ export default function RegisterPage() {
             <span>Steam orqali kirish</span>
           </button>
         </form>
-        )}
       </div>
     </div>
   );

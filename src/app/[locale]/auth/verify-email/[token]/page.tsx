@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import Link from 'next/link';
+import { Link } from "@/i18n/routing";
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
