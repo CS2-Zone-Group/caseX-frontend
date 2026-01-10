@@ -138,22 +138,25 @@ export default function SkinDetailsModal({ isOpen, onClose, skin }: SkinDetailsM
   const handleGenerateLink = async () => {
     setLoading(true);
     try {
-      const { data } = await api.post('/sharing', {
-        items: [skin],
+      const skinData = skin as any;
+      const payload = {
+        items: [
+          {
+            skinId: skinData?.id || skinData?._id,
+            ...skinData
+          }
+        ],
         title: `Check out this ${skin?.name}`
-      });
-
-     
-
-
-      if (data?.share?.shareUrl) {
-        setUrl(data.share.shareUrl);
-      }else if (data && data.id) {
-        const generatedUrl = `${window.location.origin}/marketplace/shared/${data.share.shareId}`;
-        
-        setUrl(generatedUrl);
-     }else{
-     }
+      };
+  
+      const { data } = await api.post('/sharing', payload);
+  
+      const shareUrl = data?.share?.shareUrl || 
+                       (data?.share?.shareId ? `${window.location.origin}/marketplace/shared/${data.share.shareId}` : '');
+  
+      if (shareUrl) {
+        setUrl(shareUrl);
+      }
     } catch (error) {
       console.error("Backend sharing link ishlamadi", error);
     } finally {

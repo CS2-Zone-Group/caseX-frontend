@@ -14,7 +14,7 @@ interface FavoriteButtonProps{
 const FavoriteButton = ({skinId,className=""}:FavoriteButtonProps) => {
     const {favouriteIds,toggleFavourite}=useFavouritesStore()
 
-    const isFavorite=favouriteIds.includes(skinId)
+    const isFavorite = Array.isArray(favouriteIds) && favouriteIds.includes(skinId);
 
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation(); 

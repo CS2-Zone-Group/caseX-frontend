@@ -137,38 +137,38 @@ function MarketplaceContent() {
 
   useEffect(() => {
     if (!skinIdFromUrl || isModalOpen) return;
-    console.log("🔍 URL tekshirilmoqda. Skin ID:", skinIdFromUrl);
+  
     const handleOpenSkin = async () => {
-      const foundLocal = skins.find(s => s.id == skinIdFromUrl);
+      // 1. Avval mahalliy yuklangan skinlar orasidan qidiramiz
+      const foundLocal = skins.find(s => s.id === skinIdFromUrl);
       
       if (foundLocal) {
         setSelectedSkin(foundLocal);
         setIsModalOpen(true);
+        // URLni tozalash
         window.history.replaceState(null, '', '/marketplace');
         return;
       }
-
+  
+      // 2. Agar mahalliy ro'yxatda bo'lmasa, backenddan alohida so'raymiz
       try {
-        console.log(`🚀 API ga so'rov yuborilyapti: /skins/${skinIdFromUrl}`);
         const { data } = await api.get(`/skins/${skinIdFromUrl}`);
+        // Backend formatiga qarab ma'lumotni ushlaymiz
         const actualSkin = data.data || data.item || data;
-        console.log("✅ API dan javob keldi:", data);
-        if (actualSkin && actualSkin.id) {
-           setSelectedSkin(actualSkin);
-           setIsModalOpen(true);
-           window.history.replaceState(null, '', '/marketplace');
-           console.log("🔓 Modal ochilmoqda. Skin ma'lumoti:", actualSkin);
-        }else{
-          console.log("Data bo'sh keldi");
-          
+        
+        if (actualSkin && (actualSkin.id || actualSkin._id)) {
+          setSelectedSkin(actualSkin);
+          setIsModalOpen(true);
+          // Modal ochilgach URLdan IDni olib tashlaymiz
+          window.history.replaceState(null, '', '/marketplace');
         }
       } catch (error) {
-        console.error("Ulashilgan skinlar ochishda hatolik",error);
+        console.error("Skinni yuklashda xatolik:", error);
       }
     };
-
+  
     handleOpenSkin();
-  }, [skinIdFromUrl, skins]);
+  }, [skinIdFromUrl, skins.length]); // skins.length qo'shildi, massiv to'lganda qayta tekshiradi
 
   const handleAddToCart = async (skinId: string) => {
     if (!hasHydrated || !user) {

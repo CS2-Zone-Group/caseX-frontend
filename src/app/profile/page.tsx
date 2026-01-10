@@ -16,47 +16,12 @@ import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import InsertLinkIcon from '@mui/icons-material/InsertLink';
+import api from '@/lib/api';
+import { log } from 'util';
 
 
 
-const MOCK_SHARES = [
-    {
-      _id: '1',
-      shareId: 'lqSAhD42Wd',
-      views: 124,
-      createdAt: '2024-01-20T10:30:00Z',
-      item: {
-        name: 'AK-47 | Asiimov',
-        image: 'https://community.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot7HxfDhjxszJemkV092lnYmGm_vbbuKIxz4F7MBo2-rF89SgilLm_kdpY2GncYfAcVdvYVzS_Vm9kO3m05G5vpWbz3QxvyJx5C3D30vgT18dAg',
-        price: 150.50,
-        rarity: 'Covert'
-      }
-    },
-    {
-      _id: '2',
-      shareId: 'k9XsF51Lm',
-      views: 45,
-      createdAt: '2024-01-18T14:15:00Z',
-      item: {
-        name: 'AWP | Dragon Lore',
-        image: 'https://community.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FAR17PLfYQJD_9W7m5a0mvLwOq7c2D4H65Vy3-qWpNj22gDj_0Y4YmGmI9fBdAE2aV7V_1K6w-3vgJC5vZXJwXFnvCMj4XfD30vgKJGfpQ',
-        price: 1200.00,
-        rarity: 'Contraband'
-      }
-    },
-    {
-      _id: '3',
-      shareId: 'm2Ba88Qz',
-      views: 12,
-      createdAt: '2024-01-22T09:00:00Z',
-      item: {
-        name: 'M4A4 | Howl',
-        image: 'https://community.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou-6kejhz2v_Nfz5H_uO1gb-Gw_alDLPIhm5u5Mx2gv2P8d2t2wDi_0Y4YmGmI9fBdAE2aV7V_1K6w-3vgJC5vZXJwXFnvCMj4XfD30vgKJGfpQ',
-        price: 950.00,
-        rarity: 'Contraband'
-      }
-    }
-  ];
+
 
 
 
@@ -136,7 +101,6 @@ function ProfileContent() {
   const [exchangeRates, setExchangeRates] = useState<{USD: number, UZS: number, RUB: number} | null>(null);
   const [ratesLoading, setRatesLoading] = useState(false);
   
-  // Fetch exchange rates when balance tab is active
   useEffect(() => {
     if (activeTab === 'balance') {
       const fetchRates = async () => {
@@ -160,20 +124,15 @@ function ProfileContent() {
   }, [activeTab]);
 
   useEffect(() => {
-    // 🔍 API ga so'rov yuborish o'rniga MOCK DATA ni yuklaymiz
     const fetchShares = async () => {
       try {
         setLoading(true);
         
-        // 1 soniya kutib turamiz (realistik bo'lishi uchun)
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // MOCK DATA ni o'rnatamiz
-        setShares(MOCK_SHARES);
 
-        // ⚠️ BACKEND TUZALSA, MANA BU YERNI OCHASIZ:
-        // const res = await api.get('/sharing/my-shares');
-        // setShares(res.data);
+        const res = await api.get('/sharing/my-shares');
+        setShares(res.data.shares);
 
       } catch (error) {
         console.error("Xatolik:", error);
@@ -185,35 +144,36 @@ function ProfileContent() {
     fetchShares();
   }, []);
 
-  useEffect(() => {
-    // 🔍 API ga so'rov yuborish o'rniga MOCK DATA ni yuklaymiz
-    const fetchShares = async () => {
-      try {
-        setLoading(true);
+  // useEffect(() => {
+  //   // 🔍 API ga so'rov yuborish o'rniga MOCK DATA ni yuklaymiz
+  //   const fetchShares = async () => {
+  //     try {
+  //       setLoading(true);
         
-        // 1 soniya kutib turamiz (realistik bo'lishi uchun)
-        await new Promise(resolve => setTimeout(resolve, 1000));
+  //       // 1 soniya kutib turamiz (realistik bo'lishi uchun)
+  //       await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // MOCK DATA ni o'rnatamiz
-        setShares(MOCK_SHARES);
+  //       // MOCK DATA ni o'rnatamiz
+  //       setShares(MOCK_SHARES);
 
-        // ⚠️ BACKEND TUZALSA, MANA BU YERNI OCHASIZ:
-        // const res = await api.get('/sharing/my-shares');
-        // setShares(res.data);
+  //       // ⚠️ BACKEND TUZALSA, MANA BU YERNI OCHASIZ:
+  //       // const res = await api.get('/sharing/my-shares');
+  //       // setShares(res.data);
 
-      } catch (error) {
-        console.error("Xatolik:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //     } catch (error) {
+  //       console.error("Xatolik:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchShares();
-  }, []);
-
+  //   fetchShares();
+  // }, []);
 
 
   const handleCopyLink = (shareId: string) => {
+    console.log(shareId);
+    
     const link = `${window.location.origin}/marketplace/shared/${shareId}`;
     navigator.clipboard.writeText(link);
     
