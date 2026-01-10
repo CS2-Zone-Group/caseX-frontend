@@ -12,7 +12,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useFavouritesStore } from "@/store/favouritesStore";
 
 export default function Navbar() {
-  const { count, fetchFavouriteIds } = useFavouritesStore();
+  const { count, fetchFavouriteIds, resetStore } = useFavouritesStore();
   const router = useRouter();
   const { currency } = useSettingsStore();
   const { itemCount } = useCartStore();
@@ -25,8 +25,10 @@ export default function Navbar() {
   const isLoggedIn = hasHydrated && !!user && !!token;
   const baseBalance = user?.balance || 0;
   useEffect(() => {
-    fetchFavouriteIds();
-  }, []);
+    if (isLoggedIn) {
+      fetchFavouriteIds();
+    }
+  }, [isLoggedIn, fetchFavouriteIds]);
   // Check token validity and fetch balance on mount and periodically
   useEffect(() => {
     if (isLoggedIn) {
@@ -74,6 +76,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logout();
+    resetStore(); // Favorites store ni tozalash
     setProfileMenuOpen(false);
     router.push("/auth/login");
   };

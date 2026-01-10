@@ -224,5 +224,26 @@
       "knives": "Knives",
       "gloves": "Gloves"
     }
+  },
+  "FavoritesPage": {
+    "title": "Favorites",
+    "loading": "Loading...",
+    "noFavorites": "No favorite skins",
+    "noFavoritesDescription": "Add your favorite skins from marketplace",
+    "addToCart": "Add to cart",
+    "pleaseLogin": "Please login first",
+    "addedToCart": "Added to cart!",
+    "count": ""
+  },
+  "Common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close"
   }
 }

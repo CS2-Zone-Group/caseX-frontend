@@ -190,18 +190,6 @@ export default function InventoryPage() {
       return sum + Number(price);
     }, 0);
 
-  if (loading && allItems.length === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        <Navbar />
-        <div className="container mx-auto px-4 py-8 pt-32 text-center text-gray-900 dark:text-white">
-           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-2"></div>
-           Loading...
-        </div>
-      </div>
-    );
-  }
-
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -246,7 +234,7 @@ export default function InventoryPage() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700"
+                  className="px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm shadow-sm h-8 min-w-0 appearance-none bg-no-repeat bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center] pr-10"
                 >
                   <option value="createdAt-DESC">{t.sortNewest}</option>
                   <option value="price-DESC">{t.priceHighToLow}</option>
@@ -255,7 +243,12 @@ export default function InventoryPage() {
                 </select>
               </div>
 
-              {filteredItems.length === 0 ? (
+              {loading ? (
+                <div className="text-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-2"></div>
+                  <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+                </div>
+              ) : filteredItems.length === 0 ? (
                 <div className="text-center py-20 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
                   <p className="text-gray-500 mb-4">No items found matching your filters</p>
                   <button onClick={resetFilters} className="text-primary-600 hover:underline">

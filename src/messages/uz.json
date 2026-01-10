@@ -224,5 +224,26 @@
       "knives": "Pichoqlar",
       "gloves": "Qo'lqoplar"
     }
+  },
+  "FavoritesPage": {
+    "title": "Sevimlilar",
+    "loading": "Yuklanmoqda...",
+    "noFavorites": "Sevimli skinlar yo'q",
+    "noFavoritesDescription": "Marketplace dan sevimli skinlaringizni qo'shing",
+    "addToCart": "Savatga qo'shish",
+    "pleaseLogin": "Iltimos, avval tizimga kiring",
+    "addedToCart": "Savatga qo'shildi!",
+    "count": "ta"
+  },
+  "Common": {
+    "loading": "Yuklanmoqda...",
+    "error": "Xatolik",
+    "success": "Muvaffaqiyatli",
+    "cancel": "Bekor qilish",
+    "confirm": "Tasdiqlash",
+    "save": "Saqlash",
+    "delete": "O'chirish",
+    "edit": "Tahrirlash",
+    "close": "Yopish"
   }
 }

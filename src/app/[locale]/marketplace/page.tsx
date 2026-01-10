@@ -219,14 +219,8 @@ function MarketplaceContent() {
                 </div>
                 
                 <div className="text-gray-900 dark:text-white text-sm lg:text-base">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    {t.marketplacePrice}
-                  </span>
-                  <span className="font-bold ml-1 lg:ml-2">
+                  <span className="font-bold">
                     {skins.length} {language === 'uz' ? 'ta skin' : language === 'ru' ? 'скинов' : 'items'}
-                  </span>
-                  <span className="text-green-600 dark:text-green-400 ml-1 lg:ml-2">
-                    ≈ {formatPrice(skins.reduce((sum, skin) => sum + Number(skin.price), 0), currency)}
                   </span>
                 </div>
               </div>
@@ -234,7 +228,7 @@ function MarketplaceContent() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 lg:px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm lg:text-base shadow-sm"
+                className="px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm shadow-sm h-8 min-w-0 appearance-none bg-no-repeat bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center] pr-10"
               >
                 <option value="createdAt-DESC">{t.sortNewest}</option>
                 <option value="price-DESC">{t.priceHighToLow}</option>
@@ -316,6 +310,10 @@ function MarketplaceContent() {
                           </div>
                           
                           <div className='flex gap-2 justify-center'>
+                              <div className="flex items-center justify-center">
+                                <FavoriteButton skinId={skin.id} className="w-10 h-10 text-2xl" />
+                              </div>
+                              
                               <button
                                 onClick={() => handleAddToCart(skin.id)}
                                 className="flex-1 p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition flex items-center justify-center"
@@ -325,10 +323,6 @@ function MarketplaceContent() {
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
                               </button>
-                              
-                              <div className="flex items-center justify-center">
-                                <FavoriteButton skinId={skin.id} className="w-10 h-10 text-2xl" />
-                              </div>
                           </div>
                         </div>
                       </div>
