@@ -9,6 +9,7 @@ import PaymentMethods from '@/components/PaymentMethods';
 import PopularItems from '@/components/PopularItems';
 
 export default function Home() {
+ 
   const { language, setLanguage } = useSettingsStore();
   const t = translations[language];
   const currentYear = new Date().getFullYear();
@@ -197,6 +198,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+     
 
       {/* Footer */}
       <footer className="py-12 px-4 bg-white dark:bg-gray-900 dark:text-white">

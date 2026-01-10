@@ -10,8 +10,14 @@ import { translations } from '@/lib/translations';
 import { convertCurrency, formatPrice } from '@/lib/currency';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useFavouritesStore } from '@/store/favouritesStore';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import Button from '@mui/material/Button';
+import { useChatStore } from '@/store/useChatStore';
 
 export default function Navbar() {
+  const openChat=useChatStore((state)=>state.openChat)
+  const closeChat=useChatStore((state)=>state.closeChat)
+  const isChatOpen=useChatStore((state)=>state.isChatOpen)
   const {count,fetchFavouriteIds}=useFavouritesStore()
   const router = useRouter();
   const { language, currency } = useSettingsStore();
@@ -24,10 +30,11 @@ export default function Navbar() {
   
   const isLoggedIn = hasHydrated && !!user && !!token;
   const baseBalance = user?.balance || 0;
-useEffect(()=>{
-  fetchFavouriteIds()
-},[])
-  // Check token validity and fetch balance on mount and periodically
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchFavouriteIds();
+    }
+  }, [isLoggedIn, fetchFavouriteIds]);
   useEffect(() => {
     if (isLoggedIn) {
       const { checkTokenValidity, fetchUserBalance } = useAuthStore.getState();
@@ -102,6 +109,24 @@ useEffect(()=>{
                 <Link href="/inventory" className="hover:text-primary-600 transition">
                   {language === 'uz' ? 'Inventar' : language === 'ru' ? 'Инвентарь' : 'Inventory'}
                 </Link>
+
+
+
+                <button  onClick={openChat} className={` ${isChatOpen? 'text-blue-600':''}  p-2 transition`}>
+                  <ChatBubbleOutlineIcon/>
+                  {/* {itemCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                      {itemCount > 99 ? '99+' : itemCount}
+                    </span>
+                  )} */}
+                </button>
+
+
+
+
+
+
+
                 
                 <Link href="/cart" className="relative p-2 hover:text-primary-600 transition">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
