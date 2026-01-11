@@ -22,7 +22,6 @@ interface SupportChatProps {
                     border border-gray-200 dark:border-gray-800 
                     sm:rounded-2xl shadow-2xl transition-all duration-300 overflow-hidden">
       
-      {/* HEADER */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-900">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 bg-gradient-to-br from-primary-600 to-blue-600 rounded-lg flex items-center justify-center shadow-lg">
