@@ -45,7 +45,7 @@ interface SupportChatProps {
       
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 bg-white dark:bg-gray-900">
         <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-2xl rounded-tl-none self-start max-w-[85%] text-sm shadow-sm border dark:border-gray-700">
-          Qanday yordam bera olamiz?
+          Sizga qanday yordam bera olamiz?
         </div>
       </div>
       
