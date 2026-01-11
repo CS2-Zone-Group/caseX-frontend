@@ -16,7 +16,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   useEffect(() => {
-    // Rehydrate stores and set hydration state
     const rehydrateStores = async () => {
       await useAuthStore.persist.rehydrate();
       await useSettingsStore.persist.rehydrate();
