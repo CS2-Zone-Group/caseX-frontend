@@ -6,7 +6,6 @@ import './globals.css';
 import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { LanguageProvider } from '@/contexts/LanguageContext';
-import { Chat } from './chat/page';
 import { useChatStore } from '@/store/useChatStore';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
@@ -54,15 +53,12 @@ export default function RootLayout({
     });
   }, []);
 
-  const isChatOpen=useChatStore((state)=>state.isChatOpen)
-  const closeChat=useChatStore((state)=>state.closeChat)
 
   return (
     <html lang="uz" className="dark">
       <body className={inter.className} suppressHydrationWarning={true}>
         <LanguageProvider>
           {children}
-          <Chat isOpen={isChatOpen} closeChat={closeChat} />
         </LanguageProvider>
       </body>
     </html>
