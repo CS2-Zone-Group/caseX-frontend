@@ -11,6 +11,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckIcon from "@mui/icons-material/Check";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useTranslations } from "next-intl";
+import api from "@/lib/api";
 
 interface SkinDetailsModalProps {
   isOpen: boolean;
@@ -51,12 +52,15 @@ export default function SkinDetailsModal({
   const handleGenerateLink = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.post("/api/sharing", {
+      
+      const { data } = await api.post("/sharing", {
         items: [skin],
         title: `Check out this ${skin?.name}`,
-      });
-      if (data.url) {
-        setUrl(data.url);
+      }
+    );
+      
+      if (data.share) {
+        setUrl(data.share.shareUrl);
       }
     } catch (error) {
       console.error("Link error", error);

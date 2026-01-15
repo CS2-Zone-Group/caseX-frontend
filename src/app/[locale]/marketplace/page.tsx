@@ -11,8 +11,9 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { translations } from '@/lib/translations';
 import { formatPrice } from '@/lib/currency';
 import { useFilterStore } from '@/store/filterStore';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import FavoriteButton from '@/components/FavoriteButton';
+import { useParams } from 'next/navigation';
 
 interface Skin {
   id: string;
@@ -24,8 +25,9 @@ interface Skin {
   imageUrl: string;
 }
 
-// 1. ASOSIY KODNI "MarketplaceContent" DEB NOMLAYMIZ (Export default EMAS)
 function MarketplaceContent() {
+  const params = useParams();
+  const router=useRouter()
   const searchParams = useSearchParams();
   const { user, hasHydrated } = useAuthStore();
   const { addToCart } = useCartStore();
@@ -38,6 +40,9 @@ function MarketplaceContent() {
   const [selectedSkin, setSelectedSkin] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
+  // URL dan openSkin parametrini olish
+  const openSkinId = searchParams.get('openSkin');
+
   const category = searchParams.get('category');
 
   const {
@@ -55,10 +60,9 @@ function MarketplaceContent() {
     document.title = `${t.marketplace} - CaseX`;
   }, [language, t.marketplace]);
 
-  // Sahifa yuklanganda filtrlarni tozalash (ixtiyoriy, agar kerak bo'lsa qoldiring)
   useEffect(() => {
     resetFilters();
-  }, []); 
+  }, [resetFilters]); 
 
   const fetchMarketItems = useCallback(async () => {
     setLoading(true);
@@ -100,7 +104,6 @@ function MarketplaceContent() {
          fetchedSkins = data.data;
       } 
 
-      // Agar category parametri bo'lsa, filtrlash
       if(category){
         fetchedSkins = fetchedSkins.filter(skin => {
           const searchCat = category.toLowerCase();
@@ -147,25 +150,70 @@ function MarketplaceContent() {
     }
   };
 
-  const openSkinDetails = (skin: Skin) => {
+  const openSkinDetails = useCallback((skin: Skin) => {
     const steamItem = {
       market_hash_name: skin.name,
       market_name: skin.name,
       name: skin.name,
       icon_url: skin.imageUrl.replace('https://community.cloudflare.steamstatic.com/economy/image/', '').replace('/330x192', ''),
       tags: [
-        { category: 'Weapon', localized_tag_name: skin.weaponType },
-        { category: 'Rarity', localized_tag_name: skin.rarity },
-        { category: 'Exterior', localized_tag_name: skin.exterior }
+        { 
+          category: 'Weapon', 
+          internal_name: skin.weaponType,
+          localized_tag_name: skin.weaponType 
+        },
+        { 
+          category: 'Rarity', 
+          internal_name: skin.rarity,
+          localized_tag_name: skin.rarity 
+        },
+        { 
+          category: 'Exterior', 
+          internal_name: skin.exterior,
+          localized_tag_name: skin.exterior 
+        }
       ]
     };
     setSelectedSkin(steamItem);
     setIsModalOpen(true);
-  };
+  }, []);
+  
+
+  useEffect(() => {
+    const checkAndOpenSharedSkin = async () => {
+      if (!openSkinId || isModalOpen) return;
+  
+      const existingSkin = skins.find(s => String(s.id) === String(openSkinId));
+      
+      if (existingSkin) {
+        openSkinDetails(existingSkin);
+      } else if (!loading && skins.length > 0) { 
+        try {
+          const cleanId = openSkinId.replace('share-', ''); 
+          const { data } = await api.get(`/skins/${cleanId}`);
+          
+          const sharedSkin = data.data || data;
+          
+          if (sharedSkin) {
+            openSkinDetails(sharedSkin);
+          }
+        } catch (err) {
+          console.error("Skin yuklashda xatolik yuz berdi:", err);
+        }
+      }
+    };
+  
+    checkAndOpenSharedSkin();
+  }, [openSkinId, skins, loading, openSkinDetails, isModalOpen]);
 
   const closeSkinDetails = () => {
     setIsModalOpen(false);
     setSelectedSkin(null);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('openSkin');
+    
+    // URLni yangilash (scrollni joyida saqlab qolgan holda)
+    router.replace(`${window.location.pathname}?${params.toString()}`, { scroll: false });
   };
 
   return (
@@ -175,7 +223,6 @@ function MarketplaceContent() {
       <div className="container mx-auto px-2 sm:px-4 py-8 pt-20">
         <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
           
-          {/* Filters Sidebar */}
           <div className="lg:hidden mb-4">
             {filtersVisible && (
               <MarketplaceFilters filters={filtersVisible} />
@@ -186,16 +233,13 @@ function MarketplaceContent() {
               <MarketplaceFilters filters={filtersVisible}/>
           </div>
 
-          {/* Main Content */}
           <div className="flex-1">
-            {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 lg:mb-6 gap-4 sm:gap-0">
               <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                 <div className="flex items-center gap-2">
                   <button 
                     onClick={() => setFiltersVisible(!filtersVisible)}
                     className="p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 shadow-sm lg:hidden"
-                    title={language === 'uz' ? 'Filtrlar' : language === 'ru' ? 'Фильтры' : 'Filters'}
                   >
                     {filtersVisible ? (
                       <svg className="w-4 h-4 lg:w-5 lg:h-5 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -209,7 +253,6 @@ function MarketplaceContent() {
                   </button>
                   <button 
                     className="p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 shadow-sm"
-                    title={language === 'uz' ? 'Yangilash' : language === 'ru' ? 'Обновить' : 'Refresh'}
                     onClick={() => fetchMarketItems()}
                   >
                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -258,78 +301,75 @@ function MarketplaceContent() {
                 </button>
               </div>
             ) : (
-              <>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4">
-                  {skins.map((skin) => (
-                    <div
-                      key={skin.id}
-                      className="bg-white dark:bg-gray-900 rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 shadow-sm hover:shadow-md"
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4">
+                {skins.map((skin) => (
+                  <div
+                    key={skin.id}
+                    className="bg-white dark:bg-gray-900 rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    <div 
+                      className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg mb-3 overflow-hidden cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      onClick={() => openSkinDetails(skin)}
                     >
-                      <div 
-                        className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg mb-3 overflow-hidden cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      <img
+                        src={skin.imageUrl}
+                        alt={skin.name}
+                        className="w-full h-full object-contain p-2"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <h3 
+                        className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm truncate cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 transition-colors" 
+                        title={skin.name}
                         onClick={() => openSkinDetails(skin)}
                       >
-                        <img
-                          src={skin.imageUrl}
-                          alt={skin.name}
-                          className="w-full h-full object-contain p-2"
-                        />
+                        {skin.name}
+                      </h3>
+                      
+                      <div className="flex items-center justify-center">
+                        <span className={`px-2 py-1 rounded text-xs font-medium truncate max-w-full ${
+                          skin.rarity?.toLowerCase() === 'covert' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400' :
+                          skin.rarity?.toLowerCase() === 'classified' ? 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-400' :
+                          skin.rarity?.toLowerCase() === 'restricted' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-400' :
+                          skin.rarity?.toLowerCase() === 'milspec' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400' :
+                          skin.rarity?.toLowerCase() === 'industrial' ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-400' :
+                          'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
+                        }`}>
+                          {skin.rarity}
+                        </span>
                       </div>
                       
-                      <div className="space-y-2">
-                        <h3 
-                          className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm truncate cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 transition-colors" 
-                          title={skin.name}
-                          onClick={() => openSkinDetails(skin)}
-                        >
-                          {skin.name}
-                        </h3>
-                        
-                        <div className="flex items-center justify-center">
-                          <span className={`px-2 py-1 rounded text-xs font-medium truncate max-w-full ${
-                            skin.rarity?.toLowerCase() === 'covert' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400' :
-                            skin.rarity?.toLowerCase() === 'classified' ? 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-400' :
-                            skin.rarity?.toLowerCase() === 'restricted' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-400' :
-                            skin.rarity?.toLowerCase() === 'milspec' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400' :
-                            skin.rarity?.toLowerCase() === 'industrial' ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-400' :
-                            'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
-                          }`}>
-                            {skin.rarity}
+                      <p className="text-xs text-gray-600 dark:text-gray-400 text-center truncate">
+                        {skin.exterior}
+                      </p>
+                      
+                      <div className="flex flex-col gap-2 pt-2">
+                        <div className="text-center">
+                          <span className="text-sm sm:text-base font-bold text-primary-600 dark:text-primary-400">
+                            {formatPrice(Number(skin.price), currency)}
                           </span>
                         </div>
                         
-                        <p className="text-xs text-gray-600 dark:text-gray-400 text-center truncate">
-                          {skin.exterior}
-                        </p>
-                        
-                        <div className="flex flex-col gap-2 pt-2">
-                          <div className="text-center">
-                            <span className="text-sm sm:text-base font-bold text-primary-600 dark:text-primary-400">
-                              {formatPrice(Number(skin.price), currency)}
-                            </span>
-                          </div>
-                          
-                          <div className='flex gap-2 justify-center'>
-                              <div className="flex items-center justify-center">
-                                <FavoriteButton skinId={skin.id} className="w-10 h-10 text-2xl" />
-                              </div>
-                              
-                              <button
-                                onClick={() => handleAddToCart(skin.id)}
-                                className="flex-1 p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition flex items-center justify-center"
-                                title={language === 'uz' ? 'Savatga qo\'shish' : language === 'ru' ? 'Добавить в корзину' : 'Add to cart'}
-                              >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
-                              </button>
-                          </div>
+                        <div className='flex gap-2 justify-center'>
+                            <div className="flex items-center justify-center">
+                              <FavoriteButton skinId={skin.id} className="w-10 h-10 text-2xl" />
+                            </div>
+                            
+                            <button
+                              onClick={() => handleAddToCart(skin.id)}
+                              className="flex-1 p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition flex items-center justify-center"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                              </svg>
+                            </button>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
@@ -344,7 +384,6 @@ function MarketplaceContent() {
   );
 }
 
-// 2. ENDI "MarketplaceContent" NI SUSPENSE ICHIGA O'RAB CHIQARAMIZ
 export default function MarketplacePage() {
   return (
     <Suspense fallback={
