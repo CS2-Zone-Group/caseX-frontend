@@ -4,14 +4,12 @@ import { useFavouritesStore } from "@/store/favouritesStore";
 import { useSettingsStore } from "@/store/settingsStore";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckIcon from "@mui/icons-material/Check";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useTranslations } from "next-intl";
-import api from "@/lib/api";
 
 interface SkinDetailsModalProps {
   isOpen: boolean;
@@ -52,16 +50,12 @@ export default function SkinDetailsModal({
   const handleGenerateLink = async () => {
     setLoading(true);
     try {
+      // To'g'ridan-to'g'ri skin ID yordamida link yaratish
+      const host = window.location.host;
+      const protocol = window.location.protocol;
+      const shareUrl = `${protocol}//${host}/marketplace?openSkin=${skin?.id}`;
       
-      const { data } = await api.post("/sharing", {
-        items: [skin],
-        title: `Check out this ${skin?.name}`,
-      }
-    );
-      
-      if (data.share) {
-        setUrl(data.share.shareUrl);
-      }
+      setUrl(shareUrl);
     } catch (error) {
       console.error("Link error", error);
     } finally {

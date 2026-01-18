@@ -127,6 +127,17 @@ function MarketplaceContent() {
     return () => clearTimeout(timer);
   }, [fetchMarketItems]); 
 
+  // Handle openSkin parameter from URL
+  useEffect(() => {
+    const openSkinId = searchParams.get('openSkin');
+    if (openSkinId && skins.length > 0) {
+      const skinToOpen = skins.find(skin => skin.id === openSkinId);
+      if (skinToOpen) {
+        openSkinDetails(skinToOpen);
+      }
+    }
+  }, [searchParams, skins]); 
+
   const handleAddToCart = async (skinId: string) => {
     if (!hasHydrated || !user) {
       alert(t('pleaseLogin'));
