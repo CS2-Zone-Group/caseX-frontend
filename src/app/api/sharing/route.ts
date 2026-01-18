@@ -19,8 +19,10 @@ export async function POST(request: Request) {
     // 4. Javob qaytarish
     return NextResponse.json({ 
       success: true,
-      url: fullLink,
-      shareId: randomId
+      share: {
+        shareUrl: fullLink,
+        shareId: randomId
+      }
     });
 
   } catch (error) {
