@@ -8,7 +8,7 @@ import api from '@/lib/api';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
-import { translations } from '@/lib/translations';
+import { useTranslations } from 'next-intl';
 import { formatPrice } from '@/lib/currency';
 import { useFilterStore } from '@/store/filterStore';
 import { useSearchParams } from 'next/navigation';
@@ -29,8 +29,8 @@ function MarketplaceContent() {
   const searchParams = useSearchParams();
   const { user, hasHydrated } = useAuthStore();
   const { addToCart } = useCartStore();
-  const { language, currency } = useSettingsStore();
-  const t = translations[language];
+  const { currency } = useSettingsStore();
+  const t = useTranslations('MarketplacePage');
   
   const [skins, setSkins] = useState<Skin[]>([]); 
   const [loading, setLoading] = useState(true);
@@ -52,8 +52,8 @@ function MarketplaceContent() {
   } = useFilterStore();
 
   useEffect(() => {
-    document.title = `${t.marketplace} - CaseX`;
-  }, [language, t.marketplace]);
+    document.title = `${t('marketplace')} - CaseX`;
+  }, [t]);
 
   // Sahifa yuklanganda filtrlarni tozalash (ixtiyoriy, agar kerak bo'lsa qoldiring)
   useEffect(() => {
@@ -129,19 +129,13 @@ function MarketplaceContent() {
 
   const handleAddToCart = async (skinId: string) => {
     if (!hasHydrated || !user) {
-      const message = language === 'uz' ? 'Iltimos, avval tizimga kiring' : 
-                      language === 'ru' ? 'Пожалуйста, сначала войдите в систему' : 
-                      'Please login first';
-      alert(message);
+      alert(t('pleaseLogin'));
       return;
     }
     
     try {
       await addToCart(skinId);
-      const message = language === 'uz' ? 'Savatga qo\'shildi!' : 
-                      language === 'ru' ? 'Добавлено в корзину!' : 
-                      'Added to cart!';
-      alert(message);
+      alert(t('addedToCart'));
     } catch (error: any) {
       alert(error.message);
     }
@@ -195,7 +189,7 @@ function MarketplaceContent() {
                   <button 
                     onClick={() => setFiltersVisible(!filtersVisible)}
                     className="p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 shadow-sm lg:hidden"
-                    title={language === 'uz' ? 'Filtrlar' : language === 'ru' ? 'Фильтры' : 'Filters'}
+                    title={t('filters')}
                   >
                     {filtersVisible ? (
                       <svg className="w-4 h-4 lg:w-5 lg:h-5 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -209,7 +203,7 @@ function MarketplaceContent() {
                   </button>
                   <button 
                     className="p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 shadow-sm"
-                    title={language === 'uz' ? 'Yangilash' : language === 'ru' ? 'Обновить' : 'Refresh'}
+                    title={t('refresh')}
                     onClick={() => fetchMarketItems()}
                   >
                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -219,14 +213,8 @@ function MarketplaceContent() {
                 </div>
                 
                 <div className="text-gray-900 dark:text-white text-sm lg:text-base">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    {t.marketplacePrice}
-                  </span>
-                  <span className="font-bold ml-1 lg:ml-2">
-                    {skins.length} {language === 'uz' ? 'ta skin' : language === 'ru' ? 'скинов' : 'items'}
-                  </span>
-                  <span className="text-green-600 dark:text-green-400 ml-1 lg:ml-2">
-                    ≈ {formatPrice(skins.reduce((sum, skin) => sum + Number(skin.price), 0), currency)}
+                  <span className="font-bold">
+                    {skins.length} {t('itemsCount')}
                   </span>
                 </div>
               </div>
@@ -234,12 +222,12 @@ function MarketplaceContent() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 lg:px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm lg:text-base shadow-sm"
+                className="px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm shadow-sm h-8 min-w-0 appearance-none bg-no-repeat bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center] pr-10"
               >
-                <option value="createdAt-DESC">{t.sortNewest}</option>
-                <option value="price-DESC">{t.priceHighToLow}</option>
-                <option value="price-ASC">{t.priceLowToHigh}</option>
-                <option value="name-ASC">{t.nameAtoZ}</option>
+                <option value="createdAt-DESC">{t('sortNewest')}</option>
+                <option value="price-DESC">{t('priceHighToLow')}</option>
+                <option value="price-ASC">{t('priceLowToHigh')}</option>
+                <option value="name-ASC">{t('nameAtoZ')}</option>
               </select>
             </div>
 
@@ -247,20 +235,20 @@ function MarketplaceContent() {
               <div className="flex items-center justify-center py-12 lg:py-20">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-                  <p className="text-gray-600 dark:text-gray-400">{t.loading}</p>
+                  <p className="text-gray-600 dark:text-gray-400">{t('loading')}</p>
                 </div>
               </div>
             ) : skins.length === 0 ? (
               <div className="text-center py-12 lg:py-20">
                 <div className="text-6xl mb-4">🔍</div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  {t.noSkinsFound}
+                  {t('noSkinsFound')}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  {t.tryDifferentFilters}
+                  {t('tryDifferentFilters')}
                 </p>
                 <button onClick={resetFilters} className="mt-4 text-primary-600 hover:underline">
-                  {language === 'uz' ? 'Filtrlarni tozalash' : 'Clear filters'}
+                  {t('clearFilters')}
                 </button>
               </div>
             ) : (
@@ -316,19 +304,19 @@ function MarketplaceContent() {
                           </div>
                           
                           <div className='flex gap-2 justify-center'>
+                              <div className="flex items-center justify-center">
+                                <FavoriteButton skinId={skin.id} className="w-10 h-10 text-2xl" />
+                              </div>
+                              
                               <button
                                 onClick={() => handleAddToCart(skin.id)}
                                 className="flex-1 p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition flex items-center justify-center"
-                                title={language === 'uz' ? 'Savatga qo\'shish' : language === 'ru' ? 'Добавить в корзину' : 'Add to cart'}
+                                title={t('addToCart')}
                               >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
                               </button>
-                              
-                              <div className="flex items-center justify-center">
-                                <FavoriteButton skinId={skin.id} className="w-10 h-10 text-2xl" />
-                              </div>
                           </div>
                         </div>
                       </div>

@@ -2,7 +2,7 @@
 
 import { useFavouritesStore } from "@/store/favouritesStore";
 import { useSettingsStore } from "@/store/settingsStore";
-import { Link } from "@/i18n/routing";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";

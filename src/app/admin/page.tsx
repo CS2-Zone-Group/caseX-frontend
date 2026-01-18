@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Link } from "@/i18n/routing";
+import Link from "next/link";
 
 interface DashboardStats {
   totalSkins: number;

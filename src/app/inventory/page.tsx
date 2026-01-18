@@ -8,7 +8,7 @@ import MarketplaceFilters from '@/components/MarketplaceFilters';
 import { formatPrice } from '@/lib/currency';
 import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
-import { translations } from '@/lib/translations';
+import { useTranslations } from 'next-intl';
 import api from '@/lib/api';
 import { useFilterStore } from '@/store/filterStore';
 
@@ -31,8 +31,8 @@ interface InventoryItemType {
 export default function InventoryPage() {
   const router = useRouter();
   const { user } = useAuthStore();
-  const { language, currency } = useSettingsStore();
-  const t = translations[language];
+  const { currency } = useSettingsStore();
+  const t = useTranslations('InventoryPage');
 
   const {
     searchQuery,
@@ -54,8 +54,8 @@ export default function InventoryPage() {
   const [filtersVisible, setFiltersVisible] = useState(false);
 
   useEffect(() => {
-    document.title = `${t.inventory} - CaseX`;
-  }, [language, t.inventory]);
+    document.title = `${t('title')} - CaseX`;
+  }, [t]);
 
   useEffect(() => {
     resetFilters();
@@ -236,10 +236,10 @@ export default function InventoryPage() {
                   onChange={(e) => setSortBy(e.target.value)}
                   className="px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm shadow-sm h-8 min-w-0 appearance-none bg-no-repeat bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center] pr-10"
                 >
-                  <option value="createdAt-DESC">{t.sortNewest}</option>
-                  <option value="price-DESC">{t.priceHighToLow}</option>
-                  <option value="price-ASC">{t.priceLowToHigh}</option>
-                  <option value="name-ASC">{t.nameAtoZ}</option>
+                  <option value="createdAt-DESC">{t('sortNewest')}</option>
+                  <option value="price-DESC">{t('priceHighToLow')}</option>
+                  <option value="price-ASC">{t('priceLowToHigh')}</option>
+                  <option value="name-ASC">{t('nameAtoZ')}</option>
                 </select>
               </div>
 

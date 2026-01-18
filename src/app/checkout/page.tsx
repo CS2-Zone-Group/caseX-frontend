@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 import { useCartStore } from '@/store/cartStore';
-import { translations } from '@/lib/translations';
+import { useTranslations } from 'next-intl';
 import { useSettingsStore } from '@/store/settingsStore';
 import { formatPrice } from '@/lib/currency';
 import { useRouter } from 'next/navigation';
@@ -9,8 +9,8 @@ import { useRouter } from 'next/navigation';
 export default function CheckoutPage() {
   const router = useRouter(); 
   const { items, fetchCart, removeFromCart, loading, clearCart } = useCartStore();
-  const { language, currency } = useSettingsStore();
-  const t = translations[language];
+  const { currency } = useSettingsStore();
+  const t = useTranslations('CheckoutPage');
   
   type PaymentMethod = "click" | "payme" | "visa" | null;
   
@@ -62,14 +62,14 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white pt-24 pb-12 px-4 transition-colors duration-300">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">{t.thePriceclearance}</h1>
+        <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">{t('title')}</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           <div className="lg:col-span-2 space-y-6">
             
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
-               <h2 className="text-xl font-semibold mb-4">{t.selectPaymentMethod}</h2>
+               <h2 className="text-xl font-semibold mb-4">{t('selectPaymentMethod')}</h2>
                
                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                  
@@ -105,12 +105,12 @@ export default function CheckoutPage() {
                </div>
 
                {error && (
-                 <p className="text-red-500 text-sm mt-3 animate-pulse">⚠️ {t.paymentMethodError}</p>
+                 <p className="text-red-500 text-sm mt-3 animate-pulse">⚠️ {t('paymentMethodError')}</p>
                )}
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
-              <h2 className="text-xl font-semibold mb-4">{t.cartTitle} ({items.length} {t.ta} {t.skin})</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('cartTitle')} ({items.length} {t('ta')} {t('skin')})</h2>
               
               {items.map((item) => (
                 <div key={item.id} className="flex items-center mb-4 justify-between rounded-lg px-4 py-4 border border-gray-200 dark:border-gray-700 last:border-0 last:mb-0 bg-gray-50 dark:bg-transparent">
@@ -134,7 +134,7 @@ export default function CheckoutPage() {
                       onClick={() => removeFromCart(item.id)} 
                       className="text-sm text-red-500 hover:text-red-600 dark:hover:text-red-400 mt-1 transition-colors"
                     >
-                      {t.remove}
+                      {t('remove')}
                     </button>
                   </div>
                 </div>
@@ -144,20 +144,20 @@ export default function CheckoutPage() {
 
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 sticky top-24 shadow-sm transition-colors duration-300">
-              <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">{t.paymentDetails}</h2>
+              <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">{t('paymentDetails')}</h2>
               
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-gray-500 dark:text-gray-400">
-                  <span>{t.skinsPrice}:</span>
+                  <span>{t('skinsPrice')}:</span>
                   <span>{formatPrice(Number(totalAmount), currency)}</span>
                 </div>
                 <div className="flex justify-between text-gray-500 dark:text-gray-400">
-                  <span>{t.commission} (5%):</span>
+                  <span>{t('commission')} (5%):</span>
                   <span>{formatPrice(Number(tax), currency)} </span>
                 </div>
                 <div className="h-px bg-gray-200 dark:bg-gray-700 my-4"></div>
                 <div className="flex justify-between text-xl font-bold">
-                  <span className="text-gray-900 dark:text-white">{t.checkTotal}:</span>
+                  <span className="text-gray-900 dark:text-white">{t('checkTotal')}:</span>
                   <span className="text-green-600 dark:text-green-400">{formatPrice(Number(finalTotal), currency)}</span>
                 </div>
               </div>
@@ -174,15 +174,15 @@ export default function CheckoutPage() {
                 {isProcessing ? (
                    <>
                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                     {t.processing}
+                     {t('processing')}
                    </>
                 ) : (
-                   t.paymentToDo
+                   t('paymentToDo')
                 )}
               </button>
               
               <p className="text-xs text-center text-gray-400 dark:text-gray-500 mt-4">
-                {t.clickingAgree}
+                {t('clickingAgree')}
               </p>
             </div>
           </div>

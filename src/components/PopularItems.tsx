@@ -1,6 +1,6 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/routing";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";

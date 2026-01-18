@@ -1,38 +1,83 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import FavoriteButton from '@/components/FavoriteButton';
 import { formatPrice } from '@/lib/currency';
-import { translations } from '@/lib/translations';
+import { useTranslations } from 'next-intl';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
+import { useFavouritesStore } from '@/store/favouritesStore';
+import api from '@/lib/api';
+import Navbar from '@/components/Navbar';
+import AuthGuard from '@/components/AuthGuard';
 
 export default function FavoritesPage() {
-    const { addToCart } = useCartStore();
-  const { language, currency } = useSettingsStore();
-  const t = translations[language];
-  const [items, setItems] = useState([]);
+  const { addToCart } = useCartStore();
+  const { currency } = useSettingsStore();
+  const t = useTranslations('FavoritesPage');
+  const tCommon = useTranslations('Common');
+  const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSkin, setSelectedSkin] = useState<any>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { user, hasHydrated } = useAuthStore();
 
+  const { user, hasHydrated } = useAuthStore();
+  const { favouriteIds, fetchFavouriteIds } = useFavouritesStore();
+
+  useEffect(() => {
+    document.title = `${t('title')} - CaseX`;
+  }, [t]);
+
+  // Favorites IDs o'zgarganida itemlarni yangilash
+  useEffect(() => {
+    // Agar favouriteIds bo'sh bo'lsa, itemlarni ham tozalash
+    if (favouriteIds.length === 0) {
+      setItems([]);
+      return;
+    }
+    
+    // Hozirgi itemlarni favorites IDs bilan filtrlash
+    setItems(prevItems => {
+      const filteredItems = prevItems.filter(item => favouriteIds.includes(item.id));
+      return filteredItems;
+    });
+  }, [favouriteIds]);
 
   useEffect(() => {
     const fetchFavorites = async () => {
+      if (!hasHydrated || !user) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        const { data } = await axios.get('/api/favorites');
-        setItems(data); 
+        // Avval favorites IDs ni olish
+        await fetchFavouriteIds();
+        
+        // Keyin favorites ma'lumotlarini olish
+        const { data } = await api.get('/favorites');
+        
+        // Data structure ni to'g'ri handle qilish
+        let favoritesData = [];
+        if (Array.isArray(data)) {
+          favoritesData = data;
+        } else if (data.favorites && Array.isArray(data.favorites)) {
+          favoritesData = data.favorites;
+        } else if (data.data && Array.isArray(data.data)) {
+          favoritesData = data.data;
+        } else if (data.items && Array.isArray(data.items)) {
+          favoritesData = data.items;
+        }
+        
+        setItems(favoritesData);
       } catch (error) {
-        console.error(error);
+        console.error('Favorites fetch error:', error);
+        setItems([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchFavorites();
-  }, []);
+  }, [hasHydrated, user, fetchFavouriteIds]);
 
 
   interface Skin {
@@ -48,51 +93,60 @@ export default function FavoritesPage() {
 
 
   const openSkinDetails = (skin: Skin) => {
-    const steamItem = {
-      market_hash_name: skin.name,
-      market_name: skin.name,
-      name: skin.name,
-      icon_url: skin.imageUrl.replace('https://community.cloudflare.steamstatic.com/economy/image/', '').replace('/330x192', ''),
-      tags: [
-        { category: 'Weapon', localized_tag_name: skin.weaponType },
-        { category: 'Rarity', localized_tag_name: skin.rarity },
-        { category: 'Exterior', localized_tag_name: skin.exterior }
-      ]
-    };
-    setSelectedSkin(steamItem);
-    setIsModalOpen(true);
+    // TODO: Implement skin details modal
+    console.log('Opening skin details for:', skin.name);
   };
   const handleAddToCart = async (skinId: string) => {
     if (!hasHydrated || !user) {
-      const message = language === 'uz' ? 'Iltimos, avval tizimga kiring' : 
-                      language === 'ru' ? 'Пожалуйста, сначала войдите в систему' : 
-                      'Please login first';
-      alert(message);
+      alert(t('pleaseLogin'));
       return;
     }
     
     try {
       await addToCart(skinId);
-      const message = language === 'uz' ? 'Savatga qo\'shildi!' : 
-                      language === 'ru' ? 'Добавлено в корзину!' : 
-                      'Added to cart!';
-      alert(message);
+      alert(t('addedToCart'));
     } catch (error: any) {
       alert(error.message);
     }
   };
 
-  if (loading) return <div>{t.loading}</div>;
+  if (loading) {
+    return (
+      <AuthGuard>
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+          <Navbar />
+          <div className="container mx-auto px-4 py-8 pt-32 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-2"></div>
+            <p className="text-gray-600 dark:text-gray-400">{tCommon('loading')}</p>
+          </div>
+        </div>
+      </AuthGuard>
+    );
+  }
 
   return (
-    <div className="container mx-auto py-20 px-4">
-      <h1 className="text-3xl font-bold mb-8 dark:text-white">{t.favorites} ({items.length})</h1>
-      
-      {items.length === 0 ? (
-        <p>{t.notFavoritesNow}</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {items.map((skin: any) => (
+    <AuthGuard>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <Navbar />
+        
+        <div className="container mx-auto py-8 pt-20 px-4">
+          <h1 className="text-3xl font-bold mb-8 dark:text-white">
+            {t('title')} ({favouriteIds.length}{t('count')})
+          </h1>
+          
+          {!Array.isArray(items) || items.length === 0 || favouriteIds.length === 0 ? (
+            <div className="text-center py-20 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
+              <div className="text-6xl mb-4">💔</div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                {t('noFavorites')}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                {t('noFavoritesDescription')}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+              {items.filter(item => favouriteIds.includes(item.id)).map((skin: any) => (
              
              <div
              key={skin.id}
@@ -141,26 +195,29 @@ export default function FavoritesPage() {
                      {formatPrice(Number(skin.price), currency)}
                    </span>
                  </div>
-                 <div className='flex'>
-
-                 <button
-                   onClick={() => handleAddToCart(skin.id)}
-                   className="w-36 p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition flex items-center justify-center"
-                   title={language === 'uz' ? 'Savatga qo\'shish' : language === 'ru' ? 'Добавить в корзину' : 'Add to cart'}
-                 >
-                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                   </svg>
-                 </button>
-                 <FavoriteButton  skinId={skin.id} className="w-10 h-10 text-2xl" // Kichikroq o'lcham
-                />
+                 <div className='flex gap-2 justify-center'>
+                   <div className="flex items-center justify-center">
+                     <FavoriteButton skinId={skin.id} className="w-10 h-10 text-2xl" />
+                   </div>
+                   
+                   <button
+                     onClick={() => handleAddToCart(skin.id)}
+                     className="flex-1 p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition flex items-center justify-center"
+                     title={t('addToCart')}
+                   >
+                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                     </svg>
+                   </button>
                  </div>
                </div>
              </div>
            </div>
-          ))}
+              ))}
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+    </AuthGuard>
   );
 }

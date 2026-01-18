@@ -2,11 +2,10 @@
 import React, { Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSettingsStore } from '@/store/settingsStore';
-import { translations } from '@/lib/translations';
+import { useTranslations } from 'next-intl';
 
 const SuccessContent = () => {
-  const { language } = useSettingsStore();
-  const t = translations[language];
+  const t = useTranslations('CheckoutPage');
   const router = useRouter()
 
   return (
@@ -19,23 +18,23 @@ const SuccessContent = () => {
             </svg>
         </div>
         
-        <h2 className='text-2xl font-bold text-gray-900 dark:text-white'>{t.success}</h2>
+        <h2 className='text-2xl font-bold text-gray-900 dark:text-white'>{t('success')}</h2>
         <p className='text-gray-500 dark:text-gray-400 text-sm'>
-          {t.paymentSuccessful}
+          {t('paymentSuccessful')}
         </p>
       </div>
 
       <div className='bg-gray-50 dark:bg-gray-900 rounded-xl p-4 mb-6 border border-gray-200 dark:border-gray-700/50 transition-colors'>
         
         <div className='flex justify-between items-center mb-4 pb-4 border-b border-gray-200 dark:border-gray-800'>
-          <span className='text-gray-500 dark:text-gray-400 text-sm'>{t.status}</span>
+          <span className='text-gray-500 dark:text-gray-400 text-sm'>{t('status')}</span>
           <span className='text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-400/10 px-3 py-1 rounded-full text-xs font-bold'>
-            {t.killed}
+            {t('killed')}
           </span>
         </div>
 
         <div className='flex justify-between items-center'>
-          <span className='text-gray-500 dark:text-gray-400 text-sm'>{t.transactionId}</span>
+          <span className='text-gray-500 dark:text-gray-400 text-sm'>{t('transactionId')}</span>
           <span className='text-gray-900 dark:text-white font-mono text-sm font-medium'>
             Unknown
           </span>
@@ -47,14 +46,14 @@ const SuccessContent = () => {
           onClick={() => router.push('/inventory')} 
           className='w-full bg-blue-600 hover:bg-blue-700 text-white p-3.5 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-blue-500/20'
         >
-          {t.viewInventor}
+          {t('viewInventor')}
         </button>
         
         <button 
           onClick={() => router.push('/marketplace')} 
           className='w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-200 p-3.5 rounded-xl font-bold transition-all active:scale-95'
         >
-          {t.shoppingAgain}
+          {t('shoppingAgain')}
         </button>
       </div>
 

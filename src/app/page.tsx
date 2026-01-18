@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Link } from "@/i18n/routing";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import Navbar from "@/components/Navbar";
 import PaymentMethods from "@/components/PaymentMethods";

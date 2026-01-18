@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cartStore";
@@ -231,7 +231,7 @@ export default function Navbar() {
 
                     <div className="py-2">
                       <Link
-                        href="/profile"
+                        href="/profile/settings"
                         className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                         onClick={() => setProfileMenuOpen(false)}
                       >
@@ -254,7 +254,7 @@ export default function Navbar() {
                       <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
 
                       <Link
-                        href="/profile?tab=balance"
+                        href="/profile/balance"
                         className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                         onClick={() => setProfileMenuOpen(false)}
                       >
@@ -304,7 +304,7 @@ export default function Navbar() {
                       </Link>
 
                       <Link
-                        href="/profile?tab=history"
+                        href="/profile/history"
                         className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                         onClick={() => setProfileMenuOpen(false)}
                       >
@@ -439,7 +439,7 @@ export default function Navbar() {
                   {t("cart")}
                 </Link>
                 <Link
-                  href="/profile"
+                  href="/profile/settings"
                   className="block py-2 hover:text-primary-600"
                 >
                   {t("profile")}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Link } from "@/i18n/routing";
+import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
