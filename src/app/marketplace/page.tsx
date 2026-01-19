@@ -154,6 +154,7 @@ function MarketplaceContent() {
 
   const openSkinDetails = (skin: Skin) => {
     const steamItem = {
+      id: skin.id, // ID ni qo'shamiz
       market_hash_name: skin.name,
       market_name: skin.name,
       name: skin.name,

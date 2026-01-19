@@ -50,10 +50,16 @@ export default function SkinDetailsModal({
   const handleGenerateLink = async () => {
     setLoading(true);
     try {
+      // Skin ID mavjudligini tekshirish
+      if (!skin?.id) {
+        console.error("Skin ID not found:", skin);
+        return;
+      }
+      
       // To'g'ridan-to'g'ri skin ID yordamida link yaratish
       const host = window.location.host;
       const protocol = window.location.protocol;
-      const shareUrl = `${protocol}//${host}/marketplace?openSkin=${skin?.id}`;
+      const shareUrl = `${protocol}//${host}/marketplace?openSkin=${skin.id}`;
       
       setUrl(shareUrl);
     } catch (error) {
