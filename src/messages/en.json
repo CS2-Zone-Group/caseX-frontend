@@ -40,6 +40,47 @@
       "copyright": "All rights reserved."
     }
   },
+  "RegisterPage": {
+    "title": "Sign Up",
+    "subtitle": "Or",
+    "loginLink": "sign in to your account",
+    "form": {
+      "username": "Username",
+      "usernamePlaceholder": "john_doe",
+      "email": "Email Address",
+      "emailPlaceholder": "john@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "passwordHint": "At least 8 characters with letters and numbers",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "••••••••",
+      "acceptTerms": "I agree to the",
+      "termsLink": "Terms of Service",
+      "and": "and",
+      "privacyLink": "Privacy Policy",
+      "register": "Sign Up",
+      "registering": "Signing up...",
+      "or": "Or",
+      "steamRegister": "Sign up with Steam"
+    },
+    "errors": {
+      "usernameRequired": "Username must be at least 3 characters long",
+      "emailInvalid": "Please enter a valid email address",
+      "passwordTooShort": "Password must be at least 8 characters long",
+      "passwordTooWeak": "Password must contain at least one letter and one number",
+      "passwordMismatch": "Passwords do not match",
+      "termsRequired": "You must accept the Terms of Service",
+      "emailExists": "This email is already registered",
+      "usernameExists": "This username is already taken",
+      "registrationFailed": "Registration failed. Please try again."
+    },
+    "success": {
+      "title": "Registration Successful!",
+      "message": "Your account has been created successfully.",
+      "checkEmail": "Please check your email and click the verification link to activate your account.",
+      "backToLogin": "Back to Login"
+    }
+  },
   "Navbar": {
     "marketplace": "Marketplace",
     "inventory": "Inventory",
@@ -354,5 +395,28 @@
     "profileShort": "Profile",
     "languageShort": "Lang",
     "historyShort": "History"
+  },
+  "VerifyEmailPage": {
+    "title": "Email Verification",
+    "loading": {
+      "title": "Verifying Email...",
+      "message": "Please wait while we verify your email address."
+    },
+    "success": {
+      "title": "Email Verified Successfully!",
+      "message": "Your email has been verified. You are now logged in.",
+      "redirecting": "Redirecting to marketplace..."
+    },
+    "error": {
+      "title": "Verification Failed",
+      "backToLogin": "Back to Login",
+      "registerAgain": "Register Again"
+    },
+    "errors": {
+      "invalidToken": "Invalid verification token.",
+      "tokenExpired": "Verification token has expired.",
+      "tokenAlreadyUsed": "This verification token has already been used.",
+      "verificationFailed": "Email verification failed. Please try again."
+    }
   }
 }

@@ -40,6 +40,47 @@
       "copyright": "Все права защищены."
     }
   },
+  "RegisterPage": {
+    "title": "Регистрация",
+    "subtitle": "Или",
+    "loginLink": "войдите в свой аккаунт",
+    "form": {
+      "username": "Имя пользователя",
+      "usernamePlaceholder": "john_doe",
+      "email": "Email адрес",
+      "emailPlaceholder": "john@example.com",
+      "password": "Пароль",
+      "passwordPlaceholder": "••••••••",
+      "passwordHint": "Минимум 8 символов, должны быть буквы и цифры",
+      "confirmPassword": "Подтвердите пароль",
+      "confirmPasswordPlaceholder": "••••••••",
+      "acceptTerms": "Я согласен с",
+      "termsLink": "Условиями использования",
+      "and": "и",
+      "privacyLink": "Политикой конфиденциальности",
+      "register": "Зарегистрироваться",
+      "registering": "Регистрация...",
+      "or": "Или",
+      "steamRegister": "Регистрация через Steam"
+    },
+    "errors": {
+      "usernameRequired": "Имя пользователя должно содержать минимум 3 символа",
+      "emailInvalid": "Введите корректный email адрес",
+      "passwordTooShort": "Пароль должен содержать минимум 8 символов",
+      "passwordTooWeak": "Пароль должен содержать минимум одну букву и одну цифру",
+      "passwordMismatch": "Пароли не совпадают",
+      "termsRequired": "Вы должны принять Условия использования",
+      "emailExists": "Этот email уже зарегистрирован",
+      "usernameExists": "Это имя пользователя уже занято",
+      "registrationFailed": "Ошибка регистрации. Попробуйте еще раз."
+    },
+    "success": {
+      "title": "Регистрация Успешна!",
+      "message": "Ваш аккаунт успешно создан.",
+      "checkEmail": "Проверьте свою почту и нажмите на ссылку подтверждения для активации аккаунта.",
+      "backToLogin": "Вернуться к входу"
+    }
+  },
   "Navbar": {
     "marketplace": "Маркетплейс",
     "inventory": "Инвентарь",
@@ -354,5 +395,28 @@
     "profileShort": "Профиль",
     "languageShort": "Язык",
     "historyShort": "История"
+  },
+  "VerifyEmailPage": {
+    "title": "Подтверждение Email",
+    "loading": {
+      "title": "Подтверждение Email...",
+      "message": "Пожалуйста, подождите, пока мы подтверждаем ваш email адрес."
+    },
+    "success": {
+      "title": "Email Успешно Подтвержден!",
+      "message": "Ваш email подтвержден. Вы вошли в систему.",
+      "redirecting": "Перенаправление на маркетплейс..."
+    },
+    "error": {
+      "title": "Подтверждение Не Удалось",
+      "backToLogin": "Вернуться к входу",
+      "registerAgain": "Зарегистрироваться снова"
+    },
+    "errors": {
+      "invalidToken": "Неверный токен подтверждения.",
+      "tokenExpired": "Срок действия токена подтверждения истек.",
+      "tokenAlreadyUsed": "Этот токен подтверждения уже использован.",
+      "verificationFailed": "Подтверждение email не удалось. Попробуйте еще раз."
+    }
   }
 }

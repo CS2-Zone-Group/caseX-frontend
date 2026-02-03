@@ -40,6 +40,47 @@
       "copyright": "Barcha huquqlar himoyalangan."
     }
   },
+  "RegisterPage": {
+    "title": "Ro'yxatdan O'tish",
+    "subtitle": "Yoki",
+    "loginLink": "hisobingizga kiring",
+    "form": {
+      "username": "Foydalanuvchi nomi",
+      "usernamePlaceholder": "john_doe",
+      "email": "Email manzil",
+      "emailPlaceholder": "john@example.com",
+      "password": "Parol",
+      "passwordPlaceholder": "••••••••",
+      "passwordHint": "Kamida 8 ta belgi, harf va raqam bo'lishi kerak",
+      "confirmPassword": "Parolni tasdiqlang",
+      "confirmPasswordPlaceholder": "••••••••",
+      "acceptTerms": "Men",
+      "termsLink": "Foydalanish shartlari",
+      "and": "va",
+      "privacyLink": "Maxfiylik siyosati",
+      "register": "Ro'yxatdan O'tish",
+      "registering": "Ro'yxatdan o'tmoqda...",
+      "or": "Yoki",
+      "steamRegister": "Steam orqali ro'yxatdan o'tish"
+    },
+    "errors": {
+      "usernameRequired": "Foydalanuvchi nomi kamida 3 ta belgidan iborat bo'lishi kerak",
+      "emailInvalid": "To'g'ri email manzilini kiriting",
+      "passwordTooShort": "Parol kamida 8 ta belgidan iborat bo'lishi kerak",
+      "passwordTooWeak": "Parolda kamida bitta harf va bitta raqam bo'lishi kerak",
+      "passwordMismatch": "Parollar mos kelmaydi",
+      "termsRequired": "Foydalanish shartlarini qabul qilishingiz kerak",
+      "emailExists": "Bu email allaqachon ro'yxatdan o'tgan",
+      "usernameExists": "Bu foydalanuvchi nomi band",
+      "registrationFailed": "Ro'yxatdan o'tishda xatolik. Qayta urinib ko'ring."
+    },
+    "success": {
+      "title": "Ro'yxatdan O'tish Muvaffaqiyatli!",
+      "message": "Hisobingiz muvaffaqiyatli yaratildi.",
+      "checkEmail": "Emailingizni tekshiring va hisobingizni faollashtirish uchun tasdiqlash havolasini bosing.",
+      "backToLogin": "Kirish sahifasiga qaytish"
+    }
+  },
   "Navbar": {
     "marketplace": "Marketplace",
     "inventory": "Inventar",
@@ -354,5 +395,28 @@
     "profileShort": "Profil",
     "languageShort": "Til",
     "historyShort": "Tarix"
+  },
+  "VerifyEmailPage": {
+    "title": "Email Tasdiqlash",
+    "loading": {
+      "title": "Email Tasdiqlanmoqda...",
+      "message": "Email manzilingizni tasdiqlashni kutib turing."
+    },
+    "success": {
+      "title": "Email Muvaffaqiyatli Tasdiqlandi!",
+      "message": "Emailingiz tasdiqlandi. Endi tizimga kirdingiz.",
+      "redirecting": "Marketplace'ga yo'naltirilmoqda..."
+    },
+    "error": {
+      "title": "Tasdiqlash Muvaffaqiyatsiz",
+      "backToLogin": "Kirish sahifasiga qaytish",
+      "registerAgain": "Qayta ro'yxatdan o'tish"
+    },
+    "errors": {
+      "invalidToken": "Noto'g'ri tasdiqlash tokeni.",
+      "tokenExpired": "Tasdiqlash tokeni muddati tugagan.",
+      "tokenAlreadyUsed": "Bu tasdiqlash tokeni allaqachon ishlatilgan.",
+      "verificationFailed": "Email tasdiqlash muvaffaqiyatsiz. Qayta urinib ko'ring."
+    }
   }
 }
