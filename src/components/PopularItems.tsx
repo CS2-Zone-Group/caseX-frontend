@@ -18,28 +18,28 @@ const skins: SkinsType[] = [
     id: "AWP | Dragon Lore",
     name: "AWP | Dragon Lore",
     price: "$12,500.00",
-    icon_url: "",
+    icon_url: "-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FAR17PLfYQJD_9W7m5S0mvLwOq7c2GoFsJYpiLuW8d_xjljh-hBpMWv7I4OXJlQ2NFqC-FLglLq-hJe_tcmbm3Vu3nJh5XmMnhi3n1gSOA",
     float: "Factory New",
   },
   {
     id: "M4A4 | Howl",
     name: "M4A4 | Howl",
     price: "$4,200.00",
-    icon_url: "",
+    icon_url: "-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou6rwOANf1OD3fDxUosmJlY20mvbmMbfUqWdQ-sJ0xOzAot-jiVew-hU5ZWv3IteWeg43YVrT-1m4keC-h5S9usqb1Htu3nJh5XmNABaRaFNA",
     float: "Minimal Wear",
   },
   {
     id: "Karambit | Doppler",
     name: "Karambit | Doppler",
     price: "$1,100.00",
-    icon_url: "",
+    icon_url: "-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpovbSsLQJf2PLacDBA5ciJlY20k_jkI6fXlGYFsJMg2LiYoNms2Fbm_kY6Yzz6JoScdA43YFvT_Va3kOm8gJO1vs_JnBk",
     float: "Factory New",
   },
   {
     id: "Sport Gloves | Pandora's Box",
     name: "Sport Gloves | Pandora's Box",
     price: "$1,450.00",
-    icon_url: "",
+    icon_url: "-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou7umeldf0Ob3fDxLmtmlhIGZmOjkAbXTlzpD7fp9g_vV8YLmjlHw-hI-YXjwcdKXdlRpNVCC-FW4wOTqjJO0upXIynY3snEy7HnUlBRCfw",
     float: "Field-Tested",
   },
 ];
@@ -67,9 +67,12 @@ const PopularItems = () => {
     <>
       <section className="py-20 px-4 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
         <div className="container mx-auto">
-          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-12 text-center text-transparent bg-clip-text bg-gradient-to-b from-gray-900 to-gray-600 dark:from-white dark:to-gray-500">
-            {t("title")}
-          </h2>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+              {t("title")}
+            </h2>
+            <div className="mt-3 w-16 h-1 bg-blue-600 mx-auto rounded-full" />
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {skins.map((item, index) => (

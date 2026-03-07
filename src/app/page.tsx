@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import Navbar from "@/components/Navbar";
 import PaymentMethods from "@/components/PaymentMethods";
 import PopularItems from "@/components/PopularItems";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function Home() {
   const t = useTranslations("HomePage");
@@ -95,37 +94,52 @@ export default function Home() {
       {/* Features Section */}
       <section id="features" className="py-20 px-4 bg-white dark:bg-gray-800">
         <div className="container mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">
-            {t("features.title")}
-          </h2>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+              {t("features.title")}
+            </h2>
+            <div className="mt-3 w-16 h-1 bg-blue-600 mx-auto rounded-full" />
+          </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 bg-gradient-to-br from-blue-50 to-primary-50 dark:from-gray-900 dark:to-gray-800 rounded-xl">
-              <div className="text-4xl mb-4">💰</div>
-              <h3 className="text-xl font-bold mb-3">
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="p-8 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-blue-500 dark:hover:border-blue-500 transition-colors">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 rounded-xl flex items-center justify-center mb-5">
+                <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
                 {t("features.bestPrices.title")}
               </h3>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-gray-500 dark:text-gray-400 leading-relaxed">
                 {t("features.bestPrices.description")}
               </p>
             </div>
 
-            <div className="p-8 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-900 dark:to-gray-800 rounded-xl">
-              <div className="text-4xl mb-4">🔒</div>
-              <h3 className="text-xl font-bold mb-3">
+            <div className="p-8 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-blue-500 dark:hover:border-blue-500 transition-colors">
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/40 rounded-xl flex items-center justify-center mb-5">
+                <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
                 {t("features.securePayments.title")}
               </h3>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-gray-500 dark:text-gray-400 leading-relaxed">
                 {t("features.securePayments.description")}
               </p>
             </div>
 
-            <div className="p-8 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 rounded-xl">
-              <div className="text-4xl mb-4">⚡</div>
-              <h3 className="text-xl font-bold mb-3">
+            <div className="p-8 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-blue-500 dark:hover:border-blue-500 transition-colors">
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/40 rounded-xl flex items-center justify-center mb-5">
+                <svg className="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
                 {t("features.fastDelivery.title")}
               </h3>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-gray-500 dark:text-gray-400 leading-relaxed">
                 {t("features.fastDelivery.description")}
               </p>
             </div>
@@ -138,14 +152,15 @@ export default function Home() {
       {/* About Section */}
       <section id="about" className="py-20 px-4">
         <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-4xl font-bold mb-6">{t("about.title")}</h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
+          <div className="text-center mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+              {t("about.title")}
+            </h2>
+            <div className="mt-3 w-16 h-1 bg-blue-600 mx-auto rounded-full" />
+          </div>
+          <p className="text-lg text-gray-500 dark:text-gray-300 leading-relaxed">
             {t("about.description")}
           </p>
-          {/* Language Switcher */}
-          <div className="flex justify-center">
-            <LanguageSwitcher />
-          </div>
         </div>
       </section>
 

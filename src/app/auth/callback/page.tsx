@@ -7,7 +7,7 @@ import { useAuthStore } from '@/store/authStore';
 function AuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { setAuth, checkTokenValidity } = useAuthStore();
+  const { setAuth } = useAuthStore();
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -23,24 +23,25 @@ function AuthCallbackContent() {
 
       if (token) {
         try {
-          // Store the token temporarily in localStorage
+          // Store token in localStorage for axios interceptor
           if (typeof window !== 'undefined') {
             localStorage.setItem('token', token);
           }
-          
-          // Validate token and fetch user data
-          const isValid = await checkTokenValidity();
-          
-          if (isValid) {
-            // Redirect to marketplace
+
+          // Fetch user profile with the new token
+          const { default: api } = await import('@/lib/api');
+          const response = await api.get('/users/profile');
+
+          if (response.data) {
+            setAuth(response.data, token);
             router.push('/marketplace');
           } else {
             throw new Error('Token validation failed');
           }
         } catch (error) {
           console.error('Error processing authentication:', error);
-          alert('Authentication failed. Please try again.');
-          router.push('/auth/login');
+          if (typeof window !== 'undefined') localStorage.removeItem('token');
+          router.push('/auth/login?error=auth_failed');
         }
       } else {
         console.error('No token received');
@@ -50,7 +51,7 @@ function AuthCallbackContent() {
     };
 
     handleCallback();
-  }, [searchParams, setAuth, checkTokenValidity, router]);
+  }, [searchParams, setAuth, router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">

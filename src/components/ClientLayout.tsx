@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
 import { useSettingsStore } from "@/store/settingsStore";
 import ChatSupport from "@/components/ChatSupport";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 export default function ClientLayout({
   children,
@@ -98,9 +99,11 @@ export default function ClientLayout({
   }
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      {children}
-      <ChatSupport />
-    </NextIntlClientProvider>
+    <LanguageProvider>
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        {children}
+        <ChatSupport />
+      </NextIntlClientProvider>
+    </LanguageProvider>
   );
 }

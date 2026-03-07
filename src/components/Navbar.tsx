@@ -10,6 +10,12 @@ import { useTranslations } from "next-intl";
 import { convertCurrency, formatPrice } from "@/lib/currency";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useFavouritesStore } from "@/store/favouritesStore";
+import ThemeToggle from "@/components/ThemeToggle";
+import { locales } from "@/i18n/routing";
+import { changeLanguage, getCurrentLanguage } from "@/lib/language";
+
+const langLabels: Record<string, string> = { uz: "UZ", en: "EN", ru: "RU" };
+const langFlags: Record<string, string> = { uz: "🇺🇿", en: "🇺🇸", ru: "🇷🇺" };
 
 export default function Navbar() {
   const { count, fetchFavouriteIds, resetStore } = useFavouritesStore();
@@ -21,6 +27,12 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [convertedBalance, setConvertedBalance] = useState(0);
+  const [currentLang, setCurrentLang] = useState(getCurrentLanguage());
+
+  const handleLangChange = (locale: string) => {
+    changeLanguage(locale);
+    setCurrentLang(locale);
+  };
 
   const isLoggedIn = hasHydrated && !!user && !!token;
   const baseBalance = user?.balance || 0;
@@ -150,6 +162,24 @@ export default function Navbar() {
                     </span>
                   )}
                 </Link>
+              </>
+            )}
+
+            {/* Language selector + theme toggle — only when NOT logged in */}
+            {!isLoggedIn && (
+              <>
+                <select
+                  value={currentLang}
+                  onChange={(e) => handleLangChange(e.target.value)}
+                  className="text-sm bg-gray-100 dark:bg-gray-800 border-0 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {locales.map((locale) => (
+                    <option key={locale} value={locale}>
+                      {langFlags[locale]} {langLabels[locale]}
+                    </option>
+                  ))}
+                </select>
+                <ThemeToggle />
               </>
             )}
 

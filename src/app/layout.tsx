@@ -27,7 +27,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html className="dark">
+    <html suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var t=localStorage.getItem('theme');if(t!=='light')document.documentElement.classList.add('dark')})()`,
+          }}
+        />
+      </head>
       <body className={inter.className} suppressHydrationWarning={true}>
         <ClientLayout>{children}</ClientLayout>
       </body>
