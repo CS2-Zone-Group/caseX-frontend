@@ -14,7 +14,7 @@ const LOG_LEVELS: LogLevel = {
 
 interface LogEntry {
   timestamp: string;
-  level: keyof LogLevel;
+  level: LogLevel[keyof LogLevel];
   message: string;
   context?: string;
   metadata?: any;
@@ -45,7 +45,7 @@ class Logger {
     this.userId = userId;
   }
 
-  private createLogEntry(level: keyof LogLevel, message: string, context?: string, metadata?: any): LogEntry {
+  private createLogEntry(level: LogLevel[keyof LogLevel], message: string, context?: string, metadata?: any): LogEntry {
     return {
       timestamp: new Date().toISOString(),
       level,
