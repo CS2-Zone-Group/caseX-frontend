@@ -88,7 +88,7 @@ export default function LoginPage() {
                 value={formData.identifier}
                 onChange={(e) => setFormData({ ...formData, identifier: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800"
-                placeholder="john@example.com yoki username"
+                placeholder="john@example.com, username yoki +998901234567"
               />
             </div>
 
@@ -179,7 +179,7 @@ export default function LoginPage() {
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
               </svg>
-              <span>Telefon raqam orqali kirish</span>
+              <span>Parolsiz kirish (OTP)</span>
             </Link>
           </div>
         </form>
