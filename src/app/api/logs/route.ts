@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
+  let logs: unknown;
   try {
-    const { logs } = await request.json();
+    ({ logs } = await request.json());
     
     // Backend'ga logs yuborish
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
