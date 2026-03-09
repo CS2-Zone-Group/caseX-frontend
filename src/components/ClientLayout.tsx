@@ -23,21 +23,34 @@ export default function ClientLayout({
       await useSettingsStore.persist.rehydrate();
 
       useAuthStore.getState().setHasHydrated(true);
-      
-      // localStorage dan tilni olish
-      const savedLanguage = typeof window !== 'undefined' ? localStorage.getItem('language') || 'uz' : 'uz';
-      setLocale(savedLanguage);
-      
+
+      // settingsStore dan tilni olish (primary source)
+      const settingsLanguage = useSettingsStore.getState().language;
+      // Eski localStorage 'language' key dan ham tekshirish (backward compat)
+      const legacyLanguage = typeof window !== 'undefined' ? localStorage.getItem('language') : null;
+
+      // settingsStore ga ustunlik berish, lekin agar bo'sh bo'lsa legacy dan olish
+      const resolvedLanguage = settingsLanguage || legacyLanguage || 'uz';
+      setLocale(resolvedLanguage);
+
+      // Sinxronlash: ikkala joyda ham bir xil qiymat bo'lishi kerak
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('language', resolvedLanguage);
+      }
+      if (settingsLanguage !== resolvedLanguage) {
+        useSettingsStore.getState().setLanguage(resolvedLanguage as any);
+      }
+
       // Tarjima fayllarini yuklash
       try {
-        const messagesModule = await import(`../messages/${savedLanguage}.json`);
+        const messagesModule = await import(`../messages/${resolvedLanguage}.json`);
         setMessages(messagesModule.default);
       } catch (error) {
         console.error('Failed to load messages:', error);
         const fallbackMessages = await import('../messages/uz.json');
         setMessages(fallbackMessages.default);
       }
-      
+
       setIsLoaded(true);
     };
 
@@ -72,7 +85,12 @@ export default function ClientLayout({
       const customEvent = event as CustomEvent;
       const newLanguage = customEvent.detail;
       setLocale(newLanguage);
-      
+
+      // localStorage ni ham yangilash
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('language', newLanguage);
+      }
+
       try {
         const messagesModule = await import(`../messages/${newLanguage}.json`);
         setMessages(messagesModule.default);
@@ -83,7 +101,7 @@ export default function ClientLayout({
 
     if (typeof window !== 'undefined') {
       window.addEventListener('languageChange', handleLanguageChange);
-      
+
       return () => {
         window.removeEventListener('languageChange', handleLanguageChange);
       };

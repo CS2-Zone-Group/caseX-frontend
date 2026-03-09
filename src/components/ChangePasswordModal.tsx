@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import api from '@/lib/api';
+import { useTranslations } from 'next-intl';
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
@@ -9,6 +10,7 @@ interface ChangePasswordModalProps {
 }
 
 export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
+  const t = useTranslations('ChangePasswordModal');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -25,17 +27,17 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
 
     // Validation
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setError('Barcha maydonlarni to\'ldiring');
+      setError(t('errors.fillAll'));
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError('Yangi parollar mos kelmaydi');
+      setError(t('errors.mismatch'));
       return;
     }
 
     if (newPassword.length < 8) {
-      setError('Yangi parol kamida 8 ta belgidan iborat bo\'lishi kerak');
+      setError(t('errors.tooShort'));
       return;
     }
 
@@ -56,7 +58,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
         setConfirmPassword('');
       }, 2000);
     } catch (error: any) {
-      setError(error.response?.data?.message || 'Parol o\'zgartirishda xatolik yuz berdi');
+      setError(error.response?.data?.message || t('errors.changeFailed'));
     } finally {
       setLoading(false);
     }
@@ -79,7 +81,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         {/* Background overlay */}
-        <div 
+        <div
           className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
           onClick={handleClose}
         />
@@ -88,7 +90,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
         <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-2xl">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Parolni O'zgartirish
+              {t('title')}
             </h3>
             <button
               onClick={handleClose}
@@ -109,10 +111,10 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                 </svg>
               </div>
               <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Parol Muvaffaqiyatli O'zgartirildi!
+                {t('successTitle')}
               </h4>
               <p className="text-gray-600 dark:text-gray-400">
-                Yangi parolingiz saqlandi
+                {t('successMessage')}
               </p>
             </div>
           ) : (
@@ -125,7 +127,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Joriy Parol
+                  {t('currentPassword')}
                 </label>
                 <div className="relative">
                   <input
@@ -133,7 +135,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Joriy parolingizni kiriting"
+                    placeholder={t('currentPasswordPlaceholder')}
                     disabled={loading}
                   />
                   <button
@@ -158,7 +160,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Yangi Parol
+                  {t('newPassword')}
                 </label>
                 <div className="relative">
                   <input
@@ -166,7 +168,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Yangi parolingizni kiriting"
+                    placeholder={t('newPasswordPlaceholder')}
                     disabled={loading}
                   />
                   <button
@@ -191,7 +193,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Yangi Parolni Tasdiqlang
+                  {t('confirmPassword')}
                 </label>
                 <div className="relative">
                   <input
@@ -199,7 +201,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Yangi parolingizni qayta kiriting"
+                    placeholder={t('confirmPasswordPlaceholder')}
                     disabled={loading}
                   />
                   <button
@@ -229,7 +231,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                   disabled={loading}
                   className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
                 >
-                  Bekor Qilish
+                  {t('cancel')}
                 </button>
                 <button
                   type="submit"
@@ -242,10 +244,10 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      O'zgartirilmoqda...
+                      {t('submitting')}
                     </>
                   ) : (
-                    'Parolni O\'zgartirish'
+                    t('submit')
                   )}
                 </button>
               </div>

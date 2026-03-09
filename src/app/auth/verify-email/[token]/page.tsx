@@ -4,116 +4,63 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import { useLanguage } from '@/contexts/LanguageContext';
-
-// Translation helper function
-const getTranslations = (language: string) => {
-  const translations = {
-    en: {
-      title: "Email Verification",
-      loadingTitle: "Verifying Email...",
-      loadingMessage: "Please wait while we verify your email address.",
-      successTitle: "Email Verified Successfully!",
-      successMessage: "Your email has been verified. You are now logged in.",
-      redirecting: "Redirecting to marketplace...",
-      errorTitle: "Verification Failed",
-      backToLogin: "Back to Login",
-      registerAgain: "Register Again",
-      invalidToken: "Invalid verification token.",
-      tokenExpired: "Verification token has expired.",
-      tokenAlreadyUsed: "This verification token has already been used.",
-      verificationFailed: "Email verification failed. Please try again."
-    },
-    uz: {
-      title: "Email Tasdiqlash",
-      loadingTitle: "Email Tasdiqlanmoqda...",
-      loadingMessage: "Email manzilingizni tasdiqlashni kutib turing.",
-      successTitle: "Email Muvaffaqiyatli Tasdiqlandi!",
-      successMessage: "Emailingiz tasdiqlandi. Endi tizimga kirdingiz.",
-      redirecting: "Marketplace'ga yo'naltirilmoqda...",
-      errorTitle: "Tasdiqlash Muvaffaqiyatsiz",
-      backToLogin: "Kirish sahifasiga qaytish",
-      registerAgain: "Qayta ro'yxatdan o'tish",
-      invalidToken: "Noto'g'ri tasdiqlash tokeni.",
-      tokenExpired: "Tasdiqlash tokeni muddati tugagan.",
-      tokenAlreadyUsed: "Bu tasdiqlash tokeni allaqachon ishlatilgan.",
-      verificationFailed: "Email tasdiqlash muvaffaqiyatsiz. Qayta urinib ko'ring."
-    },
-    ru: {
-      title: "Подтверждение Email",
-      loadingTitle: "Подтверждение Email...",
-      loadingMessage: "Пожалуйста, подождите, пока мы подтверждаем ваш email адрес.",
-      successTitle: "Email Успешно Подтвержден!",
-      successMessage: "Ваш email подтвержден. Вы вошли в систему.",
-      redirecting: "Перенаправление на маркетплейс...",
-      errorTitle: "Подтверждение Не Удалось",
-      backToLogin: "Вернуться к входу",
-      registerAgain: "Зарегистрироваться снова",
-      invalidToken: "Неверный токен подтверждения.",
-      tokenExpired: "Срок действия токена подтверждения истек.",
-      tokenAlreadyUsed: "Этот токен подтверждения уже использован.",
-      verificationFailed: "Подтверждение email не удалось. Попробуйте еще раз."
-    }
-  };
-  return translations[language as keyof typeof translations] || translations.en;
-};
+import { useTranslations } from 'next-intl';
 
 export default function VerifyEmailPage() {
   const router = useRouter();
   const params = useParams();
   const { setAuth } = useAuthStore();
-  const { language } = useLanguage();
-  const t = getTranslations(language);
-  
+  const t = useTranslations('VerifyEmailPage');
+
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    document.title = `${t.title} - CaseX`;
-  }, [t.title]);
+    document.title = `${t('title')} - CaseX`;
+  }, [t]);
 
   useEffect(() => {
     const verifyEmail = async () => {
       const token = params.token as string;
-      
+
       if (!token) {
         setStatus('error');
-        setMessage(t.invalidToken);
+        setMessage(t('errors.invalidToken'));
         return;
       }
 
       try {
         const { data } = await api.get(`/auth/verify-email/${token}`);
-        
+
         if (data.access_token) {
           setAuth(data.user, data.access_token);
           setStatus('success');
-          setMessage(t.successMessage);
-          
+          setMessage(t('success.message'));
+
           // Redirect to marketplace after 3 seconds
           setTimeout(() => {
             router.push('/marketplace');
           }, 3000);
         } else {
           setStatus('error');
-          setMessage(t.verificationFailed);
+          setMessage(t('errors.verificationFailed'));
         }
       } catch (error: any) {
         setStatus('error');
         const errorCode = error.response?.data?.message || 'VERIFICATION_FAILED';
-        
+
         switch (errorCode) {
           case 'INVALID_TOKEN':
-            setMessage(t.invalidToken);
+            setMessage(t('errors.invalidToken'));
             break;
           case 'TOKEN_EXPIRED':
-            setMessage(t.tokenExpired);
+            setMessage(t('errors.tokenExpired'));
             break;
           case 'TOKEN_ALREADY_USED':
-            setMessage(t.tokenAlreadyUsed);
+            setMessage(t('errors.tokenAlreadyUsed'));
             break;
           default:
-            setMessage(t.verificationFailed);
+            setMessage(t('errors.verificationFailed'));
         }
       }
     };
@@ -128,10 +75,10 @@ export default function VerifyEmailPage() {
           <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <h2 className="text-xl font-semibold text-blue-800 dark:text-blue-200 mb-2">
-              {t.loadingTitle}
+              {t('loading.title')}
             </h2>
             <p className="text-blue-700 dark:text-blue-300">
-              {t.loadingMessage}
+              {t('loading.message')}
             </p>
           </div>
         )}
@@ -144,13 +91,13 @@ export default function VerifyEmailPage() {
               </svg>
             </div>
             <h2 className="text-xl font-semibold text-green-800 dark:text-green-200 mb-2">
-              {t.successTitle}
+              {t('success.title')}
             </h2>
             <p className="text-green-700 dark:text-green-300 mb-4">
               {message}
             </p>
             <p className="text-sm text-green-600 dark:text-green-400">
-              {t.redirecting}
+              {t('success.redirecting')}
             </p>
           </div>
         )}
@@ -163,7 +110,7 @@ export default function VerifyEmailPage() {
               </svg>
             </div>
             <h2 className="text-xl font-semibold text-red-800 dark:text-red-200 mb-2">
-              {t.errorTitle}
+              {t('error.title')}
             </h2>
             <p className="text-red-700 dark:text-red-300 mb-6">
               {message}
@@ -173,13 +120,13 @@ export default function VerifyEmailPage() {
                 onClick={() => router.push('/auth/login')}
                 className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
               >
-                {t.backToLogin}
+                {t('error.backToLogin')}
               </button>
               <button
                 onClick={() => router.push('/auth/register')}
                 className="w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
               >
-                {t.registerAgain}
+                {t('error.registerAgain')}
               </button>
             </div>
           </div>

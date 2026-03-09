@@ -35,7 +35,7 @@ export default function CheckoutPage() {
     setError(null);
     
     if (!paymentMethod) {
-      setError("Iltimos, to'lov usulini tanlang");
+      setError(t('paymentMethodError'));
       return;
     }
 

@@ -44,6 +44,11 @@
     "title": "Регистрация",
     "subtitle": "Или",
     "loginLink": "войдите в свой аккаунт",
+    "loginText": "Уже есть аккаунт?",
+    "backToHome": "Главная",
+    "emailTab": "Email",
+    "phoneTab": "Телефон",
+    "resendTooSoon": "Подождите и попробуйте снова.",
     "form": {
       "username": "Имя пользователя",
       "usernamePlaceholder": "john_doe",
@@ -58,10 +63,20 @@
       "termsLink": "Условиями использования",
       "and": "и",
       "privacyLink": "Политикой конфиденциальности",
+      "termsAcceptSuffix": "",
       "register": "Зарегистрироваться",
       "registering": "Регистрация...",
       "or": "Или",
-      "steamRegister": "Регистрация через Steam"
+      "steamRegister": "Регистрация через Steam",
+      "googleRegister": "Регистрация через Google"
+    },
+    "phone": {
+      "label": "Номер телефона",
+      "placeholder": "+998901234567",
+      "hint": "Введите в международном формате (+998XXXXXXXXX)",
+      "sendOtp": "Отправить код",
+      "sending": "Отправка...",
+      "invalid": "Введите в формате +998XXXXXXXXX"
     },
     "errors": {
       "usernameRequired": "Имя пользователя должно содержать минимум 3 символа",
@@ -366,6 +381,12 @@
   },
   "ProfilePage": {
     "profileSettings": "Настройки профиля",
+    "profilePhoto": "ФОТО ПРОФИЛЯ",
+    "password": "ПАРОЛЬ",
+    "changePassword": "Изменить пароль",
+    "steamUser": "Пользователь Steam",
+    "user": "Пользователь",
+    "redirecting": "Перенаправление...",
     "languageAndCurrency": "Язык и валюта",
     "twoFA": "2FA",
     "paymentHistory": "История платежей",
@@ -417,6 +438,94 @@
       "tokenExpired": "Срок действия токена подтверждения истек.",
       "tokenAlreadyUsed": "Этот токен подтверждения уже использован.",
       "verificationFailed": "Подтверждение email не удалось. Попробуйте еще раз."
+    }
+  },
+  "LoginPage": {
+    "pageTitle": "Вход - CaseX",
+    "backToHome": "Главная",
+    "heading": "Войти в систему",
+    "or": "Или",
+    "registerLink": "зарегистрируйтесь",
+    "identifierLabel": "Email, имя пользователя или телефон",
+    "identifierPlaceholder": "john@example.com, username или +998901234567",
+    "password": "Пароль",
+    "loading": "Загрузка...",
+    "login": "Войти",
+    "googleLogin": "Войти через Google",
+    "steamLogin": "Войти через Steam",
+    "phoneLogin": "Войти без пароля (OTP)",
+    "errors": {
+      "emailNotVerified": "Email не подтвержден. Проверьте свою почту.",
+      "accountDisabled": "Аккаунт заблокирован. Обратитесь в поддержку.",
+      "invalidCredentials": "Неверный email или пароль"
+    }
+  },
+  "PhonePage": {
+    "pageTitle": "Вход по телефону - CaseX",
+    "heading": "Вход по телефону",
+    "subtitle": "Код подтверждения будет отправлен через бот Telegram Verification Codes",
+    "phoneLabel": "Номер телефона",
+    "phoneHint": "Введите в международном формате (+998XXXXXXXXX)",
+    "sendCode": "Отправить код",
+    "sending": "Отправка...",
+    "backToLogin": "Вернуться к входу",
+    "telegramCode": "Код Telegram",
+    "codeSentTo": "6-значный код отправлен на номер",
+    "codeSentVia": "через бот Telegram Verification Codes.",
+    "verifying": "Проверка...",
+    "codeNotReceived": "Не получили код?",
+    "resending": "Отправка...",
+    "resendIn": "Отправить повторно ({seconds}с)",
+    "resend": "Отправить повторно",
+    "changeNumber": "Изменить номер",
+    "errors": {
+      "phoneFormat": "Введите в формате +998XXXXXXXXX",
+      "resendTooSoon": "Подождите и попробуйте снова.",
+      "sendError": "Ошибка отправки кода.",
+      "invalidOtp": "Неверный код. Попробуйте снова.",
+      "otpExpired": "Код истек. Запросите новый.",
+      "maxAttempts": "Превышено количество попыток. Запросите новый код.",
+      "generalError": "Произошла ошибка. Попробуйте снова."
+    }
+  },
+  "SetPasswordPage": {
+    "pageTitle": "Установка пароля - CaseX",
+    "heading": "Установка пароля",
+    "subtitle": "В дальнейшем вы сможете входить по номеру телефона и паролю",
+    "successMessage": "Пароль успешно установлен! Перенаправление на главную...",
+    "newPassword": "Новый пароль",
+    "newPasswordPlaceholder": "Минимум 8 символов (буквы + цифры)",
+    "confirmPassword": "Подтвердите пароль",
+    "confirmPasswordPlaceholder": "Введите пароль повторно",
+    "saving": "Сохранение...",
+    "save": "Сохранить пароль",
+    "skip": "Пропустить",
+    "errors": {
+      "tooShort": "Пароль должен содержать минимум 8 символов",
+      "tooWeak": "Пароль должен содержать буквы и цифры",
+      "mismatch": "Пароли не совпадают",
+      "passwordWeak": "Слабый пароль. Используйте буквы и цифры.",
+      "generalError": "Произошла ошибка. Попробуйте снова."
+    }
+  },
+  "ChangePasswordModal": {
+    "title": "Изменение пароля",
+    "currentPassword": "Текущий пароль",
+    "currentPasswordPlaceholder": "Введите текущий пароль",
+    "newPassword": "Новый пароль",
+    "newPasswordPlaceholder": "Введите новый пароль",
+    "confirmPassword": "Подтвердите новый пароль",
+    "confirmPasswordPlaceholder": "Введите новый пароль повторно",
+    "cancel": "Отмена",
+    "submit": "Изменить пароль",
+    "submitting": "Изменение...",
+    "successTitle": "Пароль успешно изменен!",
+    "successMessage": "Ваш новый пароль сохранен",
+    "errors": {
+      "fillAll": "Заполните все поля",
+      "mismatch": "Новые пароли не совпадают",
+      "tooShort": "Новый пароль должен содержать минимум 8 символов",
+      "changeFailed": "Ошибка при изменении пароля"
     }
   }
 }

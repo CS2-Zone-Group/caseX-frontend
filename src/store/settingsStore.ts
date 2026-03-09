@@ -24,7 +24,13 @@ export const useSettingsStore = create<SettingsState>()(
         set({ theme });
         applyTheme(theme);
       },
-      setLanguage: (language) => set({ language }),
+      setLanguage: (language) => {
+        set({ language });
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('language', language);
+          window.dispatchEvent(new CustomEvent('languageChange', { detail: language }));
+        }
+      },
       setCurrency: (currency) => set({ currency }),
     }),
     {

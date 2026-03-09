@@ -44,6 +44,11 @@
     "title": "Ro'yxatdan O'tish",
     "subtitle": "Yoki",
     "loginLink": "hisobingizga kiring",
+    "loginText": "Hisobingiz bormi?",
+    "backToHome": "Bosh sahifa",
+    "emailTab": "Email",
+    "phoneTab": "Telefon",
+    "resendTooSoon": "Biroz kuting va qayta urinib ko'ring.",
     "form": {
       "username": "Foydalanuvchi nomi",
       "usernamePlaceholder": "john_doe",
@@ -58,10 +63,20 @@
       "termsLink": "Foydalanish shartlari",
       "and": "va",
       "privacyLink": "Maxfiylik siyosati",
+      "termsAcceptSuffix": "ni qabul qilaman",
       "register": "Ro'yxatdan O'tish",
       "registering": "Ro'yxatdan o'tmoqda...",
       "or": "Yoki",
-      "steamRegister": "Steam orqali ro'yxatdan o'tish"
+      "steamRegister": "Steam orqali ro'yxatdan o'tish",
+      "googleRegister": "Google orqali ro'yxatdan o'tish"
+    },
+    "phone": {
+      "label": "Telefon raqam",
+      "placeholder": "+998901234567",
+      "hint": "Xalqaro formatda kiriting (+998XXXXXXXXX)",
+      "sendOtp": "Kod yuborish",
+      "sending": "Yuborilmoqda...",
+      "invalid": "+998XXXXXXXXX formatida kiriting"
     },
     "errors": {
       "usernameRequired": "Foydalanuvchi nomi kamida 3 ta belgidan iborat bo'lishi kerak",
@@ -366,6 +381,12 @@
   },
   "ProfilePage": {
     "profileSettings": "Profil sozlamalari",
+    "profilePhoto": "PROFIL RASMI",
+    "password": "PAROL",
+    "changePassword": "Parolni o'zgartirish",
+    "steamUser": "Steam foydalanuvchi",
+    "user": "Foydalanuvchi",
+    "redirecting": "Yo'naltirilmoqda...",
     "languageAndCurrency": "Til va Valyuta",
     "twoFA": "2FA",
     "paymentHistory": "To'lov tarixi",
@@ -417,6 +438,94 @@
       "tokenExpired": "Tasdiqlash tokeni muddati tugagan.",
       "tokenAlreadyUsed": "Bu tasdiqlash tokeni allaqachon ishlatilgan.",
       "verificationFailed": "Email tasdiqlash muvaffaqiyatsiz. Qayta urinib ko'ring."
+    }
+  },
+  "LoginPage": {
+    "pageTitle": "Kirish - CaseX",
+    "backToHome": "Bosh sahifa",
+    "heading": "Tizimga kirish",
+    "or": "Yoki",
+    "registerLink": "ro'yxatdan o'ting",
+    "identifierLabel": "Email, username yoki telefon raqam",
+    "identifierPlaceholder": "john@example.com, username yoki +998901234567",
+    "password": "Parol",
+    "loading": "Yuklanmoqda...",
+    "login": "Kirish",
+    "googleLogin": "Google orqali kirish",
+    "steamLogin": "Steam orqali kirish",
+    "phoneLogin": "Parolsiz kirish (OTP)",
+    "errors": {
+      "emailNotVerified": "Email tasdiqlanmagan. Emailingizni tekshiring.",
+      "accountDisabled": "Hisob bloklangan. Yordam uchun murojaat qiling.",
+      "invalidCredentials": "Email yoki parol noto'g'ri"
+    }
+  },
+  "PhonePage": {
+    "pageTitle": "Telefon bilan kirish - CaseX",
+    "heading": "Telefon orqali kirish",
+    "subtitle": "Telegram Verification Codes bot orqali tasdiqlash kodi yuboriladi",
+    "phoneLabel": "Telefon raqam",
+    "phoneHint": "Xalqaro formatda kiriting (+998XXXXXXXXX)",
+    "sendCode": "Kod yuborish",
+    "sending": "Yuborilmoqda...",
+    "backToLogin": "Kirish sahifasiga qaytish",
+    "telegramCode": "Telegram kodi",
+    "codeSentTo": "raqamiga Telegram Verification Codes boti orqali 6 xonali kod yuborildi.",
+    "codeSentVia": "",
+    "verifying": "Tekshirilmoqda...",
+    "codeNotReceived": "Kod kelmadimi?",
+    "resending": "Yuborilmoqda...",
+    "resendIn": "Qayta yuborish ({seconds}s)",
+    "resend": "Qayta yuborish",
+    "changeNumber": "Raqamni o'zgartirish",
+    "errors": {
+      "phoneFormat": "+998XXXXXXXXX formatida kiriting",
+      "resendTooSoon": "Biroz kuting va qayta urinib ko'ring.",
+      "sendError": "Kod yuborishda xatolik.",
+      "invalidOtp": "Kod noto'g'ri. Qayta kiriting.",
+      "otpExpired": "Kod muddati tugagan. Yangi kod so'rang.",
+      "maxAttempts": "Urinishlar soni tugadi. Yangi kod so'rang.",
+      "generalError": "Xatolik yuz berdi. Qayta urinib ko'ring."
+    }
+  },
+  "SetPasswordPage": {
+    "pageTitle": "Parol o'rnatish - CaseX",
+    "heading": "Parol o'rnatish",
+    "subtitle": "Keyinchalik telefon raqam va parol orqali kirishingiz mumkin bo'ladi",
+    "successMessage": "Parol muvaffaqiyatli o'rnatildi! Bosh sahifaga yo'naltirilmoqda...",
+    "newPassword": "Yangi parol",
+    "newPasswordPlaceholder": "Kamida 8 ta belgi (harf + raqam)",
+    "confirmPassword": "Parolni tasdiqlang",
+    "confirmPasswordPlaceholder": "Parolni qayta kiriting",
+    "saving": "Saqlanmoqda...",
+    "save": "Parolni saqlash",
+    "skip": "O'tkazib yuborish",
+    "errors": {
+      "tooShort": "Parol kamida 8 ta belgidan iborat bo'lishi kerak",
+      "tooWeak": "Parol harf va raqamlardan iborat bo'lishi kerak",
+      "mismatch": "Parollar mos kelmadi",
+      "passwordWeak": "Parol zaif. Harf va raqamlardan foydalaning.",
+      "generalError": "Xatolik yuz berdi. Qayta urinib ko'ring."
+    }
+  },
+  "ChangePasswordModal": {
+    "title": "Parolni O'zgartirish",
+    "currentPassword": "Joriy Parol",
+    "currentPasswordPlaceholder": "Joriy parolingizni kiriting",
+    "newPassword": "Yangi Parol",
+    "newPasswordPlaceholder": "Yangi parolingizni kiriting",
+    "confirmPassword": "Yangi Parolni Tasdiqlang",
+    "confirmPasswordPlaceholder": "Yangi parolingizni qayta kiriting",
+    "cancel": "Bekor Qilish",
+    "submit": "Parolni O'zgartirish",
+    "submitting": "O'zgartirilmoqda...",
+    "successTitle": "Parol Muvaffaqiyatli O'zgartirildi!",
+    "successMessage": "Yangi parolingiz saqlandi",
+    "errors": {
+      "fillAll": "Barcha maydonlarni to'ldiring",
+      "mismatch": "Yangi parollar mos kelmaydi",
+      "tooShort": "Yangi parol kamida 8 ta belgidan iborat bo'lishi kerak",
+      "changeFailed": "Parol o'zgartirishda xatolik yuz berdi"
     }
   }
 }

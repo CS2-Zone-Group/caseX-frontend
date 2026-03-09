@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import { useTranslations } from 'next-intl';
 
 export default function SetPasswordPage() {
   const router = useRouter();
   const { user } = useAuthStore();
+  const t = useTranslations('SetPasswordPage');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
@@ -16,8 +18,8 @@ export default function SetPasswordPage() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    document.title = 'Parol o\'rnatish - CaseX';
-  }, []);
+    document.title = t('pageTitle');
+  }, [t]);
 
   // If not logged in, redirect to login
   useEffect(() => {
@@ -30,13 +32,13 @@ export default function SetPasswordPage() {
     setError('');
 
     if (password.length < 8) {
-      return setError('Parol kamida 8 ta belgidan iborat bo\'lishi kerak');
+      return setError(t('errors.tooShort'));
     }
     if (!/[a-zA-Z]/.test(password) || !/\d/.test(password)) {
-      return setError('Parol harf va raqamlardan iborat bo\'lishi kerak');
+      return setError(t('errors.tooWeak'));
     }
     if (password !== confirm) {
-      return setError('Parollar mos kelmadi');
+      return setError(t('errors.mismatch'));
     }
 
     setLoading(true);
@@ -46,8 +48,8 @@ export default function SetPasswordPage() {
       setTimeout(() => router.push('/marketplace'), 1500);
     } catch (err: any) {
       const msg = err.response?.data?.message;
-      if (msg === 'PASSWORD_TOO_WEAK') setError('Parol zaif. Harf va raqamlardan foydalaning.');
-      else setError('Xatolik yuz berdi. Qayta urinib ko\'ring.');
+      if (msg === 'PASSWORD_TOO_WEAK') setError(t('errors.passwordWeak'));
+      else setError(t('errors.generalError'));
     } finally {
       setLoading(false);
     }
@@ -62,15 +64,15 @@ export default function SetPasswordPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Parol o'rnatish</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('heading')}</h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Keyinchalik telefon raqam va parol orqali kirishingiz mumkin bo'ladi
+            {t('subtitle')}
           </p>
         </div>
 
         {success ? (
           <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded text-sm text-center">
-            Parol muvaffaqiyatli o'rnatildi! Bosh sahifaga yo'naltirilmoqda...
+            {t('successMessage')}
           </div>
         ) : (
           <>
@@ -83,7 +85,7 @@ export default function SetPasswordPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
-                  Yangi parol
+                  {t('newPassword')}
                 </label>
                 <input
                   type="password"
@@ -91,13 +93,13 @@ export default function SetPasswordPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-                  placeholder="Kamida 8 ta belgi (harf + raqam)"
+                  placeholder={t('newPasswordPlaceholder')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
-                  Parolni tasdiqlang
+                  {t('confirmPassword')}
                 </label>
                 <input
                   type="password"
@@ -105,7 +107,7 @@ export default function SetPasswordPage() {
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-                  placeholder="Parolni qayta kiriting"
+                  placeholder={t('confirmPasswordPlaceholder')}
                 />
               </div>
 
@@ -114,13 +116,13 @@ export default function SetPasswordPage() {
                 disabled={loading}
                 className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition disabled:opacity-50 font-medium"
               >
-                {loading ? 'Saqlanmoqda...' : 'Parolni saqlash'}
+                {loading ? t('saving') : t('save')}
               </button>
             </form>
 
             <div className="text-center">
               <Link href="/marketplace" className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-                O'tkazib yuborish →
+                {t('skip')} &rarr;
               </Link>
             </div>
           </>

@@ -5,20 +5,22 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import { useTranslations } from 'next-intl';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export default function LoginPage() {
   const router = useRouter();
   const { setAuth } = useAuthStore();
+  const t = useTranslations('LoginPage');
   const [formData, setFormData] = useState({ identifier: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    document.title = 'Kirish - CaseX';
-  }, []);
+    document.title = t('pageTitle');
+  }, [t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,11 +33,11 @@ export default function LoginPage() {
     } catch (err: any) {
       const code = err.response?.data?.message;
       if (code === 'EMAIL_NOT_VERIFIED') {
-        setError('Email tasdiqlanmagan. Emailingizni tekshiring.');
+        setError(t('errors.emailNotVerified'));
       } else if (code === 'ACCOUNT_DISABLED') {
-        setError('Hisob bloklangan. Yordam uchun murojaat qiling.');
+        setError(t('errors.accountDisabled'));
       } else {
-        setError('Email yoki parol noto\'g\'ri');
+        setError(t('errors.invalidCredentials'));
       }
     } finally {
       setLoading(false);
@@ -56,15 +58,15 @@ export default function LoginPage() {
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        Bosh sahifa
+        {t('backToHome')}
       </Link>
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="text-center text-3xl font-bold">Tizimga kirish</h2>
+          <h2 className="text-center text-3xl font-bold">{t('heading')}</h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-            Yoki{' '}
+            {t('or')}{' '}
             <Link href="/auth/register" className="text-primary-600 hover:text-primary-500">
-              ro'yxatdan o'ting
+              {t('registerLink')}
             </Link>
           </p>
         </div>
@@ -79,7 +81,7 @@ export default function LoginPage() {
           <div className="space-y-4">
             <div>
               <label htmlFor="identifier" className="block text-sm font-medium mb-2">
-                Email, username yoki telefon raqam
+                {t('identifierLabel')}
               </label>
               <input
                 id="identifier"
@@ -88,13 +90,13 @@ export default function LoginPage() {
                 value={formData.identifier}
                 onChange={(e) => setFormData({ ...formData, identifier: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800"
-                placeholder="john@example.com, username yoki +998901234567"
+                placeholder={t('identifierPlaceholder')}
               />
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium mb-2">
-                Parol
+                {t('password')}
               </label>
               <div className="relative">
                 <input
@@ -131,7 +133,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Yuklanmoqda...' : 'Kirish'}
+            {loading ? t('loading') : t('login')}
           </button>
 
           <div className="relative">
@@ -139,7 +141,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-gray-300 dark:border-gray-700" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-50 dark:bg-gray-900 text-gray-500">Yoki</span>
+              <span className="px-2 bg-gray-50 dark:bg-gray-900 text-gray-500">{t('or')}</span>
             </div>
           </div>
 
@@ -156,7 +158,7 @@ export default function LoginPage() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
               </svg>
-              <span>Google orqali kirish</span>
+              <span>{t('googleLogin')}</span>
             </button>
 
             {/* Steam */}
@@ -168,7 +170,7 @@ export default function LoginPage() {
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.56 3.79 10.24 8.93 11.61l3.37-6.97C10.97 16.1 10 14.67 10 13c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4c-.21 0-.42-.02-.62-.05l-2.97 6.16C17.34 22.43 24 17.73 24 12 24 5.37 18.63 0 12 0z" />
               </svg>
-              <span>Steam orqali kirish</span>
+              <span>{t('steamLogin')}</span>
             </button>
 
             {/* Phone */}
@@ -179,7 +181,7 @@ export default function LoginPage() {
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
               </svg>
-              <span>Parolsiz kirish (OTP)</span>
+              <span>{t('phoneLogin')}</span>
             </Link>
           </div>
         </form>

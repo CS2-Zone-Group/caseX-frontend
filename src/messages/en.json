@@ -44,6 +44,11 @@
     "title": "Sign Up",
     "subtitle": "Or",
     "loginLink": "sign in to your account",
+    "loginText": "Already have an account?",
+    "backToHome": "Home",
+    "emailTab": "Email",
+    "phoneTab": "Phone",
+    "resendTooSoon": "Please wait and try again.",
     "form": {
       "username": "Username",
       "usernamePlaceholder": "john_doe",
@@ -58,10 +63,20 @@
       "termsLink": "Terms of Service",
       "and": "and",
       "privacyLink": "Privacy Policy",
+      "termsAcceptSuffix": "",
       "register": "Sign Up",
       "registering": "Signing up...",
       "or": "Or",
-      "steamRegister": "Sign up with Steam"
+      "steamRegister": "Sign up with Steam",
+      "googleRegister": "Sign up with Google"
+    },
+    "phone": {
+      "label": "Phone Number",
+      "placeholder": "+998901234567",
+      "hint": "Enter in international format (+998XXXXXXXXX)",
+      "sendOtp": "Send Code",
+      "sending": "Sending...",
+      "invalid": "Enter phone in +998XXXXXXXXX format"
     },
     "errors": {
       "usernameRequired": "Username must be at least 3 characters long",
@@ -366,6 +381,12 @@
   },
   "ProfilePage": {
     "profileSettings": "Profile Settings",
+    "profilePhoto": "PROFILE PHOTO",
+    "password": "PASSWORD",
+    "changePassword": "Change Password",
+    "steamUser": "Steam User",
+    "user": "User",
+    "redirecting": "Redirecting...",
     "languageAndCurrency": "Language & Currency",
     "twoFA": "2FA",
     "paymentHistory": "Payment History",
@@ -417,6 +438,94 @@
       "tokenExpired": "Verification token has expired.",
       "tokenAlreadyUsed": "This verification token has already been used.",
       "verificationFailed": "Email verification failed. Please try again."
+    }
+  },
+  "LoginPage": {
+    "pageTitle": "Login - CaseX",
+    "backToHome": "Home",
+    "heading": "Sign in",
+    "or": "Or",
+    "registerLink": "sign up",
+    "identifierLabel": "Email, username or phone number",
+    "identifierPlaceholder": "john@example.com, username or +998901234567",
+    "password": "Password",
+    "loading": "Loading...",
+    "login": "Login",
+    "googleLogin": "Sign in with Google",
+    "steamLogin": "Sign in with Steam",
+    "phoneLogin": "Sign in without password (OTP)",
+    "errors": {
+      "emailNotVerified": "Email not verified. Check your email.",
+      "accountDisabled": "Account disabled. Contact support.",
+      "invalidCredentials": "Email or password is incorrect"
+    }
+  },
+  "PhonePage": {
+    "pageTitle": "Phone Login - CaseX",
+    "heading": "Login via phone",
+    "subtitle": "A verification code will be sent via Telegram Verification Codes bot",
+    "phoneLabel": "Phone number",
+    "phoneHint": "Enter in international format (+998XXXXXXXXX)",
+    "sendCode": "Send Code",
+    "sending": "Sending...",
+    "backToLogin": "Back to Login",
+    "telegramCode": "Telegram code",
+    "codeSentTo": "A 6-digit code was sent to",
+    "codeSentVia": "via Telegram Verification Codes bot.",
+    "verifying": "Verifying...",
+    "codeNotReceived": "Didn't receive the code?",
+    "resending": "Sending...",
+    "resendIn": "Resend ({seconds}s)",
+    "resend": "Resend",
+    "changeNumber": "Change number",
+    "errors": {
+      "phoneFormat": "Enter in +998XXXXXXXXX format",
+      "resendTooSoon": "Please wait and try again.",
+      "sendError": "Error sending code.",
+      "invalidOtp": "Invalid code. Try again.",
+      "otpExpired": "Code expired. Request a new one.",
+      "maxAttempts": "Too many attempts. Request a new code.",
+      "generalError": "An error occurred. Try again."
+    }
+  },
+  "SetPasswordPage": {
+    "pageTitle": "Set Password - CaseX",
+    "heading": "Set Password",
+    "subtitle": "You'll be able to login with phone number and password later",
+    "successMessage": "Password set successfully! Redirecting to home...",
+    "newPassword": "New password",
+    "newPasswordPlaceholder": "At least 8 characters (letters + numbers)",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Enter password again",
+    "saving": "Saving...",
+    "save": "Save Password",
+    "skip": "Skip",
+    "errors": {
+      "tooShort": "Password must be at least 8 characters",
+      "tooWeak": "Password must contain letters and numbers",
+      "mismatch": "Passwords do not match",
+      "passwordWeak": "Password is weak. Use letters and numbers.",
+      "generalError": "An error occurred. Try again."
+    }
+  },
+  "ChangePasswordModal": {
+    "title": "Change Password",
+    "currentPassword": "Current Password",
+    "currentPasswordPlaceholder": "Enter your current password",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Enter your new password",
+    "confirmPassword": "Confirm New Password",
+    "confirmPasswordPlaceholder": "Re-enter your new password",
+    "cancel": "Cancel",
+    "submit": "Change Password",
+    "submitting": "Changing...",
+    "successTitle": "Password Changed Successfully!",
+    "successMessage": "Your new password has been saved",
+    "errors": {
+      "fillAll": "Fill in all fields",
+      "mismatch": "New passwords do not match",
+      "tooShort": "New password must be at least 8 characters",
+      "changeFailed": "Error changing password"
     }
   }
 }

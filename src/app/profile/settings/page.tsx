@@ -38,7 +38,7 @@ function ProfileSettingsContent() {
               {/* Profile Avatar */}
               <div className="mb-8">
                 <label className="block text-gray-600 dark:text-gray-400 text-sm mb-4">
-                  PROFIL RASMI
+                  {t('profilePhoto')}
                 </label>
                 <div className="flex items-center gap-4">
                   <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center overflow-hidden">
@@ -54,7 +54,7 @@ function ProfileSettingsContent() {
                   </div>
                   <div>
                     <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {user?.username || "Foydalanuvchi"}
+                      {user?.username || t('user')}
                     </p>
                     {user?.steamId && (
                       <div className="flex items-center space-x-2 mt-1">
@@ -63,7 +63,7 @@ function ProfileSettingsContent() {
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
                           </svg>
                         </div>
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Steam User</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{t('steamUser')}</span>
                       </div>
                     )}
                   </div>
@@ -90,7 +90,7 @@ function ProfileSettingsContent() {
 
               {/* Password */}
               <div className="mb-8">
-                <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">PAROL</label>
+                <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">{t('password')}</label>
                 <div className="flex items-center gap-3">
                   <input
                     type="password"
@@ -102,7 +102,7 @@ function ProfileSettingsContent() {
                     onClick={() => setChangePasswordModalOpen(true)}
                     className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium"
                   >
-                    Parol o'rnatish
+                    {t('changePassword')}
                   </button>
                 </div>
               </div>
