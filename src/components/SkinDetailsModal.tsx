@@ -239,21 +239,23 @@ export default function SkinDetailsModal({
 
                     <div className="w-64 h-48 mx-auto bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden flex items-center justify-center">
                       {skin.imageUrl ? (
-                        <img
-                          src={skin.imageUrl}
-                          alt={skin.name}
-                          className="w-full h-full object-contain"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = "none";
-                            const parent = target.parentElement;
-                            if (parent) {
-                              parent.innerHTML = `<div class="text-gray-400 dark:text-gray-500">${t(
-                                "noImageAvailable"
-                              )}</div>`;
-                            }
-                          }}
-                        />
+                        <>
+                          <img
+                            src={skin.imageUrl}
+                            alt={skin.name}
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              const target = e.currentTarget as HTMLImageElement;
+                              target.style.display = "none";
+                              if (target.nextElementSibling) {
+                                (target.nextElementSibling as HTMLElement).style.display = "flex";
+                              }
+                            }}
+                          />
+                          <div style={{display: 'none'}} className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
+                            {t("noImageAvailable")}
+                          </div>
+                        </>
                       ) : (
                         <div className="text-gray-400 dark:text-gray-500">
                           {t("noImageAvailable")}

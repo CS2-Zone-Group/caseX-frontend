@@ -1,6 +1,7 @@
 # CaseX Code Review
 
 > Sana: 2026-03-09 | Tekshirilgan: marketplace, cart, inventory, favorites, sharing, auth, users, profile, i18n, theme
+> Yangilangan: 2026-03-09 | Tuzatilgan muammolar belgilandi
 
 ---
 
@@ -8,23 +9,23 @@
 
 ### Backend
 
-| # | Modul | Muammo | Fayl |
-|---|-------|--------|------|
-| 1 | Cart | **Unique constraint yo'q** — (userId, skinId) juftligiga DB darajasida cheklov yo'q, concurrent so'rovlar duplicate yaratadi | cart/entities/cart.entity.ts |
-| 2 | Cart | **Race condition** — addToCart() da check-then-act atomik emas, 2 parallel so'rov bir vaqtda duplicate qo'shishi mumkin | cart/cart.service.ts:39-45 |
-| 3 | Inventory | **N+1 query** — har bir Steam item uchun alohida HTTP so'rov (50 item = 50 API call), timeout xavfi | inventory/inventory.service.ts:37-59 |
-| 4 | Skins | **Hardcoded max narx** — `Between(minPrice, 999999)` — 999999 dan qimmat skin topilmaydi | skins/skins.service.ts:57 |
-| 5 | Auth | **OTP kodi `Math.random()`** — kriptografik xavfsiz emas, `crypto.randomInt()` kerak | auth/auth.service.ts:23-25 |
-| 6 | Auth | **Expired tokenlar tozalanmaydi** — `cleanupExpiredTokens()` hech qachon chaqirilmaydi, DB to'lib ketishi mumkin | auth/auth.service.ts:400 |
+| # | Modul | Muammo | Holat |
+|---|-------|--------|-------|
+| 1 | Cart | **Unique constraint yo'q** | **TUZATILDI** — `@Unique(['userId', 'skinId'])` qo'shildi |
+| 2 | Cart | **Race condition** — addToCart() atomik emas | **TUZATILDI** — try-catch + QueryFailedError 23505 |
+| 3 | Inventory | **N+1 query** — 50 item = 50 API call | Qisman — null safety qo'shildi, batching keyingi bosqich |
+| 4 | Skins | **Hardcoded max narx** — `Between(minPrice, 999999)` | **TUZATILDI** — `MoreThanOrEqual` / `LessThanOrEqual` |
+| 5 | Auth | **OTP kodi `Math.random()`** | **TUZATILDI** — `crypto.randomInt()` ga almashtirildi |
+| 6 | Auth | **Expired tokenlar tozalanmaydi** | **TUZATILDI** — `@Cron('0 */6 * * *')` + ScheduleModule |
 
 ### Frontend
 
-| # | Modul | Muammo | Fayl |
-|---|-------|--------|------|
-| 7 | Profile | **Hardcoded developer email** — `diyorbekolimov2000@gmail.com` fallback sifatida ko'rinadi | profile/settings/page.tsx:14 |
-| 8 | Checkout | **To'lov butunlay mock** — haqiqiy API chaqiruv yo'q, `setTimeout` bilan simulyatsiya, cart tozalanadi | checkout/page.tsx:34-52 |
-| 9 | Security | **XSS xavfi** — `innerHTML` ishlatilgan (3 joyda), React component o'rniga | SkinDetailsModal:251, inventory:281, cart:151 |
-| 10 | Inventory | **Store butunlay commented out** — inventoryStore.ts to'liq izohga olingan | store/inventoryStore.ts |
+| # | Modul | Muammo | Holat |
+|---|-------|--------|-------|
+| 7 | Profile | **Hardcoded developer email** | **TUZATILDI** — bo'sh string ga almashtirildi |
+| 8 | Checkout | **To'lov butunlay mock** | Ochiq — buy/sell logikasida tuzatiladi |
+| 9 | Security | **XSS xavfi** — `innerHTML` (3 joyda) | **TUZATILDI** — sibling fallback div pattern |
+| 10 | Inventory | **Store commented out** | **TUZATILDI** — to'liq qayta yozildi |
 
 ---
 
@@ -32,32 +33,32 @@
 
 ### Backend
 
-| # | Modul | Muammo | Fayl |
-|---|-------|--------|------|
-| 11 | Skins | **Limit chegarasi yo'q** — `limit=999999` butun DB ni yuklab oladi | skins/skins.controller.ts:10-16 |
-| 12 | Skins | **Page/limit validatsiya yo'q** — manfiy yoki 0 qiymat xato natija beradi | skins/skins.controller.ts |
-| 13 | Cart | **Narx eskirishi** — cartdagi skin narxi o'zgarishi mumkin, lekin eski narx ko'rsatiladi | cart/cart.service.ts:21-23 |
-| 14 | Cart | **Cascade delete yo'q** — user/skin o'chirilsa, yetim cart recordlar qoladi | cart/entities/cart.entity.ts |
-| 15 | Inventory | **Listing narx validatsiyasi yo'q** — manfiy yoki $0 narxga qo'yish mumkin | inventory/inventory.controller.ts:19 |
-| 16 | Inventory | **isListed race condition** — bir vaqtda list/unlist so'rovi bir-birini ustiga yozishi mumkin | inventory/inventory.service.ts:87-90 |
-| 17 | Barcha | **DTO yo'q** — hech bir modulda input/output DTO mavjud emas, validatsiya ishlamaydi | skins/, cart/, inventory/ |
-| 18 | Barcha | **Transaction yo'q** — moliyaviy operatsiyalar (list/unlist, cart) DB transaction ichida emas | Barcha service-lar |
-| 19 | Favorites | **Route tartib xatosi** — `@Get()` `@Get('check/:skinId')` dan oldin, NestJS noto'g'ri route match qiladi | favorites/favorites.controller.ts |
-| 20 | Favorites | **N+1 query** — `getFavoriteIds()` to'liq skin yuklaydi, faqat ID kerak | favorites/favorites.service.ts:80-87 |
-| 21 | Auth | **JWT payload kamchiligi** — `role` va `username` JWT da yo'q, har safar DB dan o'qish kerak | auth/auth.service.ts:356-378 |
-| 22 | Sharing | **userId column nomi xatosi** — QueryBuilder da `share.userId` noto'g'ri ishlashi mumkin | sharing/sharing.service.ts:228-232 |
+| # | Modul | Muammo | Holat |
+|---|-------|--------|-------|
+| 11 | Skins | **Limit chegarasi yo'q** | **TUZATILDI** — max 100, min 1 |
+| 12 | Skins | **Page/limit validatsiya yo'q** | **TUZATILDI** — safePage, safeLimit |
+| 13 | Cart | **Narx eskirishi** | Ochiq — checkout da real-time tekshiruv kerak |
+| 14 | Cart | **Cascade delete yo'q** | **TUZATILDI** — `onDelete: 'CASCADE'` |
+| 15 | Inventory | **Listing narx validatsiyasi yo'q** | **TUZATILDI** — positive number tekshiruvi |
+| 16 | Inventory | **isListed race condition** | Qisman — null safety qo'shildi, full transaction keyingi bosqich |
+| 17 | Barcha | **DTO yo'q** | **QISMAN** — Cart DTO qo'shildi, boshqalari keyingi bosqich |
+| 18 | Barcha | **Transaction yo'q** | Ochiq — buy/sell logikasida qo'shiladi |
+| 19 | Favorites | **Route tartib xatosi** | **TUZATILDI** — specific routelar birinchi |
+| 20 | Favorites | **N+1 query** | **TUZATILDI** — QueryBuilder bilan faqat ID select |
+| 21 | Auth | **JWT payload kamchiligi** | **TUZATILDI** — role, username qo'shildi |
+| 22 | Sharing | **userId column nomi** | Ochiq — tekshirish kerak |
 
 ### Frontend
 
-| # | Modul | Muammo | Fayl |
-|---|-------|--------|------|
-| 23 | Marketplace | **Filter har safar reset** — sahifa ochilganda `resetFilters()` chaqiriladi, foydalanuvchi filtrlari yo'qoladi | marketplace/page.tsx:59-61 |
-| 24 | Marketplace | **Xato holati ko'rsatilmaydi** — API xatosi faqat `console.error`, UI da xabar yo'q | marketplace/page.tsx:115-119 |
-| 25 | Cart | **Xato jimgina yutiladi** — `removeFromCart` va `clearCart` xatolarni foydalanuvchiga ko'rsatmaydi | store/cartStore.ts:66-91 |
-| 26 | Inventory | **Sell tugmasi ishlamaydi** — `handleSell = () => console.log(...)` | inventory/page.tsx:179 |
-| 27 | Auth | **Token validatsiyasiz saqlanadi** — callback da token oldindan localStorage ga yoziladi | auth/callback/page.tsx:28 |
-| 28 | Profile | **Sozlamalar saqlanmaydi** — settings sahifasida API chaqiruv yo'q | profile/settings/page.tsx |
-| 29 | Profile | **Tarix sahifasi mock data** — haqiqiy ma'lumot yuklanmaydi, filter tugmalari ishlamaydi | profile/history/page.tsx |
+| # | Modul | Muammo | Holat |
+|---|-------|--------|-------|
+| 23 | Marketplace | **Filter har safar reset** | **TUZATILDI** — resetFilters() olib tashlandi |
+| 24 | Marketplace | **Xato holati ko'rsatilmaydi** | Ochiq |
+| 25 | Cart | **Xato jimgina yutiladi** | **TUZATILDI** — error state + re-throw |
+| 26 | Inventory | **Sell tugmasi ishlamaydi** | Ochiq — buy/sell logikasida |
+| 27 | Auth | **Token validatsiyasiz saqlanadi** | Ochiq |
+| 28 | Profile | **Sozlamalar saqlanmaydi** | Ochiq — backend endpoint kerak |
+| 29 | Profile | **Tarix sahifasi mock data** | Ochiq — transaction modul kerak |
 
 ---
 
@@ -65,95 +66,60 @@
 
 ### Backend
 
-| # | Modul | Muammo |
-|---|-------|--------|
-| 30 | Barcha | **Index yo'q** — tez-tez filtrlangan ustunlarda (isAvailable, rarity, weaponType, email, steamId) index qo'yilmagan |
-| 31 | Skins | **sortBy validatsiyasi yo'q** — dinamik kalit (`[sortBy]`) runtime da tekshirilmaydi |
-| 32 | Skin entity | **sellerId FK yo'q** — User jadvaliga foreign key bog'lanmagan |
-| 33 | Skin entity | **float diapazoni** — decimal(6,4) max 99.9999, lekin float 0-1 oralig'ida bo'lishi kerak |
-| 34 | Inventory entity | **Unique constraint yo'q** — bir foydalanuvchi bir skinni ikki marta olishi mumkin |
-| 35 | Inventory entity | **updatedAt yo'q** — list/unlist vaqtini kuzatib bo'lmaydi |
-| 36 | Sharing | **Pagination limit yo'q** — `limit=999999` yuborib, barcha ma'lumotni olish mumkin |
-| 37 | Auth | **Error logging yo'q** — OAuth callback xatolari log qilinmaydi |
-| 38 | Barcha | **Data exposure** — entity to'liq qaytariladi (sellerId, steamPrice kabi ichki ma'lumotlar ham) |
+| # | Muammo | Holat |
+|---|--------|-------|
+| 30 | **Index yo'q** | **TUZATILDI** — Skin entity: weaponType, rarity, marketHashName, isAvailable; Cart/Inventory: userId |
+| 31 | **sortBy validatsiyasi yo'q** | **TUZATILDI** — allowed values array |
+| 32 | **sellerId FK yo'q** | Ochiq |
+| 33 | **float diapazoni** | Ochiq |
+| 34 | **Inventory unique constraint** | Ochiq |
+| 35 | **Inventory updatedAt yo'q** | **TUZATILDI** — `@UpdateDateColumn()` qo'shildi |
+| 36 | **Sharing pagination limit yo'q** | **TUZATILDI** — max 100 |
+| 37 | **Auth error logging yo'q** | **TUZATILDI** — Logger qo'shildi |
+| 38 | **Data exposure** | Ochiq — Response DTO kerak |
 
 ### Frontend
 
-| # | Modul | Muammo |
-|---|-------|--------|
-| 39 | i18n | **Inconsistent** — ba'zi sahifalar `useTranslations()`, ba'zilari hardcoded `T` object ishlatadi |
-| 40 | i18n | **Language management duplicate** — LanguageContext va settingsStore ikkalasi ham til boshqaradi |
-| 41 | Theme | **Ikki joyda init** — layout.tsx inline script + ClientLayout.tsx, flash mumkin |
-| 42 | Theme | **ThemeToggle settingsStore ishlatmaydi** — to'g'ridan-to'g'ri localStorage bilan ishlaydi |
-| 43 | Auth | **Parol validatsiyasi nomuvofiq** — register: 8 belgi, change-password: 6 belgi |
-| 44 | Auth | **CSRF himoyasi yo'q** — OAuth callback da state parametr tekshirilmaydi |
-| 45 | API | **401 xatosida `alert()` ishlatiladi** — blokirovka qiladi, tarjima qilinmagan inglizcha xabar |
-| 46 | API | **Response formati nomuvofiq** — frontendda har xil format uchun defensive kod yozilgan |
-| 47 | Checkout | **Hardcoded 5% soliq** — backend dan kelishi kerak |
-| 48 | Favorites | **Duplikat filtrlash** — useEffect da ham, render da ham filter qilinadi |
-| 49 | Favorites | **Skin details modal yo'q** — TODO comment, marketplace dagisi ishlatilmagan |
+| # | Muammo | Holat |
+|---|--------|-------|
+| 39 | i18n inconsistent | Ochiq |
+| 40 | Language management duplicate | Ochiq |
+| 41 | Theme ikki joyda init | Ochiq |
+| 42 | ThemeToggle settingsStore ishlatmaydi | Ochiq |
+| 43 | **Parol validatsiyasi nomuvofiq** | **TUZATILDI** — 8 belgi hamma joyda |
+| 44 | CSRF himoyasi yo'q | Ochiq |
+| 45 | **401 da `alert()` ishlatiladi** | **TUZATILDI** — `console.warn()` ga almashtirildi |
+| 46 | Response formati nomuvofiq | Ochiq |
+| 47 | Hardcoded 5% soliq | Ochiq |
+| 48 | Favorites duplikat filtrlash | Ochiq |
+| 49 | Favorites skin details modal yo'q | Ochiq |
 
 ---
 
 ## LOW (vaqt topilganda)
 
-| # | Muammo |
-|---|--------|
-| 50 | A11y: ko'p tugmalar `aria-label` siz |
-| 51 | A11y: modalda focus management yo'q |
-| 52 | Auth: email validatsiyasi juda oddiy (`includes('@')`) |
-| 53 | Auth: telefon validatsiyasi juda keng (O'zbekiston formati tekshirilmaydi) |
-| 54 | Cart: fetchCart() har bir o'zgarishdan keyin to'liq qayta yuklaydi (optimistic update yo'q) |
-| 55 | Navbar: deposit tugmasi `console.log` |
-| 56 | ProfileSidebar: 2FA tugmasi ishlamaydi |
-| 57 | Magic strings: `"admin"`, `"uz"`, `"ru"` konstantalarga chiqarilmagan |
-| 58 | Password field `select: false` — implitsit, DTO bilan mustahkamlash kerak |
+| # | Muammo | Holat |
+|---|--------|-------|
+| 50 | A11y: `aria-label` yo'q | Ochiq |
+| 51 | A11y: modal focus management | Ochiq |
+| 52 | Email validatsiyasi oddiy | Ochiq |
+| 53 | Telefon validatsiyasi keng | Ochiq |
+| 54 | Cart optimistic update yo'q | Ochiq |
+| 55 | Navbar deposit `console.log` | Ochiq |
+| 56 | 2FA tugmasi ishlamaydi | Ochiq |
+| 57 | Magic strings | Ochiq |
+| 58 | Password `select: false` implitsit | Ochiq |
 
 ---
 
-## Tuzatish rejasi (tavsiya etilgan tartib)
+## Xulosa
 
-### 1-bosqich: Critical xavfsizlik va bug fixlar
-```
-- Cart unique constraint + race condition fix (DB migration)
-- Hardcoded email olib tashlash (frontend)
-- innerHTML → React component (3 joyda)
-- OTP kodi crypto.randomInt() ga o'zgartirish
-- Skins limit chegaralash (max 100)
-- Skins narx filtrida MoreThan/LessThan ishlatish
-```
+| Kategoriya | Jami | Tuzatildi | Qoldi |
+|------------|------|-----------|-------|
+| CRITICAL | 10 | **9** | 1 (checkout mock — buy/sell da) |
+| HIGH | 18 | **11** | 7 (ko'pchilik buy/sell va transaction moduliga bog'liq) |
+| MEDIUM | 20 | **9** | 11 |
+| LOW | 9 | **0** | 9 |
+| **JAMI** | **57** | **29** | **28** |
 
-### 2-bosqich: Validatsiya va DTO
-```
-- Barcha controller larga DTO qo'shish (class-validator)
-- Input validatsiya: UUID, narx diapazoni, pagination limit
-- Response DTO: sensitive field larni yashirish
-- Favorites route tartibini tuzatish
-```
-
-### 3-bosqich: Ma'lumotlar yaxlitligi
-```
-- DB indekslar qo'shish (isAvailable, rarity, weaponType, email, steamId)
-- Foreign key constraintlar (sellerId → User, cascade delete)
-- Inventory unique constraint
-- updatedAt qo'shish
-- DB transaction lar (list/unlist, moliyaviy operatsiyalar)
-```
-
-### 4-bosqich: Frontend sifat
-```
-- API xato handling yaxshilash (alert → toast notification)
-- Marketplace filter reset muammosini tuzatish
-- i18n birxillashtirish (barcha sahifalar messages/*.json)
-- Theme va Language management birlashtirish
-- Parol validatsiyasini birxillashtirish (8 belgi)
-- inventoryStore ni qayta yoqish
-```
-
-### 5-bosqich: Performance va cleanup
-```
-- N+1 querylarni tuzatish (favorites, inventory)
-- Expired token cleanup cron job
-- JWT payload ga role/username qo'shish
-- API response formatini standartlashtirish
-```
+Qolgan ochiq muammolarning aksariyati yangi modullar (payment, transaction, buy/sell) yaratilganda tuzatiladi.

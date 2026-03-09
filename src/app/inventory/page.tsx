@@ -273,15 +273,20 @@ export default function InventoryPage() {
                           alt={item.skin?.name}
                           className="w-full h-full object-contain p-2"
                           onError={(e) => {
-                             const target = e.target as HTMLImageElement;
+                             const target = e.currentTarget as HTMLImageElement;
                              if (target.src.includes('/330x192')) {
                                 target.src = target.src.replace('/330x192', '');
                              } else {
                                 target.style.display = 'none';
-                                target.parentElement!.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">No Image</div>';
+                                if (target.nextElementSibling) {
+                                  (target.nextElementSibling as HTMLElement).style.display = 'flex';
+                                }
                              }
                           }}
                         />
+                        <div style={{display: 'none'}} className="flex items-center justify-center h-full text-xs text-gray-400">
+                          No Image
+                        </div>
                         {selectedItems.includes(item.id) && (
                           <div className="absolute top-2 right-2 w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center text-white text-xs">✓</div>
                         )}

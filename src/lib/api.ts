@@ -36,9 +36,9 @@ api.interceptors.response.use(
           logout();
         });
 
-        // Show notification
+        // Redirect to login
         if (window.location.pathname !== '/auth/login') {
-          alert('Your session has expired. Please login again.');
+          console.warn('Session expired. Redirecting to login.');
           window.location.href = '/auth/login';
         }
       }

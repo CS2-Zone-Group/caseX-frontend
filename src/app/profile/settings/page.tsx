@@ -11,8 +11,8 @@ function ProfileSettingsContent() {
   const { user } = useAuthStore();
   const t = useTranslations('ProfilePage');
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
-  const [email, setEmail] = useState(user?.email || "diyorbekolimov2000@gmail.com");
-  const [publicKey] = useState("0xA200bAf5f5e950eF307871d831...");
+  const [email, setEmail] = useState(user?.email || "");
+  const [publicKey] = useState("");
 
   useEffect(() => {
     document.title = `${t('profileSettings')} - CaseX`;

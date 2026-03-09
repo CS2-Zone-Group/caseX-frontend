@@ -34,8 +34,8 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
       return;
     }
 
-    if (newPassword.length < 6) {
-      setError('Yangi parol kamida 6 ta belgidan iborat bo\'lishi kerak');
+    if (newPassword.length < 8) {
+      setError('Yangi parol kamida 8 ta belgidan iborat bo\'lishi kerak');
       return;
     }
 

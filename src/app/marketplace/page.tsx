@@ -55,10 +55,7 @@ function MarketplaceContent() {
     document.title = `${t('marketplace')} - CaseX`;
   }, [t]);
 
-  // Sahifa yuklanganda filtrlarni tozalash (ixtiyoriy, agar kerak bo'lsa qoldiring)
-  useEffect(() => {
-    resetFilters();
-  }, []); 
+  // Filters are intentionally NOT reset on mount so they persist when navigating back
 
   const fetchMarketItems = useCallback(async () => {
     setLoading(true);
