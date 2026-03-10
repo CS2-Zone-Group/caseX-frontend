@@ -107,7 +107,9 @@
     "balance": "Balance",
     "paymentHistory": "Payment History",
     "adminPanel": "Admin Panel",
-    "depositTooltip": "Add funds"
+    "depositTooltip": "Add funds",
+    "onSale": "On Sale",
+    "targets": "Targets"
   },
   "CartPage": {
     "title": "Cart",
@@ -171,7 +173,7 @@
     "pciCertified": "PCI DSS Certified"
   },
   "SkinDetailsModal": {
-    "itemDetails": "ITEM DETAILS",
+    "itemDetails": "INVENTORY DETAILS",
     "salesInfo": "SALES INFO",
     "viewAtSteam": "View at Steam",
     "price": "Price",
@@ -206,7 +208,10 @@
       "battleScarred": "Battle-Scarred"
     },
     "salesChartPlaceholder": "Sales chart will be displayed here",
-    "noSalesHistory": "No sales history available for this item"
+    "noSalesHistory": "No sales history available for this item",
+    "referencePrice": "Reference price",
+    "loginRequired": "Please login first",
+    "addedToCart": "Added to cart!"
   },
   "SettingsModal": {
     "title": "Settings",
@@ -320,7 +325,11 @@
     "save": "Save",
     "delete": "Delete",
     "edit": "Edit",
-    "close": "Close"
+    "close": "Close",
+    "sortNewest": "Newest",
+    "priceHighToLow": "Price: High to Low",
+    "priceLowToHigh": "Price: Low to High",
+    "nameAtoZ": "Name: A-Z"
   },
   "MarketplacePage": {
     "title": "Marketplace",
@@ -349,7 +358,23 @@
     "sortNewest": "Newest",
     "priceHighToLow": "Price: High to Low",
     "priceLowToHigh": "Price: Low to High",
-    "nameAtoZ": "Name: A-Z"
+    "nameAtoZ": "Name: A-Z",
+    "linkSteamTitle": "Link your Steam account",
+    "linkSteamDescription": "Connect your Steam account to view and manage your CS2 inventory items",
+    "linkSteamButton": "Link Steam Account",
+    "noFiltersMatch": "No items found matching your filters",
+    "clearFilters": "Clear Filters",
+    "items": "Items",
+    "total": "Total",
+    "selected": "selected",
+    "sell": "Sell",
+    "filter": "Filter",
+    "steamInventoryPrivateTitle": "Your Steam inventory is private",
+    "steamInventoryPrivateDescription": "Set your Steam inventory to \"Public\" in Steam privacy settings so we can load your items",
+    "openSteamSettings": "Open Steam Settings",
+    "steamRateLimitedTitle": "Steam server is busy",
+    "steamRateLimitedDescription": "Too many requests to Steam. Please wait a moment and try again",
+    "retry": "Retry"
   },
   "CheckoutPage": {
     "title": "Checkout",
@@ -415,7 +440,16 @@
     "loadingRates": "Loading exchange rates...",
     "profileShort": "Profile",
     "languageShort": "Lang",
-    "historyShort": "History"
+    "historyShort": "History",
+    "steamAccount": "STEAM ACCOUNT",
+    "steamLinked": "Steam account linked",
+    "steamNotLinked": "Steam account not linked",
+    "linkSteam": "Link Steam",
+    "unlinkSteam": "Unlink",
+    "phoneNumber": "PHONE NUMBER",
+    "phoneNotSet": "Phone number not set",
+    "addPhone": "Add phone",
+    "phoneLinked": "Phone linked"
   },
   "VerifyEmailPage": {
     "title": "Email Verification",
@@ -507,6 +541,40 @@
       "passwordWeak": "Password is weak. Use letters and numbers.",
       "generalError": "An error occurred. Try again."
     }
+  },
+  "OnSalePage": {
+    "title": "Items on Sale",
+    "loading": "Loading...",
+    "empty": "No items on sale yet",
+    "emptyDescription": "List items from your inventory on the marketplace",
+    "goToInventory": "Go to Inventory",
+    "listed": "Listed",
+    "delist": "Delist",
+    "editPrice": "Edit price",
+    "listedAt": "Listed date",
+    "listPrice": "List price",
+    "items": "items"
+  },
+  "TargetsPage": {
+    "title": "Targets",
+    "loading": "Loading...",
+    "empty": "No targets yet",
+    "emptyDescription": "Add target items from the marketplace at your desired price",
+    "goToMarketplace": "Go to Marketplace",
+    "targetPrice": "Target price",
+    "currentPrice": "Current price",
+    "removeTarget": "Remove target",
+    "createdAt": "Date added",
+    "status": "Status",
+    "active": "Active",
+    "fulfilled": "Fulfilled",
+    "expired": "Expired",
+    "items": "targets"
+  },
+  "Chat": {
+    "welcomeMessage": "How can we help you?",
+    "autoReply": "Your message has been received. We will reply shortly.",
+    "inputPlaceholder": "Type your message..."
   },
   "ChangePasswordModal": {
     "title": "Change Password",

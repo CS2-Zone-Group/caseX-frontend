@@ -18,28 +18,28 @@ const skins: SkinsType[] = [
     id: "AWP | Dragon Lore",
     name: "AWP | Dragon Lore",
     price: "$12,500.00",
-    icon_url: "-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FAR17PLfYQJD_9W7m5S0mvLwOq7c2GoFsJYpiLuW8d_xjljh-hBpMWv7I4OXJlQ2NFqC-FLglLq-hJe_tcmbm3Vu3nJh5XmMnhi3n1gSOA",
+    icon_url: "i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk4veqYaF7IfysCnWRxuF4j-B-Xxa_nBovp3Pdwtj9cC_GaAd0DZdwQu9fuhS4kNy0NePntVTbjYpCyyT_3CgY5i9j_a9cBkcCWUKV",
     float: "Factory New",
   },
   {
     id: "M4A4 | Howl",
     name: "M4A4 | Howl",
     price: "$4,200.00",
-    icon_url: "-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou6rwOANf1OD3fDxUosmJlY20mvbmMbfUqWdQ-sJ0xOzAot-jiVew-hU5ZWv3IteWeg43YVrT-1m4keC-h5S9usqb1Htu3nJh5XmNABaRaFNA",
+    icon_url: "i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiFO0P_6afVSKP-EAm6extF6ueZhW2exwkl2tmTXwt39eCiUPQR2DMN4TOVetUK8xoLgM-K341eM2otDnC6okGoXufBz_TAB",
     float: "Minimal Wear",
   },
   {
     id: "Karambit | Doppler",
     name: "Karambit | Doppler",
     price: "$1,100.00",
-    icon_url: "-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpovbSsLQJf2PLacDBA5ciJlY20k_jkI6fXlGYFsJMg2LiYoNms2Fbm_kY6Yzz6JoScdA43YFvT_Va3kOm8gJO1vs_JnBk",
+    icon_url: "i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Q7uCvZaZkNM-SA1iXwON7sd5tQDmjmRg1jC2Nm5z8cBTLN1F4TowkROZctEXqxNO2Nevn4QzZ2I9Mz3r62C9L634_5uhTWKEh_fKD2w7HL_RjthCBcAWy",
     float: "Factory New",
   },
   {
     id: "Sport Gloves | Pandora's Box",
     name: "Sport Gloves | Pandora's Box",
     price: "$1,450.00",
-    icon_url: "-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou7umeldf0Ob3fDxLmtmlhIGZmOjkAbXTlzpD7fp9g_vV8YLmjlHw-hI-YXjwcdKXdlRpNVCC-FW4wOTqjJO0upXIynY3snEy7HnUlBRCfw",
+    icon_url: "i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Tk5UvzWCL2kpn2-DFk_OKherB0H-CGHHecxNF7teVgWiT9wU4jsmyDyt74dn-WOwUhApchQLYD4Rm4ktDlMbzjs1DajtlCmy6vijQJsHhHS4AXoA",
     float: "Field-Tested",
   },
 ];
@@ -95,7 +95,7 @@ const PopularItems = () => {
                 <div className="flex justify-center items-center flex-1 overflow-hidden py-4">
                   <img
                     className="w-full h-40 object-contain drop-shadow-xl transition-transform duration-500 group-hover/card:scale-110 group-hover/card:rotate-3"
-                    src={`https://community.cloudflare.steamstatic.com/economy/image/${item.icon_url}/360fx360f`}
+                    src={`https://steamcommunity-a.akamaihd.net/economy/image/${item.icon_url}/360fx360f`}
                     alt={item.name}
                   />
                 </div>

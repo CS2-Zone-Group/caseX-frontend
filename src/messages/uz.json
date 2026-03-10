@@ -107,7 +107,9 @@
     "balance": "Balans",
     "paymentHistory": "To'lov tarixi",
     "adminPanel": "Admin Panel",
-    "depositTooltip": "Balansni to'ldirish"
+    "depositTooltip": "Balansni to'ldirish",
+    "onSale": "Sotuvda",
+    "targets": "Targetlar"
   },
   "CartPage": {
     "title": "Savat",
@@ -171,7 +173,7 @@
     "pciCertified": "PCI DSS Sertifikatlangan"
   },
   "SkinDetailsModal": {
-    "itemDetails": "BUYUM TAFSILOTLARI",
+    "itemDetails": "INVENTAR TAFSILOTLARI",
     "salesInfo": "SOTUV MALUMOTLARI",
     "viewAtSteam": "Steam'da ko'rish",
     "price": "Narx",
@@ -206,7 +208,10 @@
       "battleScarred": "Jang eskirgan"
     },
     "salesChartPlaceholder": "Bu yerda sotuv grafigi ko'rsatiladi",
-    "noSalesHistory": "Bu buyum uchun sotuv tarixi mavjud emas"
+    "noSalesHistory": "Bu buyum uchun sotuv tarixi mavjud emas",
+    "referencePrice": "Ko'rsatkich narx",
+    "loginRequired": "Iltimos, avval tizimga kiring",
+    "addedToCart": "Savatga qo'shildi!"
   },
   "SettingsModal": {
     "title": "Sozlamalar",
@@ -218,8 +223,8 @@
     "currentRates": "Joriy kurslar (CBU):",
     "baseCurrency": "Asosiy valyuta: UZS (O'zbek so'mi)",
     "themes": {
-      "light": "Yorug'",
-      "dark": "Qorong'i",
+      "light": "Kunduzgi",
+      "dark": "Tungi",
       "system": "Tizim"
     },
     "languages": {
@@ -320,7 +325,11 @@
     "save": "Saqlash",
     "delete": "O'chirish",
     "edit": "Tahrirlash",
-    "close": "Yopish"
+    "close": "Yopish",
+    "sortNewest": "Eng yangi",
+    "priceHighToLow": "Narx: Yuqoridan pastga",
+    "priceLowToHigh": "Narx: Pastdan yuqoriga",
+    "nameAtoZ": "Nomi: A-Z"
   },
   "MarketplacePage": {
     "title": "Marketplace",
@@ -349,7 +358,23 @@
     "sortNewest": "Eng yangi",
     "priceHighToLow": "Narx: Yuqoridan pastga",
     "priceLowToHigh": "Narx: Pastdan yuqoriga",
-    "nameAtoZ": "Nomi: A-Z"
+    "nameAtoZ": "Nomi: A-Z",
+    "linkSteamTitle": "Steam akkauntingizni bog'lang",
+    "linkSteamDescription": "CS2 inventar predmetlaringizni ko'rish va boshqarish uchun Steam akkauntingizni ulang",
+    "linkSteamButton": "Steam akkauntni bog'lash",
+    "noFiltersMatch": "Filtrlarga mos predmet topilmadi",
+    "clearFilters": "Filtrlarni tozalash",
+    "items": "Predmetlar",
+    "total": "Jami",
+    "selected": "tanlangan",
+    "sell": "Sotish",
+    "filter": "Filtr",
+    "steamInventoryPrivateTitle": "Steam inventaringiz yopiq",
+    "steamInventoryPrivateDescription": "Steam inventaringizni ko'rish uchun Steam sozlamalarida inventarni \"Hammaga ochiq\" qiling",
+    "openSteamSettings": "Steam sozlamalarini ochish",
+    "steamRateLimitedTitle": "Steam serveri band",
+    "steamRateLimitedDescription": "Steam serveriga juda ko'p so'rov yuborildi. Biroz kutib qayta urinib ko'ring",
+    "retry": "Qayta urinish"
   },
   "CheckoutPage": {
     "title": "To'lov",
@@ -400,8 +425,8 @@
     "preferredCurrency": "Afzal qilingan valyuta",
     "language": "Til",
     "quickThemeSwitch": "Tez mavzu almashtirish",
-    "light": "Yorug'",
-    "dark": "Qorong'i",
+    "light": "Kunduzgi",
+    "dark": "Tungi",
     "auto": "Avtomatik",
     "all": "Barchasi",
     "deposits": "To'ldirish",
@@ -415,7 +440,16 @@
     "loadingRates": "Kurslar yuklanmoqda...",
     "profileShort": "Profil",
     "languageShort": "Til",
-    "historyShort": "Tarix"
+    "historyShort": "Tarix",
+    "steamAccount": "STEAM AKKAUNT",
+    "steamLinked": "Steam akkaunt biriktirilgan",
+    "steamNotLinked": "Steam akkaunt biriktirilmagan",
+    "linkSteam": "Steam'ni biriktirish",
+    "unlinkSteam": "Ajratish",
+    "phoneNumber": "TELEFON RAQAM",
+    "phoneNotSet": "Telefon raqam kiritilmagan",
+    "addPhone": "Raqam qo'shish",
+    "phoneLinked": "Telefon biriktirilgan"
   },
   "VerifyEmailPage": {
     "title": "Email Tasdiqlash",
@@ -507,6 +541,40 @@
       "passwordWeak": "Parol zaif. Harf va raqamlardan foydalaning.",
       "generalError": "Xatolik yuz berdi. Qayta urinib ko'ring."
     }
+  },
+  "OnSalePage": {
+    "title": "Sotuvdagi buyumlar",
+    "loading": "Yuklanmoqda...",
+    "empty": "Hozircha sotuvda hech narsa yo'q",
+    "emptyDescription": "Inventaringizdagi buyumlarni marketplace'ga joylashtiring",
+    "goToInventory": "Inventarga o'tish",
+    "listed": "Joylashtirilgan",
+    "delist": "Sotuvdan olish",
+    "editPrice": "Narxni o'zgartirish",
+    "listedAt": "Joylashtirilgan sana",
+    "listPrice": "Sotish narxi",
+    "items": "ta buyum"
+  },
+  "TargetsPage": {
+    "title": "Targetlar",
+    "loading": "Yuklanmoqda...",
+    "empty": "Hozircha targetlar yo'q",
+    "emptyDescription": "Marketplace'dan kerakli buyumlarni target narxda qo'shing",
+    "goToMarketplace": "Marketplace'ga o'tish",
+    "targetPrice": "Target narx",
+    "currentPrice": "Joriy narx",
+    "removeTarget": "Targetni o'chirish",
+    "createdAt": "Qo'shilgan sana",
+    "status": "Holat",
+    "active": "Faol",
+    "fulfilled": "Bajarildi",
+    "expired": "Muddati tugagan",
+    "items": "ta target"
+  },
+  "Chat": {
+    "welcomeMessage": "Qanday yordam bera olamiz?",
+    "autoReply": "Xabaringiz qabul qilindi. Tez orada javob beramiz.",
+    "inputPlaceholder": "Xabaringizni yozing..."
   },
   "ChangePasswordModal": {
     "title": "Parolni O'zgartirish",

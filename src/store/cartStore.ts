@@ -70,7 +70,7 @@ export const useCartStore = create<CartState>((set, get) => ({
       await api.post('/cart', { skinId });
       await get().fetchCart();
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Cartga qo\'shishda xatolik');
+      throw new Error(error.response?.data?.message || 'Failed to add to cart');
     }
   },
 

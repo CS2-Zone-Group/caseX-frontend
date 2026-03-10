@@ -1,6 +1,6 @@
 # CaseX Code Review
 
-> Sana: 2026-03-09 | Tekshirilgan: marketplace, cart, inventory, favorites, sharing, auth, users, profile, i18n, theme
+> Sana: 2026-03-09 | Tekshirilgan: marketplace, cart, inventory, favorites, auth, users, profile, i18n, theme
 > Yangilangan: 2026-03-09 | Tuzatilgan muammolar belgilandi
 
 ---
@@ -46,7 +46,6 @@
 | 19 | Favorites | **Route tartib xatosi** | **TUZATILDI** — specific routelar birinchi |
 | 20 | Favorites | **N+1 query** | **TUZATILDI** — QueryBuilder bilan faqat ID select |
 | 21 | Auth | **JWT payload kamchiligi** | **TUZATILDI** — role, username qo'shildi |
-| 22 | Sharing | **userId column nomi** | Ochiq — tekshirish kerak |
 
 ### Frontend
 
@@ -74,7 +73,6 @@
 | 33 | **float diapazoni** | Ochiq |
 | 34 | **Inventory unique constraint** | Ochiq |
 | 35 | **Inventory updatedAt yo'q** | **TUZATILDI** — `@UpdateDateColumn()` qo'shildi |
-| 36 | **Sharing pagination limit yo'q** | **TUZATILDI** — max 100 |
 | 37 | **Auth error logging yo'q** | **TUZATILDI** — Logger qo'shildi |
 | 38 | **Data exposure** | Ochiq — Response DTO kerak |
 

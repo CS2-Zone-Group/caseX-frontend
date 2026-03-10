@@ -107,7 +107,9 @@
     "balance": "Баланс",
     "paymentHistory": "История платежей",
     "adminPanel": "Админ Панель",
-    "depositTooltip": "Пополнить баланс"
+    "depositTooltip": "Пополнить баланс",
+    "onSale": "На продаже",
+    "targets": "Цели"
   },
   "CartPage": {
     "title": "Корзина",
@@ -171,7 +173,7 @@
     "pciCertified": "PCI DSS Сертифицировано"
   },
   "SkinDetailsModal": {
-    "itemDetails": "ДЕТАЛИ ПРЕДМЕТА",
+    "itemDetails": "ДЕТАЛИ ИНВЕНТАРЯ",
     "salesInfo": "ИНФОРМАЦИЯ О ПРОДАЖАХ",
     "viewAtSteam": "Посмотреть в Steam",
     "price": "Цена",
@@ -206,7 +208,10 @@
       "battleScarred": "Закаленное в боях"
     },
     "salesChartPlaceholder": "Здесь будет отображаться график продаж",
-    "noSalesHistory": "История продаж для этого предмета недоступна"
+    "noSalesHistory": "История продаж для этого предмета недоступна",
+    "referencePrice": "Справочная цена",
+    "loginRequired": "Пожалуйста, сначала войдите в систему",
+    "addedToCart": "Добавлено в корзину!"
   },
   "SettingsModal": {
     "title": "Настройки",
@@ -320,7 +325,11 @@
     "save": "Сохранить",
     "delete": "Удалить",
     "edit": "Редактировать",
-    "close": "Закрыть"
+    "close": "Закрыть",
+    "sortNewest": "Новые",
+    "priceHighToLow": "Цена: по убыванию",
+    "priceLowToHigh": "Цена: по возрастанию",
+    "nameAtoZ": "Имя: А-Я"
   },
   "MarketplacePage": {
     "title": "Маркетплейс",
@@ -349,7 +358,23 @@
     "sortNewest": "Новейшие",
     "priceHighToLow": "Цена: По убыванию",
     "priceLowToHigh": "Цена: По возрастанию",
-    "nameAtoZ": "Название: А-Я"
+    "nameAtoZ": "Название: А-Я",
+    "linkSteamTitle": "Привяжите аккаунт Steam",
+    "linkSteamDescription": "Подключите аккаунт Steam для просмотра и управления предметами инвентаря CS2",
+    "linkSteamButton": "Привязать Steam",
+    "noFiltersMatch": "Предметы не найдены по выбранным фильтрам",
+    "clearFilters": "Сбросить фильтры",
+    "items": "Предметы",
+    "total": "Итого",
+    "selected": "выбрано",
+    "sell": "Продать",
+    "filter": "Фильтр",
+    "steamInventoryPrivateTitle": "Ваш инвентарь Steam закрыт",
+    "steamInventoryPrivateDescription": "Откройте инвентарь в настройках Steam, чтобы мы могли загрузить ваши предметы",
+    "openSteamSettings": "Настройки Steam",
+    "steamRateLimitedTitle": "Сервер Steam перегружен",
+    "steamRateLimitedDescription": "Слишком много запросов к серверу Steam. Подождите немного и попробуйте снова",
+    "retry": "Повторить"
   },
   "CheckoutPage": {
     "title": "Оформление заказа",
@@ -415,7 +440,16 @@
     "loadingRates": "Загрузка курсов...",
     "profileShort": "Профиль",
     "languageShort": "Язык",
-    "historyShort": "История"
+    "historyShort": "История",
+    "steamAccount": "АККАУНТ STEAM",
+    "steamLinked": "Аккаунт Steam привязан",
+    "steamNotLinked": "Аккаунт Steam не привязан",
+    "linkSteam": "Привязать Steam",
+    "unlinkSteam": "Отвязать",
+    "phoneNumber": "НОМЕР ТЕЛЕФОНА",
+    "phoneNotSet": "Номер телефона не указан",
+    "addPhone": "Добавить номер",
+    "phoneLinked": "Телефон привязан"
   },
   "VerifyEmailPage": {
     "title": "Подтверждение Email",
@@ -507,6 +541,40 @@
       "passwordWeak": "Слабый пароль. Используйте буквы и цифры.",
       "generalError": "Произошла ошибка. Попробуйте снова."
     }
+  },
+  "OnSalePage": {
+    "title": "Предметы на продаже",
+    "loading": "Загрузка...",
+    "empty": "Пока нет предметов на продаже",
+    "emptyDescription": "Разместите предметы из инвентаря на маркетплейсе",
+    "goToInventory": "Перейти в инвентарь",
+    "listed": "Размещено",
+    "delist": "Снять с продажи",
+    "editPrice": "Изменить цену",
+    "listedAt": "Дата размещения",
+    "listPrice": "Цена продажи",
+    "items": "предметов"
+  },
+  "TargetsPage": {
+    "title": "Цели",
+    "loading": "Загрузка...",
+    "empty": "Пока нет целей",
+    "emptyDescription": "Добавьте целевые предметы с маркетплейса по нужной цене",
+    "goToMarketplace": "Перейти в маркетплейс",
+    "targetPrice": "Целевая цена",
+    "currentPrice": "Текущая цена",
+    "removeTarget": "Удалить цель",
+    "createdAt": "Дата добавления",
+    "status": "Статус",
+    "active": "Активно",
+    "fulfilled": "Выполнено",
+    "expired": "Истекло",
+    "items": "целей"
+  },
+  "Chat": {
+    "welcomeMessage": "Чем можем помочь?",
+    "autoReply": "Ваше сообщение получено. Мы ответим в ближайшее время.",
+    "inputPlaceholder": "Напишите сообщение..."
   },
   "ChangePasswordModal": {
     "title": "Изменение пароля",

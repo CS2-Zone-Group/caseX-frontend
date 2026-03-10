@@ -1,10 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import AuthGuard from '@/components/AuthGuard';
-import MarketplaceFilters from '@/components/MarketplaceFilters';
+import FilterPanel from '@/components/FilterPanel';
 import { formatPrice } from '@/lib/currency';
 import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -25,11 +24,11 @@ interface InventoryItemType {
     exterior: string;
     weaponType?: string;
     price?: number;
+    float?: number;
   };
 }
 
 export default function InventoryPage() {
-  const router = useRouter();
   const { user } = useAuthStore();
   const { currency } = useSettingsStore();
   const t = useTranslations('InventoryPage');
@@ -45,13 +44,14 @@ export default function InventoryPage() {
     resetFilters
   } = useFilterStore();
 
-  const [allItems, setAllItems] = useState<InventoryItemType[]>([]); 
-  const [filteredItems, setFilteredItems] = useState<InventoryItemType[]>([]); 
-  
+  const [allItems, setAllItems] = useState<InventoryItemType[]>([]);
+  const [filteredItems, setFilteredItems] = useState<InventoryItemType[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
-  const [filtersVisible, setFiltersVisible] = useState(false);
+  const [filtersVisible, setFiltersVisible] = useState(true);
+  const [steamStatus, setSteamStatus] = useState<string>('');
 
   useEffect(() => {
     document.title = `${t('title')} - CaseX`;
@@ -70,29 +70,30 @@ export default function InventoryPage() {
 
     setLoading(true);
     try {
-      const params = {
-        userId: user.id,
-      };
-
+      const params = { userId: user.id };
       const { data } = await api.get('/inventory', { params });
-      
+
       let rawItems: InventoryItemType[] = [];
+      let status = '';
 
       if (Array.isArray(data)) {
         rawItems = data;
       } else if (data.items && Array.isArray(data.items)) {
         rawItems = data.items;
+        status = data.steamStatus || '';
       } else if (data.data && Array.isArray(data.data)) {
         rawItems = data.data;
       }
 
       setAllItems(rawItems);
-      setFilteredItems(rawItems); 
+      setFilteredItems(rawItems);
+      setSteamStatus(status);
 
     } catch (error) {
       console.error('Inventory fetch error:', error);
       setAllItems([]);
       setFilteredItems([]);
+      setSteamStatus('');
     } finally {
       setLoading(false);
     }
@@ -103,31 +104,31 @@ export default function InventoryPage() {
     fetchInventoryItems();
   }, [fetchInventoryItems, isHydrated, user]);
 
-
+  // Client-side filtering
   useEffect(() => {
     let result = [...allItems];
 
     if (searchQuery) {
       const lowerQuery = searchQuery.toLowerCase();
-      result = result.filter(item => 
+      result = result.filter(item =>
         item.skin?.name?.toLowerCase().includes(lowerQuery)
       );
     }
 
     if (rarity) {
-      result = result.filter(item => 
+      result = result.filter(item =>
         item.skin?.rarity?.toLowerCase() === rarity.toLowerCase()
       );
     }
 
     if (weaponType) {
-      result = result.filter(item => 
+      result = result.filter(item =>
         item.skin?.weaponType?.toLowerCase() === weaponType.toLowerCase()
       );
     }
 
     if (condition) {
-      result = result.filter(item => 
+      result = result.filter(item =>
         item.skin?.exterior?.toLowerCase() === condition.toLowerCase()
       );
     }
@@ -135,15 +136,15 @@ export default function InventoryPage() {
     if (priceRange.min > 0 || priceRange.max > 0) {
       result = result.filter(item => {
         const price = item.listPrice || item.skin?.price || 0;
-        const minOk = priceRange.min ? price >= priceRange.min : true;
-        const maxOk = priceRange.max ? price <= priceRange.max : true;
+        const minOk = priceRange.min > 0 ? price >= priceRange.min : true;
+        const maxOk = priceRange.max > 0 ? price <= priceRange.max : true;
         return minOk && maxOk;
       });
     }
 
     if (sortBy && sortBy !== 'default') {
       const [field, order] = sortBy.includes('-') ? sortBy.split('-') : [sortBy, 'DESC'];
-      
+
       result.sort((a, b) => {
         let valA: any = 0;
         let valB: any = 0;
@@ -155,7 +156,7 @@ export default function InventoryPage() {
           valA = a.skin?.name || '';
           valB = b.skin?.name || '';
         } else {
-          valA = a.id; 
+          valA = a.id;
           valB = b.id;
         }
 
@@ -190,51 +191,110 @@ export default function InventoryPage() {
       return sum + Number(price);
     }, 0);
 
+  const handleLinkSteam = () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+    window.location.href = `${backendUrl}/auth/steam/link?token=${token}`;
+  };
+
+  const hasSteam = !!user?.steamId;
+
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <Navbar />
 
         <main className="container mx-auto px-2 sm:px-4 py-8 pt-20">
-          <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
-            
-            <div className="lg:hidden mb-4">
-              {filtersVisible && <MarketplaceFilters filters={filtersVisible} />}
+          {!hasSteam && (
+            <div className="mb-6 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-5 sm:p-6 text-white flex flex-col sm:flex-row items-center gap-4">
+              <div className="flex-shrink-0">
+                <svg className="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="text-lg font-bold">{t('linkSteamTitle')}</h3>
+                <p className="text-blue-100 text-sm mt-1">{t('linkSteamDescription')}</p>
+              </div>
+              <button
+                onClick={handleLinkSteam}
+                className="px-6 py-2.5 bg-white text-blue-700 font-semibold rounded-lg hover:bg-blue-50 transition-colors whitespace-nowrap"
+              >
+                {t('linkSteamButton')}
+              </button>
             </div>
-            <div className="hidden lg:block w-80 flex-shrink-0">
-               <MarketplaceFilters filters={filtersVisible} />
-            </div>
+          )}
 
-            <div className="flex-1">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 lg:mb-6 gap-4 sm:gap-0">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setFiltersVisible(!filtersVisible)}
-                      className="p-2 bg-white dark:bg-gray-800 rounded-lg lg:hidden border border-gray-200 dark:border-gray-700"
-                    >
-                       Filter
-                    </button>
-                    <button
-                      className="p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
-                      onClick={() => fetchInventoryItems()}
-                    >
-                      <svg className="w-5 h-5 text-gray-700 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                    </button>
-                  </div>
-                  
-                  <div className="text-gray-900 dark:text-white text-sm lg:text-base">
-                    <span className="text-gray-600 dark:text-gray-400">Items: {filteredItems.length}</span>
-                    <span className="font-bold ml-2 text-green-600 dark:text-green-400">
-                      Total: {formatPrice(totalInventoryValue, currency)}
-                    </span>
-                  </div>
+          {(steamStatus === 'private' || steamStatus === 'rate_limited') && (
+            <div className="mb-4 flex items-center gap-3 px-4 py-3 bg-yellow-50 dark:bg-gray-800/60 border border-yellow-200 dark:border-gray-700 rounded-lg text-sm">
+              <svg className="w-4 h-4 text-yellow-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+              <span className="text-gray-700 dark:text-gray-300 flex-1">
+                {steamStatus === 'private' ? t('steamInventoryPrivateDescription') : t('steamRateLimitedDescription')}
+              </span>
+              {steamStatus === 'private' ? (
+                <a
+                  href="https://steamcommunity.com/my/edit/settings"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-yellow-600 dark:text-yellow-500 hover:text-yellow-700 font-medium whitespace-nowrap transition-colors"
+                >
+                  {t('openSteamSettings')}
+                </a>
+              ) : (
+                <button
+                  onClick={() => fetchInventoryItems()}
+                  className="text-yellow-600 dark:text-yellow-500 hover:text-yellow-700 font-medium whitespace-nowrap transition-colors"
+                >
+                  {t('retry')}
+                </button>
+              )}
+            </div>
+          )}
+
+          <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
+
+            {/* Filter Panel */}
+            <FilterPanel
+              isVisible={filtersVisible}
+              onToggle={() => setFiltersVisible(false)}
+            />
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-4 gap-3">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setFiltersVisible(!filtersVisible)}
+                    className={`p-2 rounded-lg border transition-colors ${
+                      filtersVisible
+                        ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-700 text-primary-600'
+                        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                  </button>
+                  <button
+                    className="p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 transition-colors"
+                    onClick={() => fetchInventoryItems()}
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                  </button>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {t('items')}: <span className="font-semibold text-gray-900 dark:text-white">{filteredItems.length}</span>
+                  </span>
+                  <span className="text-sm font-semibold text-green-600 dark:text-green-400">
+                    {t('total')}: {formatPrice(totalInventoryValue, currency)}
+                  </span>
                 </div>
 
                 <select
-                  value={sortBy}
+                  value={sortBy === 'default' ? 'createdAt-DESC' : sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm shadow-sm h-8 min-w-0 appearance-none bg-no-repeat bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.75rem_center] pr-10"
+                  className="px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm appearance-none bg-no-repeat bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.5rem_center] pr-8"
                 >
                   <option value="createdAt-DESC">{t('sortNewest')}</option>
                   <option value="price-DESC">{t('priceHighToLow')}</option>
@@ -244,34 +304,43 @@ export default function InventoryPage() {
               </div>
 
               {loading ? (
-                <div className="text-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-2"></div>
-                  <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+                <div className="flex items-center justify-center py-20">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-10 w-10 border-2 border-primary-600 border-t-transparent mx-auto mb-3"></div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('loading')}</p>
+                  </div>
                 </div>
               ) : filteredItems.length === 0 ? (
-                <div className="text-center py-20 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
-                  <p className="text-gray-500 mb-4">No items found matching your filters</p>
-                  <button onClick={resetFilters} className="text-primary-600 hover:underline">
-                    Clear Filters
+                <div className="text-center py-20 bg-white dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700">
+                  <svg className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                  <p className="text-gray-500 dark:text-gray-400 mb-3">{t('noFiltersMatch')}</p>
+                  <button onClick={resetFilters} className="text-sm text-primary-600 hover:underline">
+                    {t('clearFilters')}
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
+                <div className={`grid gap-3 ${
+                  filtersVisible
+                    ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'
+                    : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'
+                }`}>
                   {filteredItems.map((item) => (
                     <div
                       key={item.id}
                       onClick={() => handleSelectItem(item.id)}
-                      className={`bg-white dark:bg-gray-900 rounded-xl p-3 sm:p-4 border transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md ${
+                      className={`group bg-white dark:bg-gray-900 rounded-xl border transition-all duration-200 cursor-pointer hover:shadow-lg overflow-hidden ${
                         selectedItems.includes(item.id)
-                          ? 'border-primary-600 ring-1 ring-primary-600'
-                          : 'border-gray-200 dark:border-gray-800'
+                          ? 'border-primary-500 ring-1 ring-primary-500'
+                          : 'border-gray-200 dark:border-gray-700/50 hover:border-primary-300 dark:hover:border-primary-600/50'
                       }`}
                     >
-                      <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg mb-3 overflow-hidden relative">
+                      <div className="relative aspect-square bg-gray-100 dark:bg-gray-800/50 overflow-hidden">
                         <img
                           src={item.skin?.imageUrl}
                           alt={item.skin?.name}
-                          className="w-full h-full object-contain p-2"
+                          className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
                           onError={(e) => {
                              const target = e.currentTarget as HTMLImageElement;
                              if (target.src.includes('/330x192')) {
@@ -287,29 +356,40 @@ export default function InventoryPage() {
                         <div style={{display: 'none'}} className="flex items-center justify-center h-full text-xs text-gray-400">
                           No Image
                         </div>
+                        <div className="absolute top-2 left-2 flex items-center gap-1 p-1 rounded bg-green-500/80 backdrop-blur-sm text-white">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 018 0" /></svg>
+                        </div>
+                        {item.skin?.float != null && (
+                          <div className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-gradient-to-t from-black/60 to-transparent">
+                            <div className="flex items-center gap-1.5">
+                              <div className="flex-1 h-1 rounded-full bg-gray-600 overflow-hidden">
+                                <div className="h-full rounded-full" style={{ width: `${(item.skin.float || 0) * 100}%`, background: (item.skin.float || 0) < 0.07 ? '#22c55e' : (item.skin.float || 0) < 0.15 ? '#84cc16' : (item.skin.float || 0) < 0.38 ? '#eab308' : (item.skin.float || 0) < 0.45 ? '#f97316' : '#ef4444' }} />
+                              </div>
+                              <span className="text-[9px] font-mono text-white/80">{item.skin.float ? parseFloat(String(item.skin.float)).toFixed(4) : ''}</span>
+                            </div>
+                          </div>
+                        )}
                         {selectedItems.includes(item.id) && (
-                          <div className="absolute top-2 right-2 w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center text-white text-xs">✓</div>
+                          <div className="absolute top-2 right-2 w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center text-white text-xs">
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
                         )}
                         {item.isSteamItem && (
-                          <div className="absolute top-2 left-2 px-2 py-0.5 bg-blue-600 text-white text-[10px] rounded-full">Steam</div>
+                          <div className="absolute top-2 left-2 px-2 py-0.5 bg-blue-600 text-white text-[10px] font-medium rounded-full">Steam</div>
                         )}
                       </div>
 
-                      <div className="space-y-1">
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm truncate" title={item.skin?.name}>
+                      <div className="p-3 space-y-1.5">
+                        <h3 className="font-medium text-gray-900 dark:text-white text-xs leading-tight line-clamp-2 min-h-[2rem]" title={item.skin?.name}>
                           {item.skin?.name}
                         </h3>
-                        
-                        <div className="flex justify-center">
-                          <span className="px-2 py-0.5 rounded text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 truncate">
-                            {item.skin?.rarity}
-                          </span>
-                        </div>
-                        
-                        <p className="text-[10px] text-gray-500 text-center truncate">{item.skin?.exterior}</p>
-                        
+
+                        <p className="text-[10px] text-gray-400/80 dark:text-gray-500/80 truncate">{item.skin?.exterior}</p>
+
                         <div className="text-center pt-1">
-                           <span className="text-sm font-bold text-green-600 dark:text-green-400">
+                          <span className="text-sm font-bold text-green-600 dark:text-green-400">
                             {formatPrice(Number(item.listPrice || item.skin?.price || 0), currency)}
                           </span>
                         </div>
@@ -323,16 +403,15 @@ export default function InventoryPage() {
                 <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 shadow-lg z-50">
                   <div className="container mx-auto flex justify-between items-center">
                     <span className="dark:text-white font-medium">
-                        {selectedItems.length} selected 
+                        {selectedItems.length} {t('selected')}
                         <span className="ml-2 text-green-500">
                             ({formatPrice(selectedValue, currency)})
                         </span>
                     </span>
-                    <button onClick={handleSell} className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Sell</button>
+                    <button onClick={handleSell} className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">{t('sell')}</button>
                   </div>
                 </div>
               )}
-
             </div>
           </div>
         </main>

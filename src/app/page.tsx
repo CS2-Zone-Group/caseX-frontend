@@ -168,10 +168,10 @@ export default function Home() {
       <footer className="py-12 px-4 bg-white dark:bg-gray-900 dark:text-white">
         <div className="container mx-auto text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold">C</span>
-            </div>
-            <span className="text-xl font-bold">CaseX</span>
+            <img src="/logo-icon.png" alt="CaseX" className="h-8 w-auto" />
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
+              CaseX
+            </span>
           </div>
           <p className="dark:text-gray-300 text-gray-700 mb-4">
             {t("footer.description")}

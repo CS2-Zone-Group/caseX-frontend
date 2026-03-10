@@ -24,7 +24,7 @@ caseX-frontend/  — Next.js 14 (TypeScript), Zustand, Tailwind CSS
 
 ## Bajarilgan ishlar
 
-### Backend (13 modul)
+### Backend (12 modul)
 
 | Modul | Endpoint-lar | Holat |
 |-------|-------------|-------|
@@ -36,7 +36,6 @@ caseX-frontend/  — Next.js 14 (TypeScript), Zustand, Tailwind CSS
 | **Inventory** | GET inventory, list/unlist items | ✅ To'liq |
 | **Cart** | get, add, remove, clear | ✅ To'liq |
 | **Favorites** | add, remove, list, check, ids, count | ✅ To'liq |
-| **Sharing** | create, get, update, delete, stats, generate-url | ✅ To'liq |
 | **Email** | SMTP, verification code template | ✅ To'liq |
 | **Telegram** | Gateway API, OTP sending/verifying | ✅ To'liq |
 | **Health** | full check, simple status | ✅ To'liq |
@@ -66,7 +65,7 @@ caseX-frontend/  — Next.js 14 (TypeScript), Zustand, Tailwind CSS
 | Transaction history | 🔄 Stub |
 | Chat support | 🔄 Stub |
 
-### DB Entitylar (8 ta)
+### DB Entitylar (7 ta)
 
 | Entity | Jadval | Asosiy maydonlar |
 |--------|--------|-----------------|
@@ -75,7 +74,6 @@ caseX-frontend/  — Next.js 14 (TypeScript), Zustand, Tailwind CSS
 | Inventory | inventory | id, userId, skinId, isListed, listPrice, acquiredAt |
 | Cart | cart | id, userId, skinId, quantity, addedAt |
 | Favorite | favorites | id, userId, skinId, createdAt |
-| SharedItem | shared_items | id, shareId, userId, skinId, title, viewCount, isActive |
 | EmailVerification | email_verifications | id, userId, code, expiresAt, attempts |
 | OtpVerification | otp_verifications | id, phoneNumber, code, requestId, attempts, expiresAt |
 
