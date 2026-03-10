@@ -10,6 +10,7 @@ interface User {
   steamId?: string | null;
   balance?: number;
   role?: string;
+  phoneNumber?: string | null;
 }
 
 interface AuthState {
