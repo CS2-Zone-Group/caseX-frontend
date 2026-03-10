@@ -241,7 +241,7 @@ export default function Navbar() {
                   <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-blue-600 rounded-full flex items-center justify-center overflow-hidden">
                     {user.steamAvatar || user.avatar ? (
                       <img
-                        src={user.steamAvatar || user.avatar}
+                        src={user.steamAvatar || user.avatar || undefined}
                         alt={user.username}
                         className="w-full h-full object-cover"
                         referrerPolicy="no-referrer"
