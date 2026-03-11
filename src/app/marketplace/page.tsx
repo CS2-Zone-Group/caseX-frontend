@@ -161,7 +161,7 @@ function MarketplaceContent() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <Navbar />
 
-      <div className="container mx-auto px-2 sm:px-4 py-8 pt-20">
+      <div className="max-w-[1600px] mx-auto px-2 sm:px-3 lg:px-4 py-4 pt-20">
         <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
 
           {/* Filter Panel */}
@@ -237,10 +237,10 @@ function MarketplaceContent() {
                 </button>
               </div>
             ) : (
-              <div className={`grid gap-3 ${
+              <div className={`grid gap-2 ${
                 filtersVisible
-                  ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'
-                  : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'
+                  ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5'
+                  : 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7'
               }`}>
                 {skins.map((skin) => {
                   const lockDate = skin.tradeLockUntil ? new Date(skin.tradeLockUntil) : null;
@@ -249,7 +249,7 @@ function MarketplaceContent() {
                   return (
                   <div
                     key={skin.id}
-                    className="group bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700/50 hover:border-primary-300 dark:hover:border-primary-600/50 transition-all duration-200 hover:shadow-lg overflow-hidden"
+                    className="group bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700/50 hover:border-primary-300 dark:hover:border-primary-600/50 transition-all duration-200 hover:shadow-lg overflow-hidden"
                   >
                     <div
                       className="relative aspect-square bg-gray-100 dark:bg-gray-800/50 cursor-pointer overflow-hidden"
@@ -258,7 +258,7 @@ function MarketplaceContent() {
                       <img
                         src={skin.imageUrl}
                         alt={skin.name}
-                        className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
                       />
                       {isLocked ? (
                         <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-medium">
@@ -279,33 +279,33 @@ function MarketplaceContent() {
                         </div>
                       </div>
                       <div className="absolute top-2 right-2">
-                        <FavoriteButton skinId={skin.id} className="w-8 h-8 text-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm" />
+                        <FavoriteButton skinId={skin.id} className="w-7 h-7 text-base bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm" />
                       </div>
                     </div>
 
-                    <div className="p-3 space-y-1.5">
+                    <div className="p-2 space-y-1">
                       <h3
-                        className="font-medium text-gray-900 dark:text-white text-xs leading-tight line-clamp-2 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 transition-colors min-h-[2rem]"
+                        className="font-medium text-gray-900 dark:text-white text-[11px] leading-tight line-clamp-1 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                         title={skin.name}
                         onClick={() => openSkinDetails(skin)}
                       >
                         {skin.name}
                       </h3>
 
-                      <p className="text-[10px] text-gray-400/80 dark:text-gray-500/80 truncate">
+                      <p className="text-[9px] text-gray-400/80 dark:text-gray-500/80 truncate">
                         {skin.exterior}
                       </p>
 
-                      <div className="flex items-center justify-between pt-1">
-                        <span className="text-sm font-bold text-primary-600 dark:text-primary-400">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-primary-600 dark:text-primary-400">
                           {formatPrice(Number(skin.price), currency)}
                         </span>
                         <button
                           onClick={() => handleAddToCart(skin.id)}
-                          className="p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
+                          className="p-1.5 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition"
                           title={t('addToCart')}
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
                         </button>

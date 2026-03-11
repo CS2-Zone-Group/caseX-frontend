@@ -205,7 +205,7 @@ export default function InventoryPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <Navbar />
 
-        <main className="container mx-auto px-2 sm:px-4 py-8 pt-20">
+        <main className="max-w-[1600px] mx-auto px-2 sm:px-3 lg:px-4 py-4 pt-20">
           {!hasSteam && (
             <div className="mb-6 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-5 sm:p-6 text-white flex flex-col sm:flex-row items-center gap-4">
               <div className="flex-shrink-0">
@@ -321,10 +321,10 @@ export default function InventoryPage() {
                   </button>
                 </div>
               ) : (
-                <div className={`grid gap-3 ${
+                <div className={`grid gap-2 ${
                   filtersVisible
-                    ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'
-                    : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'
+                    ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5'
+                    : 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7'
                 }`}>
                   {filteredItems.map((item) => (
                     <div

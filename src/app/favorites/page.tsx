@@ -184,7 +184,7 @@ export default function FavoritesPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <Navbar />
 
-        <div className="container mx-auto py-8 pt-20 px-2 sm:px-4">
+        <div className="max-w-[1600px] mx-auto py-4 pt-20 px-2 sm:px-3 lg:px-4">
           <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
 
             {/* Filter Panel */}
@@ -241,10 +241,10 @@ export default function FavoritesPage() {
                   </p>
                 </div>
               ) : (
-                <div className={`grid gap-3 ${
+                <div className={`grid gap-2 ${
                   filtersVisible
-                    ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'
-                    : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'
+                    ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5'
+                    : 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7'
                 }`}>
                   {filteredItems.map((skin: any) => {
                     const lockDate = skin.tradeLockUntil ? new Date(skin.tradeLockUntil) : null;
