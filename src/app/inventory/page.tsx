@@ -4,18 +4,22 @@ import { useCallback, useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import AuthGuard from '@/components/AuthGuard';
 import FilterPanel from '@/components/FilterPanel';
+import SellModal from '@/components/SellModal';
 import { formatPrice } from '@/lib/currency';
 import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useTranslations } from 'next-intl';
 import api from '@/lib/api';
 import { useFilterStore } from '@/store/filterStore';
+import { useRouter } from 'next/navigation';
 
 interface InventoryItemType {
   id: string;
   isListed: boolean;
   listPrice: number | null;
   isSteamItem?: boolean;
+  highestBid?: number | null;
+  bidCount?: number;
   skin: {
     id: string;
     name: string;
@@ -24,12 +28,14 @@ interface InventoryItemType {
     exterior: string;
     weaponType?: string;
     price?: number;
+    steamPrice?: number;
     float?: number;
   };
 }
 
 export default function InventoryPage() {
-  const { user } = useAuthStore();
+  const router = useRouter();
+  const { user, fetchUserBalance } = useAuthStore();
   const { currency } = useSettingsStore();
   const t = useTranslations('InventoryPage');
 
@@ -52,6 +58,10 @@ export default function InventoryPage() {
   const [isHydrated, setIsHydrated] = useState(false);
   const [filtersVisible, setFiltersVisible] = useState(true);
   const [steamStatus, setSteamStatus] = useState<string>('');
+  const [sellLoading, setSellLoading] = useState(false);
+  const [sellError, setSellError] = useState<string | null>(null);
+  const [sellModalOpen, setSellModalOpen] = useState(false);
+  const [withdrawLoading, setWithdrawLoading] = useState(false);
 
   useEffect(() => {
     document.title = `${t('title')} - CaseX`;
@@ -66,7 +76,7 @@ export default function InventoryPage() {
   }, []);
 
   const fetchInventoryItems = useCallback(async () => {
-    if (!user || !isHydrated) return;
+    if (!user?.id || !isHydrated) return;
 
     setLoading(true);
     try {
@@ -97,12 +107,12 @@ export default function InventoryPage() {
     } finally {
       setLoading(false);
     }
-  }, [user, isHydrated]);
+  }, [user?.id, isHydrated]);
 
   useEffect(() => {
-    if (!isHydrated || !user) return;
+    if (!isHydrated || !user?.id) return;
     fetchInventoryItems();
-  }, [fetchInventoryItems, isHydrated, user]);
+  }, [fetchInventoryItems]);
 
   // Client-side filtering
   useEffect(() => {
@@ -177,7 +187,68 @@ export default function InventoryPage() {
     );
   };
 
-  const handleSell = () => console.log('Sell:', selectedItems);
+  const selectedItemsWithBids = allItems.filter(
+    (item) => selectedItems.includes(item.id) && !item.isSteamItem && item.highestBid && item.highestBid > 0
+  );
+
+  const selectedBidValue = selectedItemsWithBids.reduce(
+    (sum, item) => sum + Number(item.highestBid || 0), 0
+  );
+
+  const handleSell = async () => {
+    if (selectedItemsWithBids.length === 0) return;
+    setSellLoading(true);
+    setSellError(null);
+
+    try {
+      for (const item of selectedItemsWithBids) {
+        await api.post(`/orders/sell/${item.id}`);
+      }
+      await fetchUserBalance();
+      setSelectedItems([]);
+      await fetchInventoryItems();
+    } catch (err: any) {
+      setSellError(err.response?.data?.message || t('sellError'));
+    } finally {
+      setSellLoading(false);
+    }
+  };
+
+  const handleSellFromModal = async (items: Array<{ inventoryId: string; price: number }>) => {
+    for (const { inventoryId, price } of items) {
+      await api.post(`/inventory/${inventoryId}/list`, { price });
+    }
+    await fetchUserBalance();
+    setSelectedItems([]);
+    setSellModalOpen(false);
+    await fetchInventoryItems();
+  };
+
+  const handleSellNowFromModal = async (inventoryIds: string[]) => {
+    for (const id of inventoryIds) {
+      await api.post(`/orders/sell/${id}`);
+    }
+    await fetchUserBalance();
+    setSelectedItems([]);
+    setSellModalOpen(false);
+    await fetchInventoryItems();
+  };
+
+  const handleWithdraw = async () => {
+    if (selectedItems.length === 0) return;
+    setWithdrawLoading(true);
+    setSellError(null);
+
+    try {
+      // TODO: Implement Steam trade withdraw via steam-bot
+      // For now show a message
+      setSellError(t('withdrawComingSoon'));
+    } finally {
+      setWithdrawLoading(false);
+    }
+  };
+
+  const hasDbItems = selectedItems.some(id => !id.startsWith('steam_'));
 
   const totalInventoryValue = filteredItems.reduce((sum, item) => {
     const price = item.listPrice || item.skin?.price || 0;
@@ -356,8 +427,13 @@ export default function InventoryPage() {
                         <div style={{display: 'none'}} className="flex items-center justify-center h-full text-xs text-gray-400">
                           No Image
                         </div>
-                        <div className="absolute top-2 left-2 flex items-center gap-1 p-1 rounded bg-green-500/80 backdrop-blur-sm text-white">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 018 0" /></svg>
+                        <div className="absolute top-2 left-2 flex items-center gap-1">
+                          <div className="p-1 rounded bg-green-500/80 backdrop-blur-sm text-white">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 018 0" /></svg>
+                          </div>
+                          {item.isSteamItem && (
+                            <div className="px-2 py-0.5 bg-blue-600/90 backdrop-blur-sm text-white text-[10px] font-medium rounded-full">Steam</div>
+                          )}
                         </div>
                         {item.skin?.float != null && (
                           <div className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-gradient-to-t from-black/60 to-transparent">
@@ -376,9 +452,6 @@ export default function InventoryPage() {
                             </svg>
                           </div>
                         )}
-                        {item.isSteamItem && (
-                          <div className="absolute top-2 left-2 px-2 py-0.5 bg-blue-600 text-white text-[10px] font-medium rounded-full">Steam</div>
-                        )}
                       </div>
 
                       <div className="p-3 space-y-1.5">
@@ -392,6 +465,16 @@ export default function InventoryPage() {
                           <span className="text-sm font-bold text-green-600 dark:text-green-400">
                             {formatPrice(Number(item.listPrice || item.skin?.price || 0), currency)}
                           </span>
+                          {!item.isSteamItem && item.highestBid && item.highestBid > 0 && (
+                            <div className="mt-0.5">
+                              <span className="text-[10px] font-medium text-orange-500 dark:text-orange-400">
+                                {t('bidLabel')}: {formatPrice(item.highestBid, currency)}
+                                {item.bidCount && item.bidCount > 1 && (
+                                  <span className="text-gray-400"> ({item.bidCount})</span>
+                                )}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -400,17 +483,103 @@ export default function InventoryPage() {
               )}
 
               {selectedItems.length > 0 && (
-                <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 shadow-lg z-50">
-                  <div className="container mx-auto flex justify-between items-center">
-                    <span className="dark:text-white font-medium">
-                        {selectedItems.length} {t('selected')}
-                        <span className="ml-2 text-green-500">
-                            ({formatPrice(selectedValue, currency)})
-                        </span>
-                    </span>
-                    <button onClick={handleSell} className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">{t('sell')}</button>
+                <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-2xl z-50">
+                  <div className="max-w-[1600px] mx-auto px-3 lg:px-4 py-3">
+                    {sellError && (
+                      <p className="text-red-500 text-sm mb-2 text-center">{sellError}</p>
+                    )}
+                    <div className="flex items-center gap-4">
+                      <button
+                        onClick={() => setSelectedItems([])}
+                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition flex-shrink-0"
+                        title={t('clearSelection')}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+
+                      {/* Withdraw — disabled */}
+                      <div className="relative group/withdraw">
+                        <button
+                          disabled
+                          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600/50 text-white/60 text-sm font-semibold rounded-lg cursor-not-allowed"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                          <span className="hidden sm:inline">{t('withdraw')}</span>
+                        </button>
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover/withdraw:opacity-100 transition-opacity pointer-events-none">
+                          {t('withdrawComingSoon')}
+                        </div>
+                      </div>
+
+                      {/* Sotuvga qo'yish — opens sell modal on list tab */}
+                      {hasDbItems && (
+                        <button
+                          onClick={() => setSellModalOpen(true)}
+                          className="flex items-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span className="hidden sm:inline">{t('sellAsk')}</span>
+                          <span className="text-xs opacity-75">{formatPrice(selectedValue, currency)}</span>
+                        </button>
+                      )}
+
+                      {/* Hoziroq sotish — always visible, disabled if no bids */}
+                      <button
+                        onClick={handleSell}
+                        disabled={sellLoading || selectedItemsWithBids.length === 0}
+                        className={`flex items-center gap-2 px-4 py-2.5 text-white text-sm font-semibold rounded-lg transition disabled:cursor-not-allowed ${
+                          selectedItemsWithBids.length > 0
+                            ? 'bg-orange-600 hover:bg-orange-700 disabled:opacity-50'
+                            : 'bg-orange-600/40'
+                        }`}
+                      >
+                        {sellLoading ? (
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        ) : (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                          </svg>
+                        )}
+                        <span className="hidden sm:inline">{t('sellNow')}</span>
+                        {selectedItemsWithBids.length > 0 ? (
+                          <span className="text-xs opacity-75">{formatPrice(selectedBidValue, currency)}</span>
+                        ) : (
+                          <span className="text-xs opacity-75">{t('noBid')}</span>
+                        )}
+                      </button>
+
+                      {/* Selected info */}
+                      <div className="flex items-center gap-2 text-sm text-gray-400 ml-auto">
+                        <span className="font-semibold text-white">{selectedItems.length}</span>
+                        <span>{t('selected')}</span>
+                        <span className="text-green-400 font-semibold">{formatPrice(selectedValue, currency)}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
+              )}
+
+              {/* Sell Modal */}
+              {sellModalOpen && (
+                <SellModal
+                  items={allItems
+                    .filter(item => selectedItems.includes(item.id) && !item.id.startsWith('steam_'))
+                    .map(item => ({
+                      id: item.id,
+                      skin: item.skin,
+                      highestBid: item.highestBid,
+                    }))
+                  }
+                  onClose={() => setSellModalOpen(false)}
+                  onSell={handleSellFromModal}
+                  onSellNow={handleSellNowFromModal}
+                />
               )}
             </div>
           </div>

@@ -70,21 +70,9 @@ export default function Navbar() {
     }
   }, [user?.id, token, isLoggedIn]); // Only depend on user.id and token, not the functions
 
-  // Convert balance when currency changes
+  // Keep convertedBalance in sync with baseBalance (formatPrice handles conversion internally)
   useEffect(() => {
-    const convertBalance = async () => {
-      try {
-        const converted = await convertCurrency(baseBalance, "USD", currency);
-        setConvertedBalance(converted);
-      } catch (error) {
-        console.error("Currency conversion failed in Navbar:", error);
-        setConvertedBalance(baseBalance);
-      }
-    };
-
-    if (baseBalance > 0) {
-      convertBalance();
-    }
+    setConvertedBalance(baseBalance);
   }, [currency, baseBalance]);
 
   const handleLogout = () => {

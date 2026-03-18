@@ -26,6 +26,10 @@ interface AuthState {
   setHasHydrated: (state: boolean) => void;
 }
 
+// Deduplication: prevent multiple concurrent calls
+let _checkPromise: Promise<boolean> | null = null;
+let _balancePromise: Promise<void> | null = null;
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -47,43 +51,46 @@ export const useAuthStore = create<AuthState>()(
         set({ user: null, token: null, isTokenValid: false });
       },
       checkTokenValidity: async () => {
+        // Deduplicate: if already in-flight, return the same promise
+        if (_checkPromise) return _checkPromise;
+
         const { token } = get();
         if (!token) {
           set({ isTokenValid: false });
           return false;
         }
 
+        _checkPromise = (async () => {
+          try {
+            const { default: api } = await import('@/lib/api');
+            const response = await api.get('/users/profile');
+
+            if (response.data) {
+              const currentUser = get().user;
+              const updatedUser = {
+                ...response.data,
+                steamAvatar: response.data.steamAvatar || currentUser?.steamAvatar || null,
+                steamId: response.data.steamId || currentUser?.steamId || null,
+              };
+
+              set({ user: updatedUser, isTokenValid: true });
+              return true;
+            }
+          } catch (error: any) {
+            if (error.response?.status === 401) {
+              get().logout();
+              set({ isTokenValid: false });
+              return false;
+            }
+          }
+          return true;
+        })();
+
         try {
-          // Import api dynamically to avoid circular dependency
-          const { default: api } = await import('@/lib/api');
-          const response = await api.get('/users/profile');
-          
-          if (response.data) {
-            // Update user data if token is valid, preserving Steam fields
-            const currentUser = get().user;
-            const updatedUser = {
-              ...response.data,
-              // Preserve Steam fields if they exist in current user but not in response
-              steamAvatar: response.data.steamAvatar || currentUser?.steamAvatar || null,
-              steamId: response.data.steamId || currentUser?.steamId || null,
-            };
-            
-            set({ 
-              user: updatedUser, 
-              isTokenValid: true 
-            });
-            return true;
-          }
-        } catch (error: any) {
-          if (error.response?.status === 401) {
-            // Token is invalid, logout
-            get().logout();
-            set({ isTokenValid: false });
-            return false;
-          }
+          return await _checkPromise;
+        } finally {
+          _checkPromise = null;
         }
-        
-        return true;
       },
       updateUser: (userData) => {
         const { user } = get();
@@ -92,25 +99,31 @@ export const useAuthStore = create<AuthState>()(
         }
       },
       fetchUserBalance: async () => {
+        if (_balancePromise) return _balancePromise;
+
         const { token, user } = get();
         if (!token || !user) return;
 
-        try {
-          // Import api dynamically to avoid circular dependency
-          const { default: api } = await import('@/lib/api');
-          const response = await api.get('/users/balance');
-          
-          if (response.data && typeof response.data.balance === 'number') {
-            // Update user balance
-            const currentUser = get().user; // Get fresh user state
-            if (currentUser) {
-              set({ 
-                user: { ...currentUser, balance: response.data.balance }
-              });
+        _balancePromise = (async () => {
+          try {
+            const { default: api } = await import('@/lib/api');
+            const response = await api.get('/users/balance');
+
+            if (response.data && typeof response.data.balance === 'number') {
+              const currentUser = get().user;
+              if (currentUser) {
+                set({ user: { ...currentUser, balance: response.data.balance } });
+              }
             }
+          } catch (error: any) {
+            console.error('Failed to fetch user balance:', error);
           }
-        } catch (error: any) {
-          console.error('Failed to fetch user balance:', error);
+        })();
+
+        try {
+          await _balancePromise;
+        } finally {
+          _balancePromise = null;
         }
       },
       setHasHydrated: (state) => {

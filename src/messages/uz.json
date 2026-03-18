@@ -211,7 +211,9 @@
     "noSalesHistory": "Bu inventar uchun sotuv tarixi mavjud emas",
     "referencePrice": "Ko'rsatkich narx",
     "loginRequired": "Iltimos, avval tizimga kiring",
-    "addedToCart": "Savatga qo'shildi!"
+    "addedToCart": "Savatga qo'shildi!",
+    "purchaseSuccess": "Xarid muvaffaqiyatli! Item inventaringizga qo'shildi.",
+    "purchaseError": "Xarid amalga oshmadi. Qayta urinib ko'ring."
   },
   "SettingsModal": {
     "title": "Sozlamalar",
@@ -348,7 +350,12 @@
     "sortNewest": "Eng yangi",
     "priceHighToLow": "Narx: Yuqoridan pastga",
     "priceLowToHigh": "Narx: Pastdan yuqoriga",
-    "nameAtoZ": "Nomi: A-Z"
+    "nameAtoZ": "Nomi: A-Z",
+    "purchaseSuccess": "Muvaffaqiyatli sotib olindi!",
+    "purchaseError": "Sotib olishda xatolik yuz berdi",
+    "buyNow": "Sotib olish",
+    "yourListing": "Sizning e'lon",
+    "sellerLabel": "Sotuvchi"
   },
   "InventoryPage": {
     "title": "Inventar",
@@ -374,7 +381,21 @@
     "openSteamSettings": "Steam sozlamalarini ochish",
     "steamRateLimitedTitle": "Steam serveri band",
     "steamRateLimitedDescription": "Steam serveriga juda ko'p so'rov yuborildi. Biroz kutib qayta urinib ko'ring",
-    "retry": "Qayta urinish"
+    "retry": "Qayta urinish",
+    "sellError": "Sotish amalga oshmadi. Qayta urinib ko'ring.",
+    "withdraw": "Steamdan yechish",
+    "sellAsk": "Sotuvga qo'yish",
+    "sellNow": "Tezda sotish",
+    "clearSelection": "Tanlovni tozalash",
+    "sellAskDescription": "Tanlangan predmetlarni o'zingiz belgilagan narxda marketga qo'ying. Sotuvchi narxini kiriting.",
+    "platformPrice": "Platforma narxi",
+    "yourPrice": "Sizning narxingiz",
+    "cancel": "Bekor qilish",
+    "listForSale": "Sotuvga qo'yish",
+    "withdrawComingSoon": "Withdraw funksiyasi tez orada ishga tushiriladi.",
+    "noBidsAvailable": "Tanlangan itemlar uchun aktiv bid yo'q",
+    "noBid": "Bid yo'q",
+    "bidLabel": "Bid"
   },
   "CheckoutPage": {
     "title": "To'lov",
@@ -402,7 +423,9 @@
     "killed": "Bajarildi",
     "transactionId": "Tranzaksiya ID",
     "viewInventor": "Inventarni ko'rish",
-    "shoppingAgain": "Yana xarid qilish"
+    "shoppingAgain": "Yana xarid qilish",
+    "payFromBalance": "Balansdan to'lash",
+    "checkoutError": "Xarid amalga oshmadi. Qayta urinib ko'ring."
   },
   "ProfilePage": {
     "profileSettings": "Profil sozlamalari",
@@ -423,11 +446,17 @@
     "withdrawal": "Yechish",
     "purchase": "Xarid",
     "preferredCurrency": "Afzal qilingan valyuta",
+    "currencyDescription": "Narxlar tanlangan valyutada ko'rsatiladi",
     "language": "Til",
+    "languageDescription": "Interfeys tilini tanlang",
     "quickThemeSwitch": "Tez mavzu almashtirish",
+    "themeDescription": "Tashqi ko'rinishni sozlang",
     "light": "Kunduzgi",
     "dark": "Tungi",
     "auto": "Avtomatik",
+    "lightDescription": "Yorqin fon",
+    "darkDescription": "Qorong'i fon",
+    "autoDescription": "Tizimga mos",
     "all": "Barchasi",
     "deposits": "To'ldirish",
     "withdrawals": "Yechish",
@@ -449,7 +478,15 @@
     "phoneNumber": "TELEFON RAQAM",
     "phoneNotSet": "Telefon raqam kiritilmagan",
     "addPhone": "Raqam qo'shish",
-    "phoneLinked": "Telefon biriktirilgan"
+    "phoneLinked": "Telefon biriktirilgan",
+    "sale": "Sotish",
+    "sales": "Sotuvlar",
+    "noTransactions": "Hozircha tranzaksiyalar yo'q",
+    "systemSettings": "Tizim sozlamalari",
+    "systemShort": "Tizim",
+    "balanceAndPayments": "Balans va to'lovlar",
+    "balanceShort": "Balans",
+    "transactionHistory": "Tranzaksiyalar tarixi"
   },
   "VerifyEmailPage": {
     "title": "Email Tasdiqlash",
@@ -595,5 +632,33 @@
       "tooShort": "Yangi parol kamida 8 ta belgidan iborat bo'lishi kerak",
       "changeFailed": "Parol o'zgartirishda xatolik yuz berdi"
     }
+  },
+  "SellModal": {
+    "title": "SOTISH",
+    "tabList": "Sotuvga qo'yish",
+    "tabInstant": "Hoziroq sotish",
+    "presetPrice": "Narx turi",
+    "recommended": "Tavsiya etilgan",
+    "lowest": "Eng past narx",
+    "avg7d": "So'nggi o'rtacha",
+    "recommendedPrice": "Tavsiya etilgan narx",
+    "recommendedPriceHint": "Steam Market'dagi ushbu item uchun eng past narx asosida hisoblangan tavsiya narxi. Siz narxni o'zgartirishingiz mumkin.",
+    "sellingPrice": "Sotish narxi",
+    "fee": "Komissiya",
+    "youGet": "Siz olasiz",
+    "showDetails": "Batafsil ko'rish",
+    "hideDetails": "Yashirish",
+    "platformPrice": "Platforma narxi",
+    "highestBid": "Eng yuqori bid",
+    "bidShort": "BID",
+    "bidPrice": "Bid narxi",
+    "putOnSaleFor": "Itemingiz sotuvga qo'yiladi",
+    "ifSuccessYouGet": "Sotilsa, siz olasiz",
+    "instantYouGet": "Siz darhol olasiz",
+    "sellError": "Xatolik yuz berdi. Qayta urinib ko'ring.",
+    "noBidsAvailable": "Tanlangan itemlar uchun aktiv bid yo'q",
+    "noBidsHint": "\"Sotuvga qo'yish\" tabiga o'ting va o'z narxingizni belgilang",
+    "noBidsForThese": "Bu itemlar uchun bid mavjud emas",
+    "noBid": "Bid yo'q"
   }
 }

@@ -120,6 +120,31 @@ export function formatPrice(amount: number | string | null | undefined, currency
   }
 }
 
+export function usdToLocal(amount: number, currency: Currency): number {
+  if (currency === 'USD') return amount;
+  const rates = cachedRates || { USD: 1, UZS: 12800, RUB: 95 };
+  return amount * rates[currency];
+}
+
+export function localToUsd(amount: number, currency: Currency): number {
+  if (currency === 'USD') return amount;
+  const rates = cachedRates || { USD: 1, UZS: 12800, RUB: 95 };
+  return amount / rates[currency];
+}
+
+// Format a value that is ALREADY in the target currency (no conversion)
+export function formatLocalAmount(amount: number, currency: Currency): string {
+  const formatNumber = (num: number, decimals: number = 2) => {
+    return num.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  };
+  switch (currency) {
+    case 'USD': return `$${formatNumber(amount, 2)}`;
+    case 'UZS': return `${formatNumber(amount, 0)} so'm`;
+    case 'RUB': return `${formatNumber(amount, 2)} ₽`;
+    default: return `$${formatNumber(amount, 2)}`;
+  }
+}
+
 export function getCurrencySymbol(currency: Currency): string {
   switch (currency) {
     case 'USD': return '$';

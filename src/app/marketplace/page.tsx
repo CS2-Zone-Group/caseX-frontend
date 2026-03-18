@@ -24,6 +24,10 @@ interface Skin {
   imageUrl: string;
   float?: number;
   tradeLockUntil?: string | null;
+  isUserListing?: boolean;
+  inventoryId?: string;
+  sellerId?: string;
+  sellerName?: string;
 }
 
 function MarketplaceContent() {
@@ -144,6 +148,22 @@ function MarketplaceContent() {
       alert(t('addedToCart'));
     } catch (error: any) {
       alert(error.message);
+    }
+  };
+
+  const handleBuyListing = async (inventoryId: string) => {
+    if (!hasHydrated || !user) {
+      alert(t('pleaseLogin'));
+      return;
+    }
+    try {
+      await api.post(`/orders/buy-listing/${inventoryId}`);
+      const { fetchUserBalance } = useAuthStore.getState();
+      await fetchUserBalance();
+      alert(t('purchaseSuccess'));
+      fetchMarketItems();
+    } catch (error: any) {
+      alert(error.response?.data?.message || t('purchaseError'));
     }
   };
 
@@ -296,19 +316,46 @@ function MarketplaceContent() {
                         {skin.exterior}
                       </p>
 
+                      {skin.isUserListing && skin.sellerName && (
+                        <div className="flex items-center gap-1">
+                          <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          <span className="text-[9px] text-gray-400 truncate">{skin.sellerName}</span>
+                        </div>
+                      )}
+
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-primary-600 dark:text-primary-400">
                           {formatPrice(Number(skin.price), currency)}
                         </span>
-                        <button
-                          onClick={() => handleAddToCart(skin.id)}
-                          className="p-1.5 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition"
-                          title={t('addToCart')}
-                        >
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                          </svg>
-                        </button>
+                        {skin.isUserListing ? (
+                          skin.sellerId === user?.id ? (
+                            <span className="text-[9px] text-gray-400 px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded">
+                              {t('yourListing')}
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => handleBuyListing(skin.inventoryId!)}
+                              className="p-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
+                              title={t('buyNow')}
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1" />
+                              </svg>
+                            </button>
+                          )
+                        ) : (
+                          <button
+                            onClick={() => handleAddToCart(skin.id)}
+                            className="p-1.5 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition"
+                            title={t('addToCart')}
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

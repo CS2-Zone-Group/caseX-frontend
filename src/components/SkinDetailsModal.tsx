@@ -47,8 +47,9 @@ export default function SkinDetailsModal({
   const { language, currency } = useSettingsStore();
   const t = useTranslations("SkinDetailsModal");
   const { addToCart } = useCartStore();
-  const { user, hasHydrated } = useAuthStore();
+  const { user, hasHydrated, fetchUserBalance } = useAuthStore();
   const [cartLoading, setCartLoading] = useState(false);
+  const [buyLoading, setBuyLoading] = useState(false);
 
   const handleAddToCart = async () => {
     if (!skin) return;
@@ -64,6 +65,26 @@ export default function SkinDetailsModal({
       alert(error.message);
     } finally {
       setCartLoading(false);
+    }
+  };
+
+  const handleQuickBuy = async () => {
+    if (!skin) return;
+    if (!hasHydrated || !user) {
+      alert(t("loginRequired"));
+      return;
+    }
+    setBuyLoading(true);
+    try {
+      const { default: api } = await import("@/lib/api");
+      await api.post("/orders/quick-buy", { skinId: skin.id });
+      await fetchUserBalance();
+      alert(t("purchaseSuccess"));
+      onClose();
+    } catch (error: any) {
+      alert(error.response?.data?.message || t("purchaseError"));
+    } finally {
+      setBuyLoading(false);
     }
   };
 
@@ -538,23 +559,27 @@ export default function SkinDetailsModal({
               <span>{cartLoading ? "..." : t("addToCart")}</span>
             </button>
             <button
-              onClick={handleAddToCart}
-              disabled={cartLoading}
+              onClick={handleQuickBuy}
+              disabled={buyLoading}
               className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-                />
-              </svg>
+              {buyLoading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              ) : (
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                  />
+                </svg>
+              )}
               <span>{t("buyNow")}</span>
             </button>
           </div>

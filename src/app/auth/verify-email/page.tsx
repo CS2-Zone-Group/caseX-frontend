@@ -113,6 +113,9 @@ export default function VerifyEmailPage() {
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
             <span className="font-medium text-gray-900 dark:text-white">{email}</span> manziliga 6 xonali kod yuborildi.
           </p>
+          <p className="mt-1 text-xs text-yellow-600 dark:text-yellow-500">
+            Kod kelmasa, Spam (Junk) papkasini tekshiring.
+          </p>
         </div>
 
         {error && (

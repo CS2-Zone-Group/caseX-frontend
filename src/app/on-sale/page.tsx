@@ -11,14 +11,21 @@ import Link from 'next/link';
 
 interface ListedItem {
   id: string;
+  userId: string;
   skinId: string;
-  name: string;
-  weaponType: string;
-  rarity: string;
-  exterior: string;
+  isListed: boolean;
   listPrice: number;
-  imageUrl: string;
-  listedAt: string;
+  acquiredAt: string;
+  updatedAt: string;
+  skin: {
+    id: string;
+    name: string;
+    weaponType: string;
+    rarity: string;
+    exterior: string;
+    price: number;
+    imageUrl: string;
+  };
 }
 
 export default function OnSalePage() {
@@ -52,7 +59,7 @@ export default function OnSalePage() {
 
   const handleDelist = async (itemId: string) => {
     try {
-      await api.post(`/inventory/${itemId}/delist`);
+      await api.patch(`/inventory/${itemId}/unlist`);
       setItems(prev => prev.filter(item => item.id !== itemId));
     } catch (error) {
       console.error('Failed to delist item:', error);
@@ -129,18 +136,18 @@ export default function OnSalePage() {
               >
                 <div className="aspect-square bg-gray-100 dark:bg-gray-800 p-4 flex items-center justify-center">
                   <img
-                    src={item.imageUrl}
-                    alt={item.name}
+                    src={item.skin.imageUrl}
+                    alt={item.skin.name}
                     className="w-full h-full object-contain"
                   />
                 </div>
                 <div className="p-4 space-y-3">
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white text-sm truncate">{item.name}</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-white text-sm truncate">{item.skin.name}</h3>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className={`text-xs font-medium ${getRarityColor(item.rarity)}`}>{item.rarity}</span>
+                      <span className={`text-xs font-medium ${getRarityColor(item.skin.rarity)}`}>{item.skin.rarity}</span>
                       <span className="text-xs text-gray-400">|</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">{item.exterior}</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">{item.skin.exterior}</span>
                     </div>
                   </div>
 

@@ -211,7 +211,9 @@
     "noSalesHistory": "История продаж для этого предмета недоступна",
     "referencePrice": "Справочная цена",
     "loginRequired": "Пожалуйста, сначала войдите в систему",
-    "addedToCart": "Добавлено в корзину!"
+    "addedToCart": "Добавлено в корзину!",
+    "purchaseSuccess": "Покупка успешна! Предмет добавлен в ваш инвентарь.",
+    "purchaseError": "Покупка не удалась. Попробуйте еще раз."
   },
   "SettingsModal": {
     "title": "Настройки",
@@ -348,7 +350,12 @@
     "sortNewest": "Новейшие",
     "priceHighToLow": "Цена: По убыванию",
     "priceLowToHigh": "Цена: По возрастанию",
-    "nameAtoZ": "Название: А-Я"
+    "nameAtoZ": "Название: А-Я",
+    "purchaseSuccess": "Успешно куплено!",
+    "purchaseError": "Ошибка при покупке",
+    "buyNow": "Купить",
+    "yourListing": "Ваше объявление",
+    "sellerLabel": "Продавец"
   },
   "InventoryPage": {
     "title": "Инвентарь",
@@ -374,7 +381,21 @@
     "openSteamSettings": "Настройки Steam",
     "steamRateLimitedTitle": "Сервер Steam перегружен",
     "steamRateLimitedDescription": "Слишком много запросов к серверу Steam. Подождите немного и попробуйте снова",
-    "retry": "Повторить"
+    "retry": "Повторить",
+    "sellError": "Не удалось продать предмет. Попробуйте еще раз.",
+    "withdraw": "Вывод в Steam",
+    "sellAsk": "Своя цена",
+    "sellNow": "Продать сейчас",
+    "clearSelection": "Очистить выбор",
+    "sellAskDescription": "Разместите выбранные предметы на маркетплейсе по вашей цене. Укажите желаемую цену.",
+    "platformPrice": "Цена платформы",
+    "yourPrice": "Ваша цена",
+    "cancel": "Отмена",
+    "listForSale": "Выставить на продажу",
+    "withdrawComingSoon": "Функция вывода скоро будет доступна.",
+    "noBidsAvailable": "Нет активных предложений для выбранных предметов",
+    "noBid": "Нет бидов",
+    "bidLabel": "Бид"
   },
   "CheckoutPage": {
     "title": "Оформление заказа",
@@ -402,7 +423,9 @@
     "killed": "Завершено",
     "transactionId": "ID транзакции",
     "viewInventor": "Посмотреть инвентарь",
-    "shoppingAgain": "Покупать снова"
+    "shoppingAgain": "Покупать снова",
+    "payFromBalance": "Оплатить с баланса",
+    "checkoutError": "Оформление не удалось. Попробуйте еще раз."
   },
   "ProfilePage": {
     "profileSettings": "Настройки профиля",
@@ -423,11 +446,17 @@
     "withdrawal": "Вывод",
     "purchase": "Покупка",
     "preferredCurrency": "Предпочитаемая валюта",
+    "currencyDescription": "Цены будут отображаться в выбранной валюте",
     "language": "Язык",
+    "languageDescription": "Выберите язык интерфейса",
     "quickThemeSwitch": "Быстрое переключение темы",
+    "themeDescription": "Настройте внешний вид",
     "light": "Светлая",
     "dark": "Темная",
     "auto": "Авто",
+    "lightDescription": "Светлый фон",
+    "darkDescription": "Тёмный фон",
+    "autoDescription": "Как в системе",
     "all": "Все",
     "deposits": "Пополнения",
     "withdrawals": "Выводы",
@@ -449,7 +478,15 @@
     "phoneNumber": "НОМЕР ТЕЛЕФОНА",
     "phoneNotSet": "Номер телефона не указан",
     "addPhone": "Добавить номер",
-    "phoneLinked": "Телефон привязан"
+    "phoneLinked": "Телефон привязан",
+    "sale": "Продажа",
+    "sales": "Продажи",
+    "noTransactions": "Транзакций пока нет",
+    "systemSettings": "Системные настройки",
+    "systemShort": "Система",
+    "balanceAndPayments": "Баланс и платежи",
+    "balanceShort": "Баланс",
+    "transactionHistory": "История транзакций"
   },
   "VerifyEmailPage": {
     "title": "Подтверждение Email",
@@ -595,5 +632,33 @@
       "tooShort": "Новый пароль должен содержать минимум 8 символов",
       "changeFailed": "Ошибка при изменении пароля"
     }
+  },
+  "SellModal": {
+    "title": "ПРОДАЖА",
+    "tabList": "Выставить на продажу",
+    "tabInstant": "Продать сейчас",
+    "presetPrice": "Тип цены",
+    "recommended": "Рекомендуемая",
+    "lowest": "Самая низкая",
+    "avg7d": "Средняя за 7 дней",
+    "recommendedPrice": "Рекомендуемая цена",
+    "recommendedPriceHint": "Рекомендуемая цена на основе самого низкого активного предложения на Steam Market для этого предмета. Вы можете изменить цену вручную.",
+    "sellingPrice": "Цена продажи",
+    "fee": "Комиссия",
+    "youGet": "Вы получите",
+    "showDetails": "Подробнее",
+    "hideDetails": "Скрыть",
+    "platformPrice": "Цена платформы",
+    "highestBid": "Высший бид",
+    "bidShort": "БИД",
+    "bidPrice": "Цена бида",
+    "putOnSaleFor": "Ваш предмет будет выставлен за",
+    "ifSuccessYouGet": "При успешной продаже вы получите",
+    "instantYouGet": "Вы мгновенно получите",
+    "sellError": "Ошибка. Попробуйте снова.",
+    "noBidsAvailable": "Нет активных предложений для выбранных предметов",
+    "noBidsHint": "Перейдите на вкладку \"Выставить на продажу\" и установите свою цену",
+    "noBidsForThese": "Нет предложений для этих предметов",
+    "noBid": "Нет бидов"
   }
 }

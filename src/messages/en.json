@@ -211,7 +211,9 @@
     "noSalesHistory": "No sales history available for this item",
     "referencePrice": "Reference price",
     "loginRequired": "Please login first",
-    "addedToCart": "Added to cart!"
+    "addedToCart": "Added to cart!",
+    "purchaseSuccess": "Purchase successful! Item added to your inventory.",
+    "purchaseError": "Purchase failed. Please try again."
   },
   "SettingsModal": {
     "title": "Settings",
@@ -348,7 +350,12 @@
     "sortNewest": "Newest",
     "priceHighToLow": "Price: High to Low",
     "priceLowToHigh": "Price: Low to High",
-    "nameAtoZ": "Name: A-Z"
+    "nameAtoZ": "Name: A-Z",
+    "purchaseSuccess": "Successfully purchased!",
+    "purchaseError": "Failed to purchase item",
+    "buyNow": "Buy Now",
+    "yourListing": "Your listing",
+    "sellerLabel": "Seller"
   },
   "InventoryPage": {
     "title": "Inventory",
@@ -374,7 +381,21 @@
     "openSteamSettings": "Open Steam Settings",
     "steamRateLimitedTitle": "Steam server is busy",
     "steamRateLimitedDescription": "Too many requests to Steam. Please wait a moment and try again",
-    "retry": "Retry"
+    "retry": "Retry",
+    "sellError": "Failed to sell item. Please try again.",
+    "withdraw": "Withdraw",
+    "sellAsk": "Sell Ask",
+    "sellNow": "Sell Now",
+    "clearSelection": "Clear selection",
+    "sellAskDescription": "List selected items on the marketplace at your custom price. Enter your asking price.",
+    "platformPrice": "Platform price",
+    "yourPrice": "Your price",
+    "cancel": "Cancel",
+    "listForSale": "List for sale",
+    "withdrawComingSoon": "Withdraw feature is coming soon.",
+    "noBidsAvailable": "No active bids for selected items",
+    "noBid": "No bid",
+    "bidLabel": "Bid"
   },
   "CheckoutPage": {
     "title": "Checkout",
@@ -402,7 +423,9 @@
     "killed": "Completed",
     "transactionId": "Transaction ID",
     "viewInventor": "View Inventory",
-    "shoppingAgain": "Shop Again"
+    "shoppingAgain": "Shop Again",
+    "payFromBalance": "Pay from Balance",
+    "checkoutError": "Checkout failed. Please try again."
   },
   "ProfilePage": {
     "profileSettings": "Profile Settings",
@@ -423,11 +446,17 @@
     "withdrawal": "Withdrawal",
     "purchase": "Purchase",
     "preferredCurrency": "Preferred Currency",
+    "currencyDescription": "Prices will be displayed in selected currency",
     "language": "Language",
+    "languageDescription": "Choose interface language",
     "quickThemeSwitch": "Quick Theme Switch",
+    "themeDescription": "Customize appearance",
     "light": "Light",
     "dark": "Dark",
     "auto": "Auto",
+    "lightDescription": "Light background",
+    "darkDescription": "Dark background",
+    "autoDescription": "Match system",
     "all": "All",
     "deposits": "Deposits",
     "withdrawals": "Withdrawals",
@@ -449,7 +478,15 @@
     "phoneNumber": "PHONE NUMBER",
     "phoneNotSet": "Phone number not set",
     "addPhone": "Add phone",
-    "phoneLinked": "Phone linked"
+    "phoneLinked": "Phone linked",
+    "sale": "Sale",
+    "sales": "Sales",
+    "noTransactions": "No transactions yet",
+    "systemSettings": "System Settings",
+    "systemShort": "System",
+    "balanceAndPayments": "Balance & Payments",
+    "balanceShort": "Balance",
+    "transactionHistory": "Transaction History"
   },
   "VerifyEmailPage": {
     "title": "Email Verification",
@@ -595,5 +632,33 @@
       "tooShort": "New password must be at least 8 characters",
       "changeFailed": "Error changing password"
     }
+  },
+  "SellModal": {
+    "title": "SELL",
+    "tabList": "List for Sale",
+    "tabInstant": "Sell Now",
+    "presetPrice": "Pre-set price",
+    "recommended": "Recommended",
+    "lowest": "Lowest price",
+    "avg7d": "Recent average",
+    "recommendedPrice": "Recommended price",
+    "recommendedPriceHint": "The recommended price based on the lowest active listing price on Steam Market for this item. You can change the price manually.",
+    "sellingPrice": "Selling price",
+    "fee": "Fee",
+    "youGet": "You'll get",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details",
+    "platformPrice": "Platform price",
+    "highestBid": "Highest bid",
+    "bidShort": "BID",
+    "bidPrice": "Bid price",
+    "putOnSaleFor": "Your item will be put on sale for",
+    "ifSuccessYouGet": "If the sale is successful, you'll get",
+    "instantYouGet": "You'll instantly receive",
+    "sellError": "Failed to process. Please try again.",
+    "noBidsAvailable": "No active bids for selected items",
+    "noBidsHint": "Switch to \"List for Sale\" to set your own price",
+    "noBidsForThese": "No bids available for these items",
+    "noBid": "No bid"
   }
 }
