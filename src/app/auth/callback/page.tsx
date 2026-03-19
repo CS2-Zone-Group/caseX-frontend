@@ -3,6 +3,7 @@
 import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
+import { toast } from '@/store/toastStore';
 
 function AuthCallbackContent() {
   const router = useRouter();
@@ -16,7 +17,7 @@ function AuthCallbackContent() {
 
       if (error) {
         console.error('Authentication error:', error);
-        alert('Authentication failed. Please try again.');
+        toast.error('Authentication failed. Please try again.');
         router.push('/auth/login');
         return;
       }
@@ -45,7 +46,7 @@ function AuthCallbackContent() {
         }
       } else {
         console.error('No token received');
-        alert('Authentication failed. No token received.');
+        toast.error('Authentication failed. No token received.');
         router.push('/auth/login');
       }
     };

@@ -395,7 +395,9 @@
     "withdrawComingSoon": "Withdraw feature is coming soon.",
     "noBidsAvailable": "No active bids for selected items",
     "noBid": "No bid",
-    "bidLabel": "Bid"
+    "bidLabel": "Bid",
+    "nonListableItem": "This item type cannot be listed for sale",
+    "onSale": "On Sale"
   },
   "CheckoutPage": {
     "title": "Checkout",

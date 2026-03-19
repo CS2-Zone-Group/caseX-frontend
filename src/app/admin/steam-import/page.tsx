@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { searchSteamSkins, getPopularSteamSkins, importSkinFromSteam, bulkImportSkinsFromSteam } from '@/lib/steam';
 import SkinDetailsModal from '@/components/SkinDetailsModal';
+import { toast } from '@/store/toastStore';
 
 interface SteamItem {
   market_hash_name: string;
@@ -117,9 +118,9 @@ export default function SteamImportPage() {
       });
 
       if (result.failed === 0) {
-        alert(t.importSuccess.replace('{count}', result.imported.toString()));
+        toast.success(t.importSuccess.replace('{count}', result.imported.toString()));
       } else {
-        alert(t.importError.replace('{failed}', result.failed.toString()));
+        toast.error(t.importError.replace('{failed}', result.failed.toString()));
       }
 
       // Clear selection after import

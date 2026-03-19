@@ -11,6 +11,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useTranslations } from "next-intl";
 import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
+import { toast } from "@/store/toastStore";
 
 interface SkinDetailsModalProps {
   isOpen: boolean;
@@ -54,15 +55,15 @@ export default function SkinDetailsModal({
   const handleAddToCart = async () => {
     if (!skin) return;
     if (!hasHydrated || !user) {
-      alert(t("loginRequired"));
+      toast.info(t("loginRequired"));
       return;
     }
     setCartLoading(true);
     try {
       await addToCart(skin.id);
-      alert(t("addedToCart"));
+      toast.success(t("addedToCart"));
     } catch (error: any) {
-      alert(error.message);
+      toast.error(error.message);
     } finally {
       setCartLoading(false);
     }
@@ -71,7 +72,7 @@ export default function SkinDetailsModal({
   const handleQuickBuy = async () => {
     if (!skin) return;
     if (!hasHydrated || !user) {
-      alert(t("loginRequired"));
+      toast.info(t("loginRequired"));
       return;
     }
     setBuyLoading(true);
@@ -79,10 +80,10 @@ export default function SkinDetailsModal({
       const { default: api } = await import("@/lib/api");
       await api.post("/orders/quick-buy", { skinId: skin.id });
       await fetchUserBalance();
-      alert(t("purchaseSuccess"));
+      toast.success(t("purchaseSuccess"));
       onClose();
     } catch (error: any) {
-      alert(error.response?.data?.message || t("purchaseError"));
+      toast.error(error.response?.data?.message || t("purchaseError"));
     } finally {
       setBuyLoading(false);
     }
@@ -339,7 +340,7 @@ export default function SkinDetailsModal({
                     <button
                       className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 text-sm font-medium"
                       onClick={() => {
-                        alert("Inspect in game functionality would open CS2 with this item");
+                        toast.info("Inspect in game functionality would open CS2 with this item");
                       }}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

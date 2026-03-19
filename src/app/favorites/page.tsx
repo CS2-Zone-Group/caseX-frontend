@@ -13,6 +13,7 @@ import { useFilterStore } from '@/store/filterStore';
 import api from '@/lib/api';
 import Navbar from '@/components/Navbar';
 import AuthGuard from '@/components/AuthGuard';
+import { toast } from '@/store/toastStore';
 
 export default function FavoritesPage() {
   const { addToCart } = useCartStore();
@@ -153,15 +154,15 @@ export default function FavoritesPage() {
 
   const handleAddToCart = async (skinId: string) => {
     if (!hasHydrated || !user) {
-      alert(t('pleaseLogin'));
+      toast.info(t('pleaseLogin'));
       return;
     }
 
     try {
       await addToCart(skinId);
-      alert(t('addedToCart'));
+      toast.success(t('addedToCart'));
     } catch (error: any) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 

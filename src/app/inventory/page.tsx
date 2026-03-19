@@ -27,10 +27,23 @@ interface InventoryItemType {
     rarity: string;
     exterior: string;
     weaponType?: string;
+    marketHashName?: string;
     price?: number;
     steamPrice?: number;
     float?: number;
   };
+}
+
+/** Medals, graffiti, badges, charms, and patches cannot be listed for sale */
+function isNonListable(item: InventoryItemType): boolean {
+  const name = (item.skin?.name || '').toLowerCase();
+  return (
+    name.includes('graffiti') ||
+    name.includes('medal') ||
+    name.includes('badge') ||
+    name.includes('charm') ||
+    name.includes('patch')
+  );
 }
 
 export default function InventoryPage() {
@@ -176,12 +189,22 @@ export default function InventoryPage() {
       });
     }
 
+    // Listed items go to the top
+    result.sort((a, b) => {
+      if (a.isListed && !b.isListed) return -1;
+      if (!a.isListed && b.isListed) return 1;
+      return 0;
+    });
+
     setFilteredItems(result);
 
   }, [allItems, searchQuery, sortBy, rarity, weaponType, condition, priceRange]);
 
 
   const handleSelectItem = (id: string) => {
+    const item = allItems.find(i => i.id === id);
+    if (!item) return;
+    if (isNonListable(item) || item.isListed) return;
     setSelectedItems(prev =>
       prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
     );
@@ -216,7 +239,25 @@ export default function InventoryPage() {
 
   const handleSellFromModal = async (items: Array<{ inventoryId: string; price: number }>) => {
     for (const { inventoryId, price } of items) {
-      await api.post(`/inventory/${inventoryId}/list`, { price });
+      if (inventoryId.startsWith('steam_')) {
+        const steamItem = allItems.find(i => i.id === inventoryId);
+        if (steamItem) {
+          await api.post('/inventory/list-steam-item', {
+            price,
+            skinData: {
+              name: steamItem.skin.name,
+              imageUrl: steamItem.skin.imageUrl,
+              marketHashName: steamItem.skin.marketHashName || steamItem.skin.name,
+              rarity: steamItem.skin.rarity,
+              exterior: steamItem.skin.exterior,
+              weaponType: steamItem.skin.weaponType || 'Unknown',
+              float: steamItem.skin.float || 0,
+            },
+          });
+        }
+      } else {
+        await api.post(`/inventory/${inventoryId}/list`, { price });
+      }
     }
     await fetchUserBalance();
     setSelectedItems([]);
@@ -248,7 +289,12 @@ export default function InventoryPage() {
     }
   };
 
-  const hasDbItems = selectedItems.some(id => !id.startsWith('steam_'));
+  const hasListableItems = selectedItems.some(id => {
+    const item = allItems.find(i => i.id === id);
+    return item && !isNonListable(item);
+  });
+
+  const listedCount = filteredItems.filter(item => item.isListed).length;
 
   const totalInventoryValue = filteredItems.reduce((sum, item) => {
     const price = item.listPrice || item.skin?.price || 0;
@@ -357,6 +403,11 @@ export default function InventoryPage() {
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     {t('items')}: <span className="font-semibold text-gray-900 dark:text-white">{filteredItems.length}</span>
                   </span>
+                  {listedCount > 0 && (
+                    <span className="text-sm text-green-600 dark:text-green-400 font-medium">
+                      {t('onSale')}: {listedCount}
+                    </span>
+                  )}
                   <span className="text-sm font-semibold text-green-600 dark:text-green-400">
                     {t('total')}: {formatPrice(totalInventoryValue, currency)}
                   </span>
@@ -397,15 +448,23 @@ export default function InventoryPage() {
                     ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5'
                     : 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7'
                 }`}>
-                  {filteredItems.map((item) => (
+                  {filteredItems.map((item) => {
+                    const nonListable = isNonListable(item);
+                    const listed = item.isListed;
+                    return (
                     <div
                       key={item.id}
                       onClick={() => handleSelectItem(item.id)}
-                      className={`group bg-white dark:bg-gray-900 rounded-xl border transition-all duration-200 cursor-pointer hover:shadow-lg overflow-hidden ${
-                        selectedItems.includes(item.id)
-                          ? 'border-primary-500 ring-1 ring-primary-500'
-                          : 'border-gray-200 dark:border-gray-700/50 hover:border-primary-300 dark:hover:border-primary-600/50'
+                      className={`group bg-white dark:bg-gray-900 rounded-xl border-2 transition-all duration-200 overflow-hidden ${
+                        listed
+                          ? 'border-green-500/70 dark:border-green-500/50 cursor-default'
+                          : nonListable
+                            ? 'opacity-50 cursor-not-allowed border-transparent'
+                            : selectedItems.includes(item.id)
+                              ? 'border-primary-500 ring-1 ring-primary-500 cursor-pointer hover:shadow-lg'
+                              : 'border-gray-200 dark:border-gray-700/50 hover:border-primary-300 dark:hover:border-primary-600/50 cursor-pointer hover:shadow-lg'
                       }`}
+                      title={nonListable ? t('nonListableItem') : listed ? t('onSale') : undefined}
                     >
                       <div className="relative aspect-square bg-gray-100 dark:bg-gray-800/50 overflow-hidden">
                         <img
@@ -428,9 +487,15 @@ export default function InventoryPage() {
                           No Image
                         </div>
                         <div className="absolute top-2 left-2 flex items-center gap-1">
-                          <div className="p-1 rounded bg-green-500/80 backdrop-blur-sm text-white">
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 018 0" /></svg>
-                          </div>
+                          {listed ? (
+                            <div className="px-2 py-0.5 bg-green-500/90 backdrop-blur-sm text-white text-[10px] font-bold rounded">
+                              {t('onSale')}
+                            </div>
+                          ) : (
+                            <div className="p-1 rounded bg-green-500/80 backdrop-blur-sm text-white">
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 018 0" /></svg>
+                            </div>
+                          )}
                           {item.isSteamItem && (
                             <div className="px-2 py-0.5 bg-blue-600/90 backdrop-blur-sm text-white text-[10px] font-medium rounded-full">Steam</div>
                           )}
@@ -462,10 +527,16 @@ export default function InventoryPage() {
                         <p className="text-[10px] text-gray-400/80 dark:text-gray-500/80 truncate">{item.skin?.exterior}</p>
 
                         <div className="text-center pt-1">
-                          <span className="text-sm font-bold text-green-600 dark:text-green-400">
-                            {formatPrice(Number(item.listPrice || item.skin?.price || 0), currency)}
-                          </span>
-                          {!item.isSteamItem && item.highestBid && item.highestBid > 0 && (
+                          {listed ? (
+                            <span className="text-sm font-bold text-green-500">
+                              {formatPrice(Number(item.listPrice || 0), currency)}
+                            </span>
+                          ) : (
+                            <span className="text-sm font-bold text-green-600 dark:text-green-400">
+                              {formatPrice(Number(item.listPrice || item.skin?.price || 0), currency)}
+                            </span>
+                          )}
+                          {!item.isSteamItem && !listed && item.highestBid && item.highestBid > 0 && (
                             <div className="mt-0.5">
                               <span className="text-[10px] font-medium text-orange-500 dark:text-orange-400">
                                 {t('bidLabel')}: {formatPrice(item.highestBid, currency)}
@@ -478,7 +549,8 @@ export default function InventoryPage() {
                         </div>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
 
@@ -516,7 +588,7 @@ export default function InventoryPage() {
                       </div>
 
                       {/* Sotuvga qo'yish — opens sell modal on list tab */}
-                      {hasDbItems && (
+                      {hasListableItems && (
                         <button
                           onClick={() => setSellModalOpen(true)}
                           className="flex items-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition"
@@ -569,11 +641,11 @@ export default function InventoryPage() {
               {sellModalOpen && (
                 <SellModal
                   items={allItems
-                    .filter(item => selectedItems.includes(item.id) && !item.id.startsWith('steam_'))
+                    .filter(item => selectedItems.includes(item.id) && !isNonListable(item))
                     .map(item => ({
                       id: item.id,
                       skin: item.skin,
-                      highestBid: item.highestBid,
+                      highestBid: item.isSteamItem ? null : item.highestBid,
                     }))
                   }
                   onClose={() => setSellModalOpen(false)}

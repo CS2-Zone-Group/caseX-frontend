@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
 import { useSettingsStore } from "@/store/settingsStore";
 import ChatSupport from "@/components/ChatSupport";
+import ToastContainer from "@/components/ToastContainer";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
 export default function ClientLayout({
@@ -121,6 +122,7 @@ export default function ClientLayout({
       <NextIntlClientProvider locale={locale} messages={messages}>
         {children}
         <ChatSupport />
+        <ToastContainer />
       </NextIntlClientProvider>
     </LanguageProvider>
   );

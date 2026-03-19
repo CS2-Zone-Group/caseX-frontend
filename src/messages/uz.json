@@ -395,7 +395,9 @@
     "withdrawComingSoon": "Withdraw funksiyasi tez orada ishga tushiriladi.",
     "noBidsAvailable": "Tanlangan itemlar uchun aktiv bid yo'q",
     "noBid": "Bid yo'q",
-    "bidLabel": "Bid"
+    "bidLabel": "Bid",
+    "nonListableItem": "Bu turdagi itemni sotuvga qo'yib bo'lmaydi",
+    "onSale": "Sotuvda"
   },
   "CheckoutPage": {
     "title": "To'lov",

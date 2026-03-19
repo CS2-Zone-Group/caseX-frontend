@@ -13,6 +13,7 @@ import { formatPrice } from '@/lib/currency';
 import { useFilterStore } from '@/store/filterStore';
 import { useSearchParams } from 'next/navigation';
 import FavoriteButton from '@/components/FavoriteButton';
+import { toast } from '@/store/toastStore';
 
 interface Skin {
   id: string;
@@ -139,31 +140,31 @@ function MarketplaceContent() {
 
   const handleAddToCart = async (skinId: string) => {
     if (!hasHydrated || !user) {
-      alert(t('pleaseLogin'));
+      toast.info(t('pleaseLogin'));
       return;
     }
 
     try {
       await addToCart(skinId);
-      alert(t('addedToCart'));
+      toast.success(t('addedToCart'));
     } catch (error: any) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
   const handleBuyListing = async (inventoryId: string) => {
     if (!hasHydrated || !user) {
-      alert(t('pleaseLogin'));
+      toast.info(t('pleaseLogin'));
       return;
     }
     try {
       await api.post(`/orders/buy-listing/${inventoryId}`);
       const { fetchUserBalance } = useAuthStore.getState();
       await fetchUserBalance();
-      alert(t('purchaseSuccess'));
+      toast.success(t('purchaseSuccess'));
       fetchMarketItems();
     } catch (error: any) {
-      alert(error.response?.data?.message || t('purchaseError'));
+      toast.error(error.response?.data?.message || t('purchaseError'));
     }
   };
 
@@ -329,25 +330,16 @@ function MarketplaceContent() {
                         <span className="text-xs font-bold text-primary-600 dark:text-primary-400">
                           {formatPrice(Number(skin.price), currency)}
                         </span>
-                        {skin.isUserListing ? (
-                          skin.sellerId === user?.id ? (
-                            <span className="text-[9px] text-gray-400 px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded">
-                              {t('yourListing')}
-                            </span>
-                          ) : (
-                            <button
-                              onClick={() => handleBuyListing(skin.inventoryId!)}
-                              className="p-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
-                              title={t('buyNow')}
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1" />
-                              </svg>
-                            </button>
-                          )
+                        {skin.isUserListing && skin.sellerId === user?.id ? (
+                          <span className="text-[9px] text-gray-400 px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded">
+                            {t('yourListing')}
+                          </span>
                         ) : (
                           <button
-                            onClick={() => handleAddToCart(skin.id)}
+                            onClick={() => skin.isUserListing
+                              ? handleBuyListing(skin.inventoryId!)
+                              : handleAddToCart(skin.id)
+                            }
                             className="p-1.5 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition"
                             title={t('addToCart')}
                           >
