@@ -690,6 +690,14 @@
     "placeBid": "Bid qo'yish",
     "bidSuccess": "{count} ta bid muvaffaqiyatli qo'yildi!",
     "bidPartialError": "{count} ta bid muvaffaqiyatsiz",
-    "bidError": "Bid qo'yishda xatolik"
+    "bidError": "Bid qo'yishda xatolik",
+    "warningTitle": "TARGET YARATISHDAN OLDIN",
+    "warningHeading": "Trade himoyasi targetingizga qanday ta'sir qiladi",
+    "warningPoint1": "Ko'p target itemlar 7 kunlik trade himoyasi bilan keladi",
+    "warningPoint2": "Bu muddat ichida asl egasi itemni qaytarishi mumkin",
+    "warningPoint3": "Agar shunday bo'lsa, to'liq refund balansingizga qaytariladi",
+    "warningPoint4": "Himoya tugagunga qadar itemlarni sotishga qo'yishingiz mumkin",
+    "dontShowAgain": "Boshqa ko'rsatilmasin",
+    "agreeAndContinue": "Roziman, davom etish"
   }
 }

@@ -690,6 +690,14 @@
     "placeBid": "Place Bid",
     "bidSuccess": "{count} bid(s) placed successfully!",
     "bidPartialError": "{count} bid(s) failed",
-    "bidError": "Failed to place bids"
+    "bidError": "Failed to place bids",
+    "warningTitle": "BEFORE YOU CREATE TARGET",
+    "warningHeading": "How Trade Protection Affects Your Target",
+    "warningPoint1": "Most target items you will receive trade-protected for 7 days",
+    "warningPoint2": "They can be reverted by the original owner during this period",
+    "warningPoint3": "You'll get a full refund to your balance if that happens",
+    "warningPoint4": "You can still list them for sale or sell instantly",
+    "dontShowAgain": "Don't show again",
+    "agreeAndContinue": "Agree and continue"
   }
 }

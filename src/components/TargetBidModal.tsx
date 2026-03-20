@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { formatPrice } from "@/lib/currency";
 import type { Currency } from "@/lib/currency";
 import { useTranslations } from "next-intl";
@@ -35,8 +35,114 @@ export default function TargetBidModal({
   const [useGlobalPrice, setUseGlobalPrice] = useState(true);
   const [globalPrice, setGlobalPrice] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
+  const [dontShowAgain, setDontShowAgain] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      const dismissed = localStorage.getItem("target_warning_dismissed");
+      if (!dismissed) {
+        setShowWarning(true);
+      }
+    }
+  }, [isOpen]);
+
+  const handleAgree = () => {
+    if (dontShowAgain) {
+      localStorage.setItem("target_warning_dismissed", "true");
+    }
+    setShowWarning(false);
+  };
 
   if (!isOpen || skins.length === 0) return null;
+
+  if (showWarning) {
+    return (
+      <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+        <div className="flex items-center justify-center min-h-screen px-4">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+          <div className="relative w-full max-w-md bg-gray-900 rounded-2xl shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 pt-5">
+              <h3 className="text-sm font-bold text-green-400 tracking-wider uppercase">
+                {t("warningTitle")}
+              </h3>
+              <button
+                onClick={onClose}
+                className="p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-gray-800 transition"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="px-5 py-6 flex flex-col items-center text-center">
+              {/* Shield icon */}
+              <div className="w-20 h-20 mb-5">
+                <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M40 8L12 22V38C12 55.6 24.2 71.8 40 76C55.8 71.8 68 55.6 68 38V22L40 8Z" fill="#D97706" />
+                  <path d="M40 14L18 26V38C18 52.8 27.8 66.4 40 70C52.2 66.4 62 52.8 62 38V26L40 14Z" fill="#F59E0B" />
+                  <path d="M36 44L30 38L27 41L36 50L54 32L51 29L36 44Z" fill="#92400E" />
+                </svg>
+              </div>
+
+              <h4 className="text-lg font-bold text-white mb-3">
+                {t("warningHeading")}
+              </h4>
+
+              <ul className="text-sm text-gray-400 space-y-2 text-left mb-6">
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-500 mt-0.5">•</span>
+                  {t("warningPoint1")}
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-500 mt-0.5">•</span>
+                  {t("warningPoint2")}
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-500 mt-0.5">•</span>
+                  {t("warningPoint3")}
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-500 mt-0.5">•</span>
+                  {t("warningPoint4")}
+                </li>
+              </ul>
+
+              {/* Don't show again */}
+              <label className="flex items-center gap-2 cursor-pointer mb-5">
+                <input
+                  type="checkbox"
+                  checked={dontShowAgain}
+                  onChange={(e) => setDontShowAgain(e.target.checked)}
+                  className="w-4 h-4 rounded border-gray-600 bg-gray-800 text-amber-500 focus:ring-amber-500"
+                />
+                <span className="text-sm text-gray-400">{t("dontShowAgain")}</span>
+              </label>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3 px-5 pb-5">
+              <button
+                onClick={onClose}
+                className="flex-1 py-3 text-sm font-medium text-gray-300 bg-gray-700 rounded-xl hover:bg-gray-600 transition"
+              >
+                {t("cancel")}
+              </button>
+              <button
+                onClick={handleAgree}
+                className="flex-1 py-3 text-sm font-medium text-gray-900 bg-green-400 rounded-xl hover:bg-green-300 transition"
+              >
+                {t("agreeAndContinue")}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = async () => {
     setSubmitting(true);
