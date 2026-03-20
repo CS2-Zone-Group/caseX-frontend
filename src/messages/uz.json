@@ -109,7 +109,8 @@
     "adminPanel": "Admin Panel",
     "depositTooltip": "Balansni to'ldirish",
     "onSale": "Sotuvda",
-    "targets": "Targetlar"
+    "targets": "Targetlar",
+    "onlineSupport": "Online-yordam"
   },
   "CartPage": {
     "title": "Savat",
@@ -213,7 +214,11 @@
     "loginRequired": "Iltimos, avval tizimga kiring",
     "addedToCart": "Savatga qo'shildi!",
     "purchaseSuccess": "Xarid muvaffaqiyatli! Item inventaringizga qo'shildi.",
-    "purchaseError": "Xarid amalga oshmadi. Qayta urinib ko'ring."
+    "purchaseError": "Xarid amalga oshmadi. Qayta urinib ko'ring.",
+    "avgPrice": "o'rtacha narx",
+    "loadingSales": "Sotuv ma'lumotlari yuklanmoqda...",
+    "target": "Target",
+    "offer": "Offer"
   },
   "SettingsModal": {
     "title": "Sozlamalar",
@@ -355,7 +360,14 @@
     "purchaseError": "Sotib olishda xatolik yuz berdi",
     "buyNow": "Sotib olish",
     "yourListing": "Sizning e'lon",
-    "sellerLabel": "Sotuvchi"
+    "sellerLabel": "Sotuvchi",
+    "selected": "Tanlangan",
+    "targetBid": "Target | Bid",
+    "items": "ta item",
+    "removeAll": "Hammasini o'chirish",
+    "addSelectedToCart": "Savatga qo'shish",
+    "inCaseOfPurchase": "Sotib olsangiz to'lash kerak bo'ladi",
+    "addedAllToCart": "Barcha itemlar savatga qo'shildi!"
   },
   "InventoryPage": {
     "title": "Inventar",
@@ -613,7 +625,9 @@
   "Chat": {
     "welcomeMessage": "Qanday yordam bera olamiz?",
     "autoReply": "Xabaringiz qabul qilindi. Tez orada javob beramiz.",
-    "inputPlaceholder": "Xabaringizni yozing..."
+    "inputPlaceholder": "Xabaringizni yozing...",
+    "messageSent": "Xabar yuborildi! Jamoamiz tez orada javob beradi.",
+    "messageError": "Xabar yuborilmadi. Qayta urinib ko'ring."
   },
   "ChangePasswordModal": {
     "title": "Parolni O'zgartirish",
@@ -662,5 +676,20 @@
     "noBidsHint": "\"Sotuvga qo'yish\" tabiga o'ting va o'z narxingizni belgilang",
     "noBidsForThese": "Bu itemlar uchun bid mavjud emas",
     "noBid": "Bid yo'q"
+  },
+  "TargetBidModal": {
+    "title": "Target Bid qo'yish",
+    "items": "ta item",
+    "samePrice": "Hammasi uchun bir narx",
+    "individualPrice": "Alohida narxlar",
+    "bidPrice": "Bid narxingiz",
+    "marketPrice": "Bozor",
+    "totalBid": "Umumiy bid summasi",
+    "bidNote": "Bidingiz bekor qilmaguningizcha faol bo'ladi. Sotuvchi narxni qabul qilganda, item balansingizdan avtomatik sotib olinadi.",
+    "cancel": "Bekor qilish",
+    "placeBid": "Bid qo'yish",
+    "bidSuccess": "{count} ta bid muvaffaqiyatli qo'yildi!",
+    "bidPartialError": "{count} ta bid muvaffaqiyatsiz",
+    "bidError": "Bid qo'yishda xatolik"
   }
 }

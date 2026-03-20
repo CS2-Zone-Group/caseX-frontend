@@ -13,6 +13,7 @@ import { formatPrice } from '@/lib/currency';
 import { useFilterStore } from '@/store/filterStore';
 import { useSearchParams } from 'next/navigation';
 import FavoriteButton from '@/components/FavoriteButton';
+import TargetBidModal from '@/components/TargetBidModal';
 import { toast } from '@/store/toastStore';
 
 interface Skin {
@@ -43,6 +44,8 @@ function MarketplaceContent() {
   const [filtersVisible, setFiltersVisible] = useState(true);
   const [selectedSkin, setSelectedSkin] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [bidModalOpen, setBidModalOpen] = useState(false);
 
   const category = searchParams.get('category');
 
@@ -178,6 +181,42 @@ function MarketplaceContent() {
     setSelectedSkin(null);
   };
 
+  const getItemKey = (skin: Skin) => skin.inventoryId || skin.id;
+
+  const toggleSelectItem = (skin: Skin) => {
+    const key = getItemKey(skin);
+    setSelectedItems(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  };
+
+  const clearSelection = () => setSelectedItems(new Set());
+
+  const selectedSkins = skins.filter(s => selectedItems.has(getItemKey(s)));
+  const selectedTotal = selectedSkins.reduce((sum, s) => sum + Number(s.price), 0);
+
+  const handleAddSelectedToCart = async () => {
+    if (!hasHydrated || !user) {
+      toast.info(t('pleaseLogin'));
+      return;
+    }
+    try {
+      for (const skin of selectedSkins) {
+        await addToCart(skin.id);
+      }
+      toast.success(t('addedAllToCart'));
+      clearSelection();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <Navbar />
@@ -267,14 +306,20 @@ function MarketplaceContent() {
                   const lockDate = skin.tradeLockUntil ? new Date(skin.tradeLockUntil) : null;
                   const isLocked = lockDate ? lockDate > new Date() : false;
                   const lockDays = isLocked && lockDate ? Math.ceil((lockDate.getTime() - Date.now()) / 86400000) : 0;
+                  const itemKey = getItemKey(skin);
+                  const isSelected = selectedItems.has(itemKey);
                   return (
                   <div
-                    key={skin.id}
-                    className="group bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700/50 hover:border-primary-300 dark:hover:border-primary-600/50 transition-all duration-200 hover:shadow-lg overflow-hidden"
+                    key={itemKey}
+                    onClick={() => toggleSelectItem(skin)}
+                    className={`group bg-white dark:bg-gray-900 rounded-lg border transition-all duration-200 hover:shadow-lg overflow-hidden cursor-pointer ${
+                      isSelected
+                        ? 'border-primary-500 dark:border-primary-500 ring-2 ring-primary-500/30'
+                        : 'border-gray-200 dark:border-gray-700/50 hover:border-primary-300 dark:hover:border-primary-600/50'
+                    }`}
                   >
                     <div
-                      className="relative aspect-square bg-gray-100 dark:bg-gray-800/50 cursor-pointer overflow-hidden"
-                      onClick={() => openSkinDetails(skin)}
+                      className="relative aspect-square bg-gray-100 dark:bg-gray-800/50 overflow-hidden"
                     >
                       <img
                         src={skin.imageUrl}
@@ -299,16 +344,31 @@ function MarketplaceContent() {
                           <span className="text-[9px] font-mono text-white/80">{skin.float ? parseFloat(String(skin.float)).toFixed(4) : ''}</span>
                         </div>
                       </div>
-                      <div className="absolute top-2 right-2">
-                        <FavoriteButton skinId={skin.id} className="w-7 h-7 text-base bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm" />
+                      {isSelected && (
+                        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-10">
+                          <span className="text-white font-semibold text-sm">{t('selected')}</span>
+                        </div>
+                      )}
+                      <div className="absolute top-2 right-2 flex flex-col gap-1 z-20">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); openSkinDetails(skin); }}
+                          className="w-7 h-7 flex items-center justify-center rounded-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                        </button>
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <FavoriteButton skinId={skin.id} className="w-7 h-7 text-base bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm" />
+                        </div>
                       </div>
                     </div>
 
                     <div className="p-2 space-y-1">
                       <h3
-                        className="font-medium text-gray-900 dark:text-white text-[11px] leading-tight line-clamp-1 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                        className="font-medium text-gray-900 dark:text-white text-[11px] leading-tight line-clamp-1"
                         title={skin.name}
-                        onClick={() => openSkinDetails(skin)}
                       >
                         {skin.name}
                       </h3>
@@ -336,10 +396,12 @@ function MarketplaceContent() {
                           </span>
                         ) : (
                           <button
-                            onClick={() => skin.isUserListing
-                              ? handleBuyListing(skin.inventoryId!)
-                              : handleAddToCart(skin.id)
-                            }
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              skin.isUserListing
+                                ? handleBuyListing(skin.inventoryId!)
+                                : handleAddToCart(skin.id);
+                            }}
                             className="p-1.5 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition"
                             title={t('addToCart')}
                           >
@@ -359,10 +421,80 @@ function MarketplaceContent() {
         </div>
       </div>
 
+      {/* Bottom Action Bar */}
+      {selectedItems.size > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-2xl">
+          <div className="max-w-[1600px] mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-gray-900 dark:text-white">
+                  {formatPrice(selectedTotal, currency)}
+                </span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  ({selectedItems.size})
+                </span>
+              </div>
+              <span className="hidden sm:inline text-sm text-gray-500 dark:text-gray-400">
+                {t('inCaseOfPurchase')}{' '}
+                <span className="font-semibold text-gray-900 dark:text-white">
+                  {formatPrice(selectedTotal, currency)}
+                </span>
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <button
+                onClick={() => setBidModalOpen(true)}
+                className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg font-medium hover:from-amber-600 hover:to-orange-600 transition-all text-sm"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+                <div className="text-left">
+                  <div className="leading-tight">{t('targetBid')}</div>
+                  <div className="text-[10px] opacity-80">{selectedItems.size} {t('items')}</div>
+                </div>
+              </button>
+
+              <button
+                onClick={handleAddSelectedToCart}
+                className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg font-medium hover:from-green-600 hover:to-teal-600 transition-all text-sm"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <div className="text-left">
+                  <div className="leading-tight">{t('addSelectedToCart')}</div>
+                  <div className="text-[10px] opacity-80">{formatPrice(selectedTotal, currency)}</div>
+                </div>
+              </button>
+
+              <button
+                onClick={clearSelection}
+                className="flex items-center gap-1.5 px-3 py-2.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition text-sm"
+              >
+                {t('removeAll')}
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <SkinDetailsModal
         isOpen={isModalOpen}
         onClose={closeSkinDetails}
         skin={selectedSkin}
+      />
+
+      <TargetBidModal
+        isOpen={bidModalOpen}
+        onClose={() => setBidModalOpen(false)}
+        skins={selectedSkins}
+        currency={currency}
+        onSuccess={clearSelection}
       />
     </div>
   );

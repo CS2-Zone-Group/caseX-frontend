@@ -109,7 +109,8 @@
     "adminPanel": "Admin Panel",
     "depositTooltip": "Add funds",
     "onSale": "On Sale",
-    "targets": "Targets"
+    "targets": "Targets",
+    "onlineSupport": "Online Support"
   },
   "CartPage": {
     "title": "Cart",
@@ -213,7 +214,11 @@
     "loginRequired": "Please login first",
     "addedToCart": "Added to cart!",
     "purchaseSuccess": "Purchase successful! Item added to your inventory.",
-    "purchaseError": "Purchase failed. Please try again."
+    "purchaseError": "Purchase failed. Please try again.",
+    "avgPrice": "avg price",
+    "loadingSales": "Loading sales data...",
+    "target": "Target",
+    "offer": "Offer"
   },
   "SettingsModal": {
     "title": "Settings",
@@ -355,7 +360,14 @@
     "purchaseError": "Failed to purchase item",
     "buyNow": "Buy Now",
     "yourListing": "Your listing",
-    "sellerLabel": "Seller"
+    "sellerLabel": "Seller",
+    "selected": "Selected",
+    "targetBid": "Target | Bid",
+    "items": "items",
+    "removeAll": "Remove All",
+    "addSelectedToCart": "Add to Cart",
+    "inCaseOfPurchase": "In case of purchase you'll be asked to pay",
+    "addedAllToCart": "All items added to cart!"
   },
   "InventoryPage": {
     "title": "Inventory",
@@ -613,7 +625,9 @@
   "Chat": {
     "welcomeMessage": "How can we help you?",
     "autoReply": "Your message has been received. We will reply shortly.",
-    "inputPlaceholder": "Type your message..."
+    "inputPlaceholder": "Type your message...",
+    "messageSent": "Message sent! Our team will respond shortly.",
+    "messageError": "Failed to send message. Please try again."
   },
   "ChangePasswordModal": {
     "title": "Change Password",
@@ -662,5 +676,20 @@
     "noBidsHint": "Switch to \"List for Sale\" to set your own price",
     "noBidsForThese": "No bids available for these items",
     "noBid": "No bid"
+  },
+  "TargetBidModal": {
+    "title": "Place Target Bid",
+    "items": "items",
+    "samePrice": "Same price for all",
+    "individualPrice": "Individual prices",
+    "bidPrice": "Your bid price",
+    "marketPrice": "Market",
+    "totalBid": "Total bid amount",
+    "bidNote": "Your bid will be active until cancelled. When a seller accepts your price, the item will be purchased automatically from your balance.",
+    "cancel": "Cancel",
+    "placeBid": "Place Bid",
+    "bidSuccess": "{count} bid(s) placed successfully!",
+    "bidPartialError": "{count} bid(s) failed",
+    "bidError": "Failed to place bids"
   }
 }

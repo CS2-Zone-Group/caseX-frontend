@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl";
 import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "@/store/toastStore";
+import SalesInfoTab from "@/components/SalesInfoTab";
 
 interface SkinDetailsModalProps {
   isOpen: boolean;
@@ -327,7 +328,10 @@ export default function SkinDetailsModal({
                   {/* Action Buttons */}
                   <div className="flex gap-2">
                     <button
-                      className="flex-1 px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
+                      className="flex-1 px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium text-white"
+                      style={{ backgroundColor: '#171a21' }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#2a475e'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#171a21'}
                       onClick={() => {
                         const steamUrl = `https://steamcommunity.com/market/listings/730/${encodeURIComponent(
                           skin.marketHashName || skin.name
@@ -335,12 +339,16 @@ export default function SkinDetailsModal({
                         window.open(steamUrl, "_blank");
                       }}
                     >
-                      {t("viewAtSteam")}
+                      <svg className="w-4 h-4" viewBox="0 0 256 259" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M127.779 0C60.4 0 5.24 52.368 0 119.104l68.7 28.396c5.83-3.99 12.856-6.326 20.427-6.326.681 0 1.355.022 2.027.058l30.55-44.245v-.622c0-27.982 22.773-50.755 50.755-50.755 27.982 0 50.755 22.773 50.755 50.755 0 27.983-22.773 50.756-50.755 50.756h-1.173l-43.52 31.073c0 .538.029 1.076.029 1.606 0 20.972-17.044 38.01-38.01 38.01-18.478 0-33.904-13.267-37.328-30.795L3.582 162.891C19.886 217.78 69.603 258.47 127.779 258.47c70.537 0 127.735-57.198 127.735-127.735C255.514 57.198 198.316 0 127.779 0zM80.392 216.528l-15.588-6.441c3.468 7.218 9.623 13.204 17.803 16.452 17.689 7.024 37.742-1.59 44.766-19.28a33.82 33.82 0 0 0 1.803-20.475 33.834 33.834 0 0 0-11.082-18.292l16.194 6.698c14.694 6.064 21.686 22.83 15.59 37.42-6.075 14.587-22.833 21.578-37.45 15.556-6.868-2.837-12.267-7.917-15.587-13.948l-16.45-6.803v9.113zm122.542-69.868c0-18.654-15.18-33.835-33.835-33.835-18.655 0-33.836 15.181-33.836 33.835 0 18.655 15.181 33.836 33.836 33.836 18.655 0 33.835-15.181 33.835-33.836zm-59.245-.083c0-14.138 11.44-25.627 25.576-25.627 14.136 0 25.627 11.49 25.627 25.627 0 14.137-11.491 25.627-25.627 25.627-14.137 0-25.576-11.49-25.576-25.627z"/>
+                      </svg>
+                      <span>{t("viewAtSteam")}</span>
                     </button>
                     <button
                       className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 text-sm font-medium"
                       onClick={() => {
-                        toast.info("Inspect in game functionality would open CS2 with this item");
+                        const inspectUrl = `steam://rungame/730/76561202255233023/+csgo_econ_action_preview%20M%20${encodeURIComponent(skin.marketHashName || skin.name)}`;
+                        window.location.href = inspectUrl;
                       }}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -458,83 +466,7 @@ export default function SkinDetailsModal({
             )}
 
             {activeTab === "sales" && (
-              <div className="space-y-6">
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                      {t("salesHistory")}
-                    </h3>
-                    <div className="flex space-x-2">
-                      <button className="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded">
-                        7D
-                      </button>
-                      <button className="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded">
-                        1M
-                      </button>
-                      <button className="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded">
-                        6M
-                      </button>
-                      <button className="px-3 py-1 text-sm bg-green-600 text-white rounded">
-                        1Y
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="h-64 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-                    <div className="text-gray-400 dark:text-gray-500">
-                      <svg
-                        className="w-16 h-16 mx-auto mb-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                        />
-                      </svg>
-                      <p>{t("salesChartPlaceholder")}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                      {t("recentSales")}
-                    </h3>
-                    <button className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-white">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="grid grid-cols-3 gap-4 text-gray-600 dark:text-gray-400 text-sm font-medium pb-2 border-b border-gray-200 dark:border-gray-700">
-                      <span>{t("sellingPrice")}</span>
-                      <span>{t("operation")}</span>
-                      <span>{t("dateTime")}</span>
-                    </div>
-
-                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                      <p>{t("noSalesHistory")}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <SalesInfoTab skinId={skin.id} currency={currency} t={t} />
             )}
           </div>
 

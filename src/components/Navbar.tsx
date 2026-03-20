@@ -11,6 +11,7 @@ import { convertCurrency, formatPrice } from "@/lib/currency";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useFavouritesStore } from "@/store/favouritesStore";
 import ThemeToggle from "@/components/ThemeToggle";
+import { useChatStore } from "@/store/useChatStore";
 import { locales } from "@/i18n/routing";
 import { changeLanguage, getCurrentLanguage } from "@/lib/language";
 
@@ -394,6 +395,29 @@ export default function Navbar() {
                         </svg>
                         <span>{t("paymentHistory")}</span>
                       </Link>
+
+                      <button
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition w-full"
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          useChatStore.getState().openChat();
+                        }}
+                      >
+                        <svg
+                          className="w-5 h-5 text-green-500"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                          />
+                        </svg>
+                        <span>{t("onlineSupport")}</span>
+                      </button>
 
                       {/* Admin Panel Link - Only for admin users */}
                       {user.role === "admin" && (

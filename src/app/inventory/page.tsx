@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import AuthGuard from '@/components/AuthGuard';
 import FilterPanel from '@/components/FilterPanel';
 import SellModal from '@/components/SellModal';
+import SkinDetailsModal from '@/components/SkinDetailsModal';
 import { formatPrice } from '@/lib/currency';
 import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -75,6 +76,7 @@ export default function InventoryPage() {
   const [sellError, setSellError] = useState<string | null>(null);
   const [sellModalOpen, setSellModalOpen] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
+  const [detailsSkin, setDetailsSkin] = useState<any>(null);
 
   useEffect(() => {
     document.title = `${t('title')} - CaseX`;
@@ -510,13 +512,24 @@ export default function InventoryPage() {
                             </div>
                           </div>
                         )}
-                        {selectedItems.includes(item.id) && (
-                          <div className="absolute top-2 right-2 w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center text-white text-xs">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        <div className="absolute top-2 right-2 flex flex-col gap-1">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setDetailsSkin(item.skin); }}
+                            className="w-6 h-6 flex items-center justify-center rounded-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                          </div>
-                        )}
+                          </button>
+                          {selectedItems.includes(item.id) && (
+                            <div className="w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center text-white text-xs">
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       <div className="p-3 space-y-1.5">
@@ -656,6 +669,12 @@ export default function InventoryPage() {
             </div>
           </div>
         </main>
+
+        <SkinDetailsModal
+          isOpen={!!detailsSkin}
+          onClose={() => setDetailsSkin(null)}
+          skin={detailsSkin}
+        />
       </div>
     </AuthGuard>
   );
