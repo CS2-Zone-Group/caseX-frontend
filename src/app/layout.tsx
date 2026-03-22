@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
+import Script from "next/script";
 import "./globals.css";
 import ClientLayout from "../components/ClientLayout";
 import type { Metadata } from "next";
@@ -29,6 +30,7 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <head>
+        <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){var t=localStorage.getItem('theme');if(t!=='light')document.documentElement.classList.add('dark')})()`,

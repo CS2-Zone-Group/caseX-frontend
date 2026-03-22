@@ -9,6 +9,7 @@ import { formatPrice } from '@/lib/currency';
 import SkinDetailsModal from '@/components/SkinDetailsModal';
 import api from '@/lib/api';
 import Link from 'next/link';
+import { toast } from '@/store/toastStore';
 
 interface ListedItem {
   id: string;
@@ -63,8 +64,10 @@ export default function OnSalePage() {
     try {
       await api.patch(`/inventory/${itemId}/unlist`);
       setItems(prev => prev.filter(item => item.id !== itemId));
+      toast.success(t('delistSuccess'));
     } catch (error) {
       console.error('Failed to delist item:', error);
+      toast.error(t('delistError'));
     }
   };
 

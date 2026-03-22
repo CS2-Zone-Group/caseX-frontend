@@ -4,11 +4,13 @@
       "title": "CaseX - CS2 Skins Marketplace"
     },
     "hero": {
-      "badge": "Uzbekistan's #1 CS2 Marketplace",
-      "title": "Buy CS2 Skins",
-      "description": "Best prices, secure and fast. The most trusted CS2 skins marketplace in Uzbekistan.",
-      "marketplaceButton": "🛍️ Go to Marketplace",
-      "signUpButton": "Sign Up"
+      "badge": "#1 Inventory Market in Uzbekistan",
+      "titleLine1": "The Ultimate",
+      "titleHighlight": "CS2 Inventory",
+      "titleLine2": "Marketplace",
+      "description": "Buy and sell CS2 inventory items at the best local prices. Secure, instant delivery via Steam. Supports Payme, Click, and ATMOS.",
+      "startTrading": "Start Trading",
+      "browseCatalog": "Browse Catalog"
     },
     "stats": {
       "skins": "Skins",
@@ -20,7 +22,7 @@
       "title": "WHY CASEX?",
       "bestPrices": {
         "title": "Best Prices",
-        "description": "Buy CS2 skins at the lowest prices in the market"
+        "description": "Buy CS2 inventory items at the lowest prices in the market"
       },
       "securePayments": {
         "title": "Secure Payments",
@@ -28,15 +30,27 @@
       },
       "fastDelivery": {
         "title": "Fast Delivery",
-        "description": "Get your skins within minutes"
+        "description": "Get your items within minutes"
       }
     },
-    "about": {
-      "title": "About CaseX",
-      "description": "CaseX - the first and most trusted CS2 skins marketplace in Uzbekistan. We provide gamers with a safe, fast and convenient way to buy and sell skins."
+    "howItWorks": {
+      "title": "Start Trading in Minutes",
+      "subtitle": "The simplest and fastest way to get the items you want using local payment methods.",
+      "step1": {
+        "title": "1. Log in with Steam",
+        "description": "Securely connect your account using the official Steam API. No password required."
+      },
+      "step2": {
+        "title": "2. Deposit or List Items",
+        "description": "Add funds via Payme/Click or list your own inventory items for sale at your own price."
+      },
+      "step3": {
+        "title": "3. Complete Trade",
+        "description": "Accept the trade offer instantly on Steam. Our bot or P2P system handles the rest."
+      }
     },
     "footer": {
-      "description": "Uzbekistan CS2 skins marketplace",
+      "description": "Uzbekistan CS2 inventory marketplace",
       "copyright": "All rights reserved."
     }
   },
@@ -500,7 +514,10 @@
     "systemShort": "System",
     "balanceAndPayments": "Balance & Payments",
     "balanceShort": "Balance",
-    "transactionHistory": "Transaction History"
+    "transactionHistory": "Transaction History",
+    "telegramAccount": "Telegram Account",
+    "telegramLinked": "Connected via Telegram",
+    "steamLinkExternal": "Opens in browser"
   },
   "VerifyEmailPage": {
     "title": "Email Verification",
@@ -620,13 +637,33 @@
     "active": "Active",
     "fulfilled": "Fulfilled",
     "expired": "Expired",
-    "items": "targets"
+    "items": "targets",
+    "inactive": "Inactive",
+    "cancelled": "Cancelled",
+    "activate": "Set Active",
+    "deactivate": "Set Inactive",
+    "delete": "Delete",
+    "editPrice": "Edit Price",
+    "selected": "selected",
+    "selectAll": "Select All",
+    "clearSelection": "Clear selection",
+    "confirmDelete": "Delete this target?",
+    "bulkSuccess": "Operation completed",
+    "priceUpdated": "Price updated",
+    "statusUpdated": "Status updated",
+    "enterNewPrice": "Enter new price",
+    "save": "Save",
+    "all": "All",
+    "noTargetsFound": "No targets found",
+    "manageBulk": "Select targets to manage"
   },
   "Chat": {
-    "welcomeMessage": "How can we help you?",
-    "autoReply": "Your message has been received. We will reply shortly.",
+    "supportTitle": "Support",
+    "supportDescription": "Have a problem or question? We're here to help!",
+    "startChat": "Send a message",
+    "endChat": "End chat",
+    "welcomeMessage": "Hello! Welcome to CaseX support. Please describe your issue and we'll get back to you shortly.",
     "inputPlaceholder": "Type your message...",
-    "messageSent": "Message sent! Our team will respond shortly.",
     "messageError": "Failed to send message. Please try again."
   },
   "ChangePasswordModal": {

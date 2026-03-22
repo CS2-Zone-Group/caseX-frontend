@@ -4,11 +4,13 @@
       "title": "CaseX - CS2 Skinlari Marketplace"
     },
     "hero": {
-      "badge": "O'zbekiston #1 CS2 Marketplace",
-      "title": "CS2 Skinlarini Xarid Qiling",
-      "description": "Eng yaxshi narxlarda, xavfsiz va tez. O'zbekistondagi eng ishonchli CS2 skinlari marketplace.",
-      "marketplaceButton": "🛍️ Marketplace'ga O'tish",
-      "signUpButton": "Ro'yxatdan O'tish"
+      "badge": "O'zbekistonda #1 Inventar Bozor",
+      "titleLine1": "Eng Yaxshi",
+      "titleHighlight": "CS2 Inventar",
+      "titleLine2": "Marketplace",
+      "description": "CS2 inventar buyumlarini eng yaxshi mahalliy narxlarda sotib oling va soting. Steam orqali xavfsiz, tezkor yetkazib berish. Payme, Click va ATMOS qo'llab-quvvatlanadi.",
+      "startTrading": "Savdoni Boshlash",
+      "browseCatalog": "Katalogni Ko'rish"
     },
     "stats": {
       "skins": "Skinlar",
@@ -20,7 +22,7 @@
       "title": "NIMA UCHUN CASEX?",
       "bestPrices": {
         "title": "Eng Yaxshi Narxlar",
-        "description": "Bozordagi eng arzon narxlarda CS2 skinlarini sotib oling"
+        "description": "Bozordagi eng arzon narxlarda CS2 inventar buyumlarini sotib oling"
       },
       "securePayments": {
         "title": "Xavfsiz To'lovlar",
@@ -28,15 +30,27 @@
       },
       "fastDelivery": {
         "title": "Tezkor Yetkazib Berish",
-        "description": "Skinlaringizni bir necha daqiqada qo'lingizga oling"
+        "description": "Buyumlaringizni bir necha daqiqada qo'lingizga oling"
       }
     },
-    "about": {
-      "title": "CaseX Haqida",
-      "description": "CaseX - O'zbekistondagi birinchi va eng ishonchli CS2 skinlari marketplace. Biz o'yinchilarga xavfsiz, tez va qulay tarzda skinlar sotib olish va sotish imkoniyatini taqdim etamiz."
+    "howItWorks": {
+      "title": "Bir Necha Daqiqada Savdoni Boshlang",
+      "subtitle": "Mahalliy to'lov usullari orqali xohlagan buyumlaringizni olishning eng oson va tez yo'li.",
+      "step1": {
+        "title": "1. Steam orqali kiring",
+        "description": "Rasmiy Steam API orqali hisobingizni xavfsiz ulang. Parol talab qilinmaydi."
+      },
+      "step2": {
+        "title": "2. Pul kiriting yoki Buyum qo'ying",
+        "description": "Payme/Click orqali pul kiriting yoki o'z inventaringizdagi buyumlarni o'z narxingizda sotuvga qo'ying."
+      },
+      "step3": {
+        "title": "3. Savdoni yakunlang",
+        "description": "Steam'da savdo taklifini qabul qiling. Bizning bot yoki P2P tizim qolganini hal qiladi."
+      }
     },
     "footer": {
-      "description": "CS2 skinlari uchun O'zbekiston marketplace",
+      "description": "CS2 inventar uchun O'zbekiston marketplace",
       "copyright": "Barcha huquqlar himoyalangan."
     }
   },
@@ -500,7 +514,10 @@
     "systemShort": "Tizim",
     "balanceAndPayments": "Balans va to'lovlar",
     "balanceShort": "Balans",
-    "transactionHistory": "Tranzaksiyalar tarixi"
+    "transactionHistory": "Tranzaksiyalar tarixi",
+    "telegramAccount": "Telegram Hisob",
+    "telegramLinked": "Telegram orqali ulangan",
+    "steamLinkExternal": "Brauzerda ochiladi"
   },
   "VerifyEmailPage": {
     "title": "Email Tasdiqlash",
@@ -620,13 +637,33 @@
     "active": "Faol",
     "fulfilled": "Bajarildi",
     "expired": "Muddati tugagan",
-    "items": "ta target"
+    "items": "ta target",
+    "inactive": "Nofaol",
+    "cancelled": "Bekor qilingan",
+    "activate": "Faollashtirish",
+    "deactivate": "Nofaol qilish",
+    "delete": "O'chirish",
+    "editPrice": "Narxni tahrirlash",
+    "selected": "tanlangan",
+    "selectAll": "Hammasini tanlash",
+    "clearSelection": "Tanlovni tozalash",
+    "confirmDelete": "Bu targetni o'chirish?",
+    "bulkSuccess": "Amaliyot bajarildi",
+    "priceUpdated": "Narx yangilandi",
+    "statusUpdated": "Holat yangilandi",
+    "enterNewPrice": "Yangi narx",
+    "save": "Saqlash",
+    "all": "Hammasi",
+    "noTargetsFound": "Targetlar topilmadi",
+    "manageBulk": "Boshqarish uchun tanlang"
   },
   "Chat": {
-    "welcomeMessage": "Qanday yordam bera olamiz?",
-    "autoReply": "Xabaringiz qabul qilindi. Tez orada javob beramiz.",
+    "supportTitle": "Qo'llab-quvvatlash",
+    "supportDescription": "Muammo yoki savolingiz bormi? Biz yordam beramiz!",
+    "startChat": "Xabar jo'natish",
+    "endChat": "Yakunlash",
+    "welcomeMessage": "Assalomu alaykum! CaseX qo'llab-quvvatlash xizmatiga xush kelibsiz. Muammoingizni yozing, tez orada javob beramiz.",
     "inputPlaceholder": "Xabaringizni yozing...",
-    "messageSent": "Xabar yuborildi! Jamoamiz tez orada javob beradi.",
     "messageError": "Xabar yuborilmadi. Qayta urinib ko'ring."
   },
   "ChangePasswordModal": {

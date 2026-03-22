@@ -434,12 +434,6 @@ function MarketplaceContent() {
                   ({selectedItems.size})
                 </span>
               </div>
-              <span className="hidden sm:inline text-sm text-gray-500 dark:text-gray-400">
-                {t('inCaseOfPurchase')}{' '}
-                <span className="font-semibold text-gray-900 dark:text-white">
-                  {formatPrice(selectedTotal, currency)}
-                </span>
-              </span>
             </div>
 
             <div className="flex items-center gap-2 flex-shrink-0">
@@ -471,10 +465,10 @@ function MarketplaceContent() {
 
               <button
                 onClick={clearSelection}
-                className="flex items-center gap-1.5 px-3 py-2.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition text-sm"
+                className="flex items-center justify-center w-10 h-10 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700 transition"
+                title={t('removeAll')}
               >
-                {t('removeAll')}
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>

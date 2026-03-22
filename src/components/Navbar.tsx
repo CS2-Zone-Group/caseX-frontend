@@ -12,6 +12,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useFavouritesStore } from "@/store/favouritesStore";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useChatStore } from "@/store/useChatStore";
+import { useTelegramStore } from "@/store/telegramStore";
 import { locales } from "@/i18n/routing";
 import { changeLanguage, getCurrentLanguage } from "@/lib/language";
 
@@ -25,6 +26,7 @@ export default function Navbar() {
   const { currency } = useSettingsStore();
   const { itemCount } = useCartStore();
   const { user, token, logout, hasHydrated } = useAuthStore();
+  const { isTelegramApp } = useTelegramStore();
   const t = useTranslations("Navbar");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -76,6 +78,29 @@ export default function Navbar() {
     setConvertedBalance(baseBalance);
   }, [currency, baseBalance]);
 
+  // Telegram BackButton integration
+  useEffect(() => {
+    if (!isTelegramApp) return;
+
+    const tgWebApp = typeof window !== 'undefined' ? window.Telegram?.WebApp : null;
+    if (!tgWebApp) return;
+
+    const handleBack = () => {
+      router.back();
+    };
+
+    if (pathname !== '/') {
+      tgWebApp.BackButton.show();
+      tgWebApp.BackButton.onClick(handleBack);
+    } else {
+      tgWebApp.BackButton.hide();
+    }
+
+    return () => {
+      tgWebApp.BackButton.offClick(handleBack);
+    };
+  }, [isTelegramApp, pathname, router]);
+
   const handleLogout = () => {
     logout();
     resetStore(); // Favorites store ni tozalash
@@ -84,7 +109,10 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-50 border-b border-gray-200 dark:border-gray-800">
+    <nav
+      className="fixed top-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-50 border-b border-gray-200 dark:border-gray-800"
+      style={isTelegramApp ? { paddingTop: typeof window !== 'undefined' ? (window.Telegram?.WebApp?.safeAreaInset?.top || 0) : 0 } : undefined}
+    >
       <div className="max-w-[1600px] mx-auto px-2 sm:px-3 lg:px-4 py-2">
         <div className="flex justify-between items-center">
           {/* Logo */}
@@ -225,6 +253,7 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+
                   className="flex items-center gap-3 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition"
                 >
                   <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-blue-600 rounded-full flex items-center justify-center overflow-hidden">
@@ -453,38 +482,44 @@ export default function Navbar() {
                         </>
                       )}
 
-                      <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+                      {!isTelegramApp && (
+                        <>
+                          <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
 
-                      <button
-                        className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 transition w-full"
-                        onClick={handleLogout}
-                      >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                          />
-                        </svg>
-                        <span>{t("logout")}</span>
-                      </button>
+                          <button
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 transition w-full"
+                            onClick={handleLogout}
+                          >
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                              />
+                            </svg>
+                            <span>{t("logout")}</span>
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 )}
               </div>
             ) : (
-              <Link
-                href="/auth/login"
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
-              >
-                {t("login")}
-              </Link>
+              !isTelegramApp && (
+                <Link
+                  href="/auth/login"
+                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
+                >
+                  {t("login")}
+                </Link>
+              )
             )}
           </div>
 
@@ -621,13 +656,15 @@ export default function Navbar() {
                 )}
               </>
             ) : (
-              <Link
-                href="/auth/login"
-                className="block px-4 py-2 bg-primary-600 text-white rounded-lg text-center"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {t("login")}
-              </Link>
+              !isTelegramApp && (
+                <Link
+                  href="/auth/login"
+                  className="block px-4 py-2 bg-primary-600 text-white rounded-lg text-center"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {t("login")}
+                </Link>
+              )
             )}
           </div>
         )}

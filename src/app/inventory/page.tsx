@@ -406,9 +406,12 @@ export default function InventoryPage() {
                     {t('items')}: <span className="font-semibold text-gray-900 dark:text-white">{filteredItems.length}</span>
                   </span>
                   {listedCount > 0 && (
-                    <span className="text-sm text-green-600 dark:text-green-400 font-medium">
+                    <button
+                      onClick={() => router.push('/on-sale')}
+                      className="text-sm text-green-600 dark:text-green-400 font-medium hover:underline transition-colors"
+                    >
                       {t('onSale')}: {listedCount}
-                    </span>
+                    </button>
                   )}
                   <span className="text-sm font-semibold text-green-600 dark:text-green-400">
                     {t('total')}: {formatPrice(totalInventoryValue, currency)}

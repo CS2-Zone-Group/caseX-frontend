@@ -60,7 +60,7 @@ export const useInventoryStore = create<InventoryStore>()(
 
       listItem: async (itemId: string, price: number) => {
         try {
-          await api.patch(`/inventory/${itemId}/list`, { price });
+          await api.post(`/inventory/${itemId}/list`, { price });
           set((state) => ({
             items: state.items.map((item) =>
               item.id === itemId ? { ...item, isListed: true, listPrice: price } : item

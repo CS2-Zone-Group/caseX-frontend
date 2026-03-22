@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { formatPrice } from "@/lib/currency";
+import { formatPrice, getCurrencySymbol, usdToLocal } from "@/lib/currency";
 import type { Currency } from "@/lib/currency";
 import { useTranslations } from "next-intl";
 import { toast } from "@/store/toastStore";
@@ -14,6 +14,7 @@ interface Skin {
   price: number;
   exterior: string;
   float?: number;
+  tradeLock?: boolean;
 }
 
 interface TargetBidModalProps {
@@ -85,9 +86,11 @@ export default function TargetBidModal({
   const [bidPrices, setBidPrices] = useState<Record<string, string>>({});
   const [savedBids, setSavedBids] = useState<Record<string, number>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [infoDismissed, setInfoDismissed] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
-  const [infoDismissed, setInfoDismissed] = useState(false);
+
+  const hasLockedItems = skins.some((s) => s.tradeLock);
 
   useEffect(() => {
     if (isOpen) {
@@ -96,12 +99,14 @@ export default function TargetBidModal({
       setSavedBids({});
       setSubmitting(false);
       setInfoDismissed(false);
-      const dismissed = localStorage.getItem("target_warning_dismissed");
-      if (!dismissed) {
-        setShowWarning(true);
+      if (hasLockedItems) {
+        const dismissed = localStorage.getItem("target_warning_dismissed");
+        setShowWarning(!dismissed);
+      } else {
+        setShowWarning(false);
       }
     }
-  }, [isOpen]);
+  }, [isOpen, hasLockedItems]);
 
   const handleAgree = () => {
     if (dontShowAgain) {
@@ -112,7 +117,7 @@ export default function TargetBidModal({
 
   if (!isOpen || skins.length === 0) return null;
 
-  // Warning screen
+  // Warning screen — only for trade-locked items
   if (showWarning) {
     return (
       <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
@@ -248,16 +253,11 @@ export default function TargetBidModal({
               <span className="text-amber-500">TARGET</span>
               <span className="text-white ml-2">{currentStep + 1} {t("of")} {skins.length}</span>
             </h3>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-white font-medium">
-                {formatPrice(total, currency)}
-              </span>
-              <button onClick={onClose} className="p-1.5 text-gray-400 hover:text-white transition">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
+            <button onClick={onClose} className="p-1.5 text-gray-400 hover:text-white transition">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
 
           {/* Progress bar */}
@@ -330,18 +330,18 @@ export default function TargetBidModal({
                 {/* Price input */}
                 <div className="bg-gray-800 rounded-lg p-3">
                   <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{t("youllPay")}</p>
-                  <div className="relative">
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 text-green-400 text-lg font-medium">$</span>
+                  <div className="flex items-center gap-2">
                     <input
                       type="number"
-                      step="0.01"
+                      step={currency === 'UZS' ? '1' : '0.01'}
                       min="0.01"
                       value={currentPrice}
                       onChange={(e) => setBidPrices((prev) => ({ ...prev, [skin.id]: e.target.value }))}
-                      placeholder={skin.price.toFixed(2)}
-                      className="w-full pl-4 pr-2 py-1 bg-transparent text-lg font-medium text-green-400 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      placeholder={currency === 'UZS' ? Math.round(usdToLocal(Number(skin.price || 0), currency)).toString() : usdToLocal(Number(skin.price || 0), currency).toFixed(2)}
+                      className="w-full py-1 bg-transparent text-lg font-medium text-green-400 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       autoFocus
                     />
+                    <span className="text-sm text-green-400 font-medium flex-shrink-0">{getCurrencySymbol(currency)}</span>
                   </div>
                 </div>
               </div>

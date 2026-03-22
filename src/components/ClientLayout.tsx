@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { NextIntlClientProvider } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
 import { useSettingsStore } from "@/store/settingsStore";
+import { useTelegramStore } from "@/store/telegramStore";
+import { isTelegramWebApp, getTelegramInitData } from "@/lib/telegram";
+import api from "@/lib/api";
 import ChatSupport from "@/components/ChatSupport";
 import ToastContainer from "@/components/ToastContainer";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -53,6 +56,48 @@ export default function ClientLayout({
       }
 
       setIsLoaded(true);
+
+      // Telegram Mini App detection and auto-login
+      try {
+        if (isTelegramWebApp()) {
+          useTelegramStore.getState().setIsTelegramApp(true);
+
+          const tgWebApp = window.Telegram?.WebApp;
+          if (tgWebApp) {
+            tgWebApp.ready();
+            tgWebApp.expand();
+
+            // Apply Telegram theme
+            const tgColorScheme = tgWebApp.colorScheme;
+            if (tgColorScheme) {
+              const root = window.document.documentElement;
+              root.classList.remove("light", "dark");
+              root.classList.add(tgColorScheme);
+              useSettingsStore.getState().setTheme(tgColorScheme as any);
+            }
+
+            // Auto-login if no valid auth token exists
+            const existingToken = useAuthStore.getState().token;
+            if (!existingToken) {
+              const initData = getTelegramInitData();
+              if (initData) {
+                api.post('/auth/telegram', { initData })
+                  .then((response) => {
+                    const { token: newToken, user: userData } = response.data;
+                    if (newToken && userData) {
+                      useAuthStore.getState().setAuth(userData, newToken);
+                    }
+                  })
+                  .catch((err) => {
+                    console.warn('Telegram auto-login failed:', err?.message || err);
+                  });
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Telegram Mini App initialization failed:', err);
+      }
     };
 
     rehydrateStores();
