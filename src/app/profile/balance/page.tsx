@@ -8,6 +8,7 @@ import { formatPrice, getExchangeRates } from "@/lib/currency";
 import Navbar from "@/components/Navbar";
 import ProfileSidebar from "@/components/ProfileSidebar";
 import api from "@/lib/api";
+import Loader from "@/components/Loader";
 
 interface Transaction {
   id: string;
@@ -325,7 +326,7 @@ function BalanceAndPaymentsContent() {
 
 export default function BalanceAndPaymentsPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+    <Suspense fallback={<Loader fullScreen />}>
       <BalanceAndPaymentsContent />
     </Suspense>
   );

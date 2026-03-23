@@ -124,7 +124,8 @@
     "depositTooltip": "Balansni to'ldirish",
     "onSale": "Sotuvda",
     "targets": "Targetlar",
-    "onlineSupport": "Online-yordam"
+    "onlineSupport": "Online-yordam",
+    "transactions": "Tranzaksiyalar"
   },
   "CartPage": {
     "title": "Savat",
@@ -713,6 +714,19 @@
     "noBidsHint": "\"Sotuvga qo'yish\" tabiga o'ting va o'z narxingizni belgilang",
     "noBidsForThese": "Bu itemlar uchun bid mavjud emas",
     "noBid": "Bid yo'q"
+  },
+  "TransactionsPage": {
+    "title": "Tranzaksiya tarixi",
+    "all": "Hammasi",
+    "purchases": "Xaridlar",
+    "sales": "Sotuvlar",
+    "purchase": "Xarid",
+    "sale": "Sotuv",
+    "noTransactions": "Tranzaksiyalar yo'q",
+    "noTransactionsDesc": "Xarid va sotuv tarixingiz shu yerda ko'rinadi",
+    "amount": "Summa",
+    "date": "Sana",
+    "goToMarketplace": "Marketpleyga o'tish"
   },
   "TargetBidModal": {
     "title": "Target Bid qo'yish",

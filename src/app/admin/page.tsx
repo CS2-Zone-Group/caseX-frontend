@@ -2,29 +2,43 @@
 
 import { useState, useEffect } from 'react';
 import Link from "next/link";
+import api from '@/lib/api';
+import { formatPrice } from '@/lib/currency';
+import { useSettingsStore } from '@/store/settingsStore';
+import Loader from '@/components/Loader';
+
+interface RecentTransaction {
+  id: string;
+  type: 'purchase' | 'sale';
+  amount: number;
+  createdAt: string;
+  user?: { id: string; username: string };
+  skin?: { id: string; name: string };
+}
 
 interface DashboardStats {
   totalSkins: number;
   totalUsers: number;
-  totalOrders: number;
+  totalTransactions: number;
   totalRevenue: number;
-  recentOrders: any[];
-  popularSkins: any[];
+  activeListings: number;
+  recentTransactions: RecentTransaction[];
 }
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { currency } = useSettingsStore();
 
-  // Simple English translations for now
   const t = {
     title: 'Admin Dashboard',
     totalSkins: 'Total Skins',
     totalUsers: 'Total Users',
-    totalOrders: 'Total Orders',
+    totalTransactions: 'Total Transactions',
     totalRevenue: 'Total Revenue',
-    recentOrders: 'Recent Orders',
-    popularSkins: 'Popular Skins',
+    activeListings: 'Active Listings',
+    recentTransactions: 'Recent Transactions',
     viewAll: 'View All',
     steamImport: 'Steam Import',
     importDescription: 'Import skins from Steam Market',
@@ -45,37 +59,35 @@ export default function AdminDashboard() {
   const fetchDashboardStats = async () => {
     try {
       setLoading(true);
-      // For now, we'll use mock data since we don't have admin endpoints yet
-      const mockStats: DashboardStats = {
-        totalSkins: 150,
-        totalUsers: 1250,
-        totalOrders: 89,
-        totalRevenue: 15420.50,
-        recentOrders: [
-          { id: '1', user: 'John Doe', skin: 'AK-47 | Redline', amount: 45.99, date: '2024-01-15' },
-          { id: '2', user: 'Jane Smith', skin: 'AWP | Dragon Lore', amount: 2500.00, date: '2024-01-14' },
-          { id: '3', user: 'Mike Johnson', skin: 'M4A4 | Howl', amount: 1200.00, date: '2024-01-14' },
-        ],
-        popularSkins: [
-          { id: '1', name: 'AK-47 | Redline', sales: 45, revenue: 2070.55 },
-          { id: '2', name: 'AWP | Dragon Lore', sales: 12, revenue: 30000.00 },
-          { id: '3', name: 'M4A4 | Howl', sales: 23, revenue: 27600.00 },
-        ],
-      };
-      setStats(mockStats);
-    } catch (error) {
-      console.error('Failed to fetch dashboard stats:', error);
+      setError(null);
+      const response = await api.get('/admin/stats');
+      setStats(response.data);
+    } catch (err: any) {
+      console.error('Failed to fetch dashboard stats:', err);
+      setError(err.response?.data?.message || 'Failed to load dashboard stats');
     } finally {
       setLoading(false);
     }
   };
 
   if (loading) {
+    return <Loader fullScreen />;
+  }
+
+  if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-          <div className="text-lg text-gray-600 dark:text-gray-400">{t.loading}</div>
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 max-w-md text-center">
+          <svg className="w-12 h-12 text-red-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+          <p className="text-red-700 dark:text-red-300 font-medium mb-3">{error}</p>
+          <button
+            onClick={fetchDashboardStats}
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm transition-colors"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
@@ -87,8 +99,8 @@ export default function AdminDashboard() {
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold mb-1">Welcome back, Admin! 👋</h1>
-            <p className="text-blue-100">Here's what's happening with your platform today.</p>
+            <h1 className="text-2xl font-bold mb-1">Welcome back, Admin!</h1>
+            <p className="text-blue-100">Here&apos;s what&apos;s happening with your platform today.</p>
           </div>
           <div className="hidden lg:block">
             <div className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
@@ -101,13 +113,12 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.totalSkins}</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.totalSkins || 0}</p>
-              <p className="text-xs text-green-600 dark:text-green-400 mt-1">+12% from last month</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.totalSkins ?? 0}</p>
             </div>
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,8 +132,7 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.totalUsers}</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.totalUsers || 0}</p>
-              <p className="text-xs text-green-600 dark:text-green-400 mt-1">+8% from last month</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.totalUsers ?? 0}</p>
             </div>
             <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-md">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,9 +145,8 @@ export default function AdminDashboard() {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.totalOrders}</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.totalOrders || 0}</p>
-              <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">+5% from last month</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.totalTransactions}</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.totalTransactions ?? 0}</p>
             </div>
             <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-md">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -152,13 +161,26 @@ export default function AdminDashboard() {
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.totalRevenue}</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                ${stats?.totalRevenue?.toFixed(2) || '0.00'}
+                {formatPrice(stats?.totalRevenue ?? 0, currency)}
               </p>
-              <p className="text-xs text-green-600 dark:text-green-400 mt-1">+15% from last month</p>
             </div>
             <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.activeListings}</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.activeListings ?? 0}</p>
+            </div>
+            <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-md">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
           </div>
@@ -250,106 +272,76 @@ export default function AdminDashboard() {
       {/* Recent Activity */}
       <div>
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Recent Activity</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Recent Orders */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {t.recentOrders}
-                </h3>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
               </div>
-              <Link
-                href="/admin/orders"
-                className="text-blue-600 hover:text-blue-700 text-sm font-medium hover:underline transition-all"
-              >
-                {t.viewAll}
-              </Link>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {t.recentTransactions}
+              </h3>
             </div>
-
-            <div className="space-y-3">
-              {stats?.recentOrders?.map((order, index) => (
-                <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-md flex items-center justify-center text-white text-xs font-bold">
-                      {index + 1}
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900 dark:text-white text-sm">{order.user}</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">{order.skin}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-green-600 dark:text-green-400 text-sm">${order.amount}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{order.date}</p>
-                  </div>
-                </div>
-              )) || (
-                <div className="text-center py-6">
-                  <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">{t.noData}</p>
-                </div>
-              )}
-            </div>
+            <Link
+              href="/admin/orders"
+              className="text-blue-600 hover:text-blue-700 text-sm font-medium hover:underline transition-all"
+            >
+              {t.viewAll}
+            </Link>
           </div>
 
-          {/* Popular Skins */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {t.popularSkins}
-                </h3>
-              </div>
-              <Link
-                href="/admin/skins"
-                className="text-blue-600 hover:text-blue-700 text-sm font-medium hover:underline transition-all"
-              >
-                {t.viewAll}
-              </Link>
-            </div>
-
-            <div className="space-y-3">
-              {stats?.popularSkins?.map((skin, index) => (
-                <div key={skin.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <div className="space-y-3">
+            {stats?.recentTransactions && stats.recentTransactions.length > 0 ? (
+              stats.recentTransactions.map((tx, index) => (
+                <div key={tx.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                   <div className="flex items-center space-x-3">
-                    <div className="w-6 h-6 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-md flex items-center justify-center text-white text-xs font-bold">
-                      {index + 1}
+                    <div className={`w-6 h-6 rounded-md flex items-center justify-center text-white text-xs font-bold ${
+                      tx.type === 'purchase'
+                        ? 'bg-gradient-to-br from-green-500 to-green-600'
+                        : 'bg-gradient-to-br from-orange-500 to-orange-600'
+                    }`}>
+                      {tx.type === 'purchase' ? 'B' : 'S'}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-white text-sm">{skin.name}</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">{skin.sales} sales</p>
+                      <p className="font-medium text-gray-900 dark:text-white text-sm">
+                        {tx.user?.username || 'Unknown User'}
+                      </p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        {tx.skin?.name || 'Unknown Skin'}
+                      </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-bold text-purple-600 dark:text-purple-400 text-sm">${skin.revenue.toFixed(2)}</p>
+                  <div className="flex items-center space-x-3">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                      tx.type === 'purchase'
+                        ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
+                        : 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400'
+                    }`}>
+                      {tx.type === 'purchase' ? 'Purchase' : 'Sale'}
+                    </span>
+                    <div className="text-right">
+                      <p className="font-bold text-green-600 dark:text-green-400 text-sm">
+                        {formatPrice(tx.amount, currency)}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {new Date(tx.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              )) || (
-                <div className="text-center py-6">
-                  <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">{t.noData}</p>
+              ))
+            ) : (
+              <div className="text-center py-6">
+                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                  </svg>
                 </div>
-              )}
-            </div>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">{t.noData}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

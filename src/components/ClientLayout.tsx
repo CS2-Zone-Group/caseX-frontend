@@ -8,6 +8,7 @@ import { useTelegramStore } from "@/store/telegramStore";
 import { isTelegramWebApp, getTelegramInitData } from "@/lib/telegram";
 import api from "@/lib/api";
 import ChatSupport from "@/components/ChatSupport";
+import Loader from "@/components/Loader";
 import ToastContainer from "@/components/ToastContainer";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
@@ -155,11 +156,7 @@ export default function ClientLayout({
   }, []);
 
   if (!isLoaded) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900">
-        <div className="text-white">Loading...</div>
-      </div>
-    );
+    return <Loader fullScreen size="lg" />;
   }
 
   return (

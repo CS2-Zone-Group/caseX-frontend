@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import Navbar from "@/components/Navbar";
 import ProfileSidebar from "@/components/ProfileSidebar";
 import { changeLanguage, getCurrentLanguage } from "@/lib/language";
+import Loader from "@/components/Loader";
 
 function SystemSettingsContent() {
   const [currentLanguage, setCurrentLanguage] = useState(getCurrentLanguage());
@@ -260,7 +261,7 @@ function SystemSettingsContent() {
 
 export default function SystemSettingsPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+    <Suspense fallback={<Loader fullScreen />}>
       <SystemSettingsContent />
     </Suspense>
   );

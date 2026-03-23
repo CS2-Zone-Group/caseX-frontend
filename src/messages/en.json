@@ -124,7 +124,8 @@
     "depositTooltip": "Add funds",
     "onSale": "On Sale",
     "targets": "Targets",
-    "onlineSupport": "Online Support"
+    "onlineSupport": "Online Support",
+    "transactions": "Transactions"
   },
   "CartPage": {
     "title": "Cart",
@@ -713,6 +714,19 @@
     "noBidsHint": "Switch to \"List for Sale\" to set your own price",
     "noBidsForThese": "No bids available for these items",
     "noBid": "No bid"
+  },
+  "TransactionsPage": {
+    "title": "Transaction History",
+    "all": "All",
+    "purchases": "Purchases",
+    "sales": "Sales",
+    "purchase": "Purchase",
+    "sale": "Sale",
+    "noTransactions": "No transactions yet",
+    "noTransactionsDesc": "Your buy and sell history will appear here",
+    "amount": "Amount",
+    "date": "Date",
+    "goToMarketplace": "Go to Marketplace"
   },
   "TargetBidModal": {
     "title": "Place Target Bid",

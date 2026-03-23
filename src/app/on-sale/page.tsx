@@ -10,6 +10,7 @@ import SkinDetailsModal from '@/components/SkinDetailsModal';
 import api from '@/lib/api';
 import Link from 'next/link';
 import { toast } from '@/store/toastStore';
+import Loader from '@/components/Loader';
 
 interface ListedItem {
   id: string;
@@ -102,12 +103,7 @@ export default function OnSalePage() {
         </div>
 
         {!hasHydrated || loading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-              <p className="text-gray-600 dark:text-gray-400">{t('loading')}</p>
-            </div>
-          </div>
+          <Loader />
         ) : !user ? (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">🔐</div>

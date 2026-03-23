@@ -124,7 +124,8 @@
     "depositTooltip": "Пополнить баланс",
     "onSale": "На продаже",
     "targets": "Цели",
-    "onlineSupport": "Онлайн-помощь"
+    "onlineSupport": "Онлайн-помощь",
+    "transactions": "Транзакции"
   },
   "CartPage": {
     "title": "Корзина",
@@ -713,6 +714,19 @@
     "noBidsHint": "Перейдите на вкладку \"Выставить на продажу\" и установите свою цену",
     "noBidsForThese": "Нет предложений для этих предметов",
     "noBid": "Нет бидов"
+  },
+  "TransactionsPage": {
+    "title": "История транзакций",
+    "all": "Все",
+    "purchases": "Покупки",
+    "sales": "Продажи",
+    "purchase": "Покупка",
+    "sale": "Продажа",
+    "noTransactions": "Транзакций пока нет",
+    "noTransactionsDesc": "Здесь будет отображаться история покупок и продаж",
+    "amount": "Сумма",
+    "date": "Дата",
+    "goToMarketplace": "Перейти на маркетплейс"
   },
   "TargetBidModal": {
     "title": "Разместить Target Bid",

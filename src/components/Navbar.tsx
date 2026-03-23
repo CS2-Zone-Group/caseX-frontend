@@ -425,6 +425,27 @@ export default function Navbar() {
                         <span>{t("paymentHistory")}</span>
                       </Link>
 
+                      <Link
+                        href="/transactions"
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                        onClick={() => setProfileMenuOpen(false)}
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
+                          />
+                        </svg>
+                        <span>{t("transactions")}</span>
+                      </Link>
+
                       <button
                         className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition w-full"
                         onClick={() => {
@@ -635,6 +656,20 @@ export default function Navbar() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                   {t("profile")}
+                </Link>
+                <Link
+                  href="/transactions"
+                  className={`flex items-center gap-1.5 px-3 py-2 text-sm transition border-l-2 ${
+                    pathname === "/transactions"
+                      ? "text-primary-500 font-semibold border-primary-500"
+                      : "text-gray-400 dark:text-gray-400 hover:text-white border-transparent"
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                  </svg>
+                  {t("transactions")}
                 </Link>
 
                 {user?.role === "admin" && (

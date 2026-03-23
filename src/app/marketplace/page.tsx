@@ -15,6 +15,7 @@ import { useSearchParams } from 'next/navigation';
 import FavoriteButton from '@/components/FavoriteButton';
 import TargetBidModal from '@/components/TargetBidModal';
 import { toast } from '@/store/toastStore';
+import Loader from '@/components/Loader';
 
 interface Skin {
   id: string;
@@ -275,12 +276,7 @@ function MarketplaceContent() {
             </div>
 
             {loading ? (
-              <div className="flex items-center justify-center py-20">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-10 w-10 border-2 border-primary-600 border-t-transparent mx-auto mb-3"></div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{t('loading')}</p>
-                </div>
-              </div>
+              <Loader />
             ) : skins.length === 0 ? (
               <div className="text-center py-20">
                 <svg className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -496,11 +492,7 @@ function MarketplaceContent() {
 
 export default function MarketplacePage() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-10 w-10 border-2 border-primary-600 border-t-transparent"></div>
-      </div>
-    }>
+    <Suspense fallback={<Loader fullScreen />}>
       <MarketplaceContent />
     </Suspense>
   );

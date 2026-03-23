@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import ChangePasswordModal from "@/components/ChangePasswordModal";
 import AddPhoneModal from "@/components/AddPhoneModal";
 import ProfileSidebar from "@/components/ProfileSidebar";
+import Loader from "@/components/Loader";
 
 function ProfileSettingsContent() {
   const { user } = useAuthStore();
@@ -230,7 +231,7 @@ function ProfileSettingsContent() {
 
 export default function ProfileSettingsPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+    <Suspense fallback={<Loader fullScreen />}>
       <ProfileSettingsContent />
     </Suspense>
   );
