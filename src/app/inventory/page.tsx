@@ -6,6 +6,7 @@ import AuthGuard from '@/components/AuthGuard';
 import FilterPanel from '@/components/FilterPanel';
 import SellModal from '@/components/SellModal';
 import SkinDetailsModal from '@/components/SkinDetailsModal';
+import TradeDepositModal from '@/components/TradeDepositModal';
 import { formatPrice } from '@/lib/currency';
 import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -78,6 +79,15 @@ export default function InventoryPage() {
   const [sellModalOpen, setSellModalOpen] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [detailsSkin, setDetailsSkin] = useState<any>(null);
+  const [tradeDepositData, setTradeDepositData] = useState<{
+    inventoryId: string;
+    tradeOfferStatus: string;
+    tradeOfferId: string | null;
+    botUsername: string;
+    skinName: string;
+    skinImageUrl: string;
+    createdAt: string;
+  } | null>(null);
 
   useEffect(() => {
     document.title = `${t('title')} - CaseX`;
@@ -241,11 +251,14 @@ export default function InventoryPage() {
   };
 
   const handleSellFromModal = async (items: Array<{ inventoryId: string; price: number }>) => {
+    let steamTradeResult: any = null;
+    let steamItemInfo: InventoryItemType | undefined;
+
     for (const { inventoryId, price } of items) {
       if (inventoryId.startsWith('steam_')) {
         const steamItem = allItems.find(i => i.id === inventoryId);
         if (steamItem) {
-          await api.post('/inventory/list-steam-item', {
+          const { data } = await api.post('/inventory/list-steam-item', {
             price,
             skinData: {
               name: steamItem.skin.name,
@@ -257,6 +270,8 @@ export default function InventoryPage() {
               float: steamItem.skin.float || 0,
             },
           });
+          steamTradeResult = data;
+          steamItemInfo = steamItem;
         }
       } else {
         await api.post(`/inventory/${inventoryId}/list`, { price });
@@ -265,7 +280,21 @@ export default function InventoryPage() {
     await fetchUserBalance();
     setSelectedItems([]);
     setSellModalOpen(false);
-    await fetchInventoryItems();
+
+    // If a Steam item was listed, open the TradeDepositModal
+    if (steamTradeResult && steamItemInfo) {
+      setTradeDepositData({
+        inventoryId: steamTradeResult.id,
+        tradeOfferStatus: steamTradeResult.tradeOfferStatus || 'pending',
+        tradeOfferId: steamTradeResult.tradeOfferId || null,
+        botUsername: steamTradeResult.botUsername || 'casex_trade_bot_1',
+        skinName: steamItemInfo.skin.name,
+        skinImageUrl: steamItemInfo.skin.imageUrl,
+        createdAt: steamTradeResult.acquiredAt || new Date().toISOString(),
+      });
+    } else {
+      await fetchInventoryItems();
+    }
   };
 
   const handleSellNowFromModal = async (inventoryIds: string[]) => {
@@ -674,6 +703,26 @@ export default function InventoryPage() {
           onClose={() => setDetailsSkin(null)}
           skin={detailsSkin}
         />
+
+        {tradeDepositData && (
+          <TradeDepositModal
+            inventoryId={tradeDepositData.inventoryId}
+            tradeOfferStatus={tradeDepositData.tradeOfferStatus}
+            tradeOfferId={tradeDepositData.tradeOfferId}
+            botUsername={tradeDepositData.botUsername}
+            skinName={tradeDepositData.skinName}
+            skinImageUrl={tradeDepositData.skinImageUrl}
+            createdAt={tradeDepositData.createdAt}
+            onClose={() => {
+              setTradeDepositData(null);
+              fetchInventoryItems();
+            }}
+            onSuccess={() => {
+              setTradeDepositData(null);
+              fetchInventoryItems();
+            }}
+          />
+        )}
       </div>
     </AuthGuard>
   );
