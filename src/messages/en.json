@@ -748,6 +748,7 @@
     "bidSuccess": "{count} bid(s) placed successfully!",
     "bidPartialError": "{count} bid(s) failed",
     "bidError": "Failed to place bids",
+    "bidPriceTooHigh": "Bid price must be lower than the item price",
     "warningTitle": "BEFORE YOU CREATE TARGET",
     "warningHeading": "How Trade Protection Affects Your Target",
     "warningPoint1": "Most target items you will receive trade-protected for 7 days",

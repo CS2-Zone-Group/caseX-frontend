@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { formatPrice, getCurrencySymbol, usdToLocal } from "@/lib/currency";
+import { formatPrice, getCurrencySymbol, usdToLocal, localToUsd } from "@/lib/currency";
 import type { Currency } from "@/lib/currency";
 import { useTranslations } from "next-intl";
 import { toast } from "@/store/toastStore";
@@ -171,9 +171,19 @@ export default function TargetBidModal({
   const isLast = currentStep === skins.length - 1;
   const progress = ((currentStep + 1) / skins.length) * 100;
 
+  const [priceError, setPriceError] = useState<string | null>(null);
+
   const handleSave = () => {
     const price = parseFloat(currentPrice);
     if (!price || price <= 0) return;
+
+    // Validate: bid price must be less than item's current price
+    const itemLocalPrice = usdToLocal(Number(skin.price || 0), currency);
+    if (itemLocalPrice > 0 && price >= itemLocalPrice) {
+      setPriceError(t("bidPriceTooHigh"));
+      return;
+    }
+    setPriceError(null);
 
     setSavedBids((prev) => ({ ...prev, [skin.id]: price }));
 
@@ -217,9 +227,10 @@ export default function TargetBidModal({
     let errorCount = 0;
 
     try {
-      for (const [skinId, price] of Object.entries(bids)) {
+      for (const [skinId, localPrice] of Object.entries(bids)) {
         try {
-          await api.post("/orders/bids", { skinId, price });
+          const priceUsd = localToUsd(localPrice, currency);
+          await api.post("/orders/bids", { skinId, price: priceUsd });
           successCount++;
         } catch {
           errorCount++;
@@ -336,13 +347,16 @@ export default function TargetBidModal({
                       step={currency === 'UZS' ? '1' : '0.01'}
                       min="0.01"
                       value={currentPrice}
-                      onChange={(e) => setBidPrices((prev) => ({ ...prev, [skin.id]: e.target.value }))}
+                      onChange={(e) => { setPriceError(null); setBidPrices((prev) => ({ ...prev, [skin.id]: e.target.value })); }}
                       placeholder={currency === 'UZS' ? Math.round(usdToLocal(Number(skin.price || 0), currency)).toString() : usdToLocal(Number(skin.price || 0), currency).toFixed(2)}
                       className="w-full py-1 bg-transparent text-lg font-medium text-green-400 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       autoFocus
                     />
                     <span className="text-sm text-green-400 font-medium flex-shrink-0">{getCurrencySymbol(currency)}</span>
                   </div>
+                  {priceError && (
+                    <p className="text-xs text-red-400 mt-1">{priceError}</p>
+                  )}
                 </div>
               </div>
             </div>

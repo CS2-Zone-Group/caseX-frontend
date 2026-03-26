@@ -748,6 +748,7 @@
     "bidSuccess": "{count} ta bid muvaffaqiyatli qo'yildi!",
     "bidPartialError": "{count} ta bid muvaffaqiyatsiz",
     "bidError": "Bid qo'yishda xatolik",
+    "bidPriceTooHigh": "Bid narxi item narxidan past bo'lishi kerak",
     "warningTitle": "TARGET YARATISHDAN OLDIN",
     "warningHeading": "Trade himoyasi targetingizga qanday ta'sir qiladi",
     "warningPoint1": "Ko'p target itemlar 7 kunlik trade himoyasi bilan keladi",
