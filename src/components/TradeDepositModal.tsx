@@ -42,8 +42,16 @@ export default function TradeDepositModal({
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const closedRef = useRef(false);
 
+  // Handle initial failed status immediately
+  useEffect(() => {
+    if (initialStatus === 'failed') {
+      setShowError(true);
+    }
+  }, [initialStatus]);
+
   // Calculate remaining time based on createdAt
   useEffect(() => {
+    if (initialStatus === 'failed') return;
     const created = new Date(createdAt).getTime();
     const now = Date.now();
     const elapsed = now - created;
@@ -53,7 +61,7 @@ export default function TradeDepositModal({
     if (remaining <= 0) {
       setShowTimeout(true);
     }
-  }, [createdAt]);
+  }, [createdAt, initialStatus]);
 
   // Countdown timer
   useEffect(() => {
@@ -106,6 +114,8 @@ export default function TradeDepositModal({
   useEffect(() => {
     if (showSuccess || showError || showTimeout) return;
 
+    // Poll immediately on mount, then every 10 seconds
+    pollStatus();
     pollRef.current = setInterval(pollStatus, POLL_INTERVAL_MS);
 
     return () => {

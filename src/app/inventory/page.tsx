@@ -258,20 +258,26 @@ export default function InventoryPage() {
       if (inventoryId.startsWith('steam_')) {
         const steamItem = allItems.find(i => i.id === inventoryId);
         if (steamItem) {
-          const { data } = await api.post('/inventory/list-steam-item', {
-            price,
-            skinData: {
-              name: steamItem.skin.name,
-              imageUrl: steamItem.skin.imageUrl,
-              marketHashName: steamItem.skin.marketHashName || steamItem.skin.name,
-              rarity: steamItem.skin.rarity,
-              exterior: steamItem.skin.exterior,
-              weaponType: steamItem.skin.weaponType || 'Unknown',
-              float: steamItem.skin.float || 0,
-            },
-          });
-          steamTradeResult = data;
-          steamItemInfo = steamItem;
+          try {
+            const { data } = await api.post('/inventory/list-steam-item', {
+              price,
+              skinData: {
+                name: steamItem.skin.name,
+                imageUrl: steamItem.skin.imageUrl,
+                marketHashName: steamItem.skin.marketHashName || steamItem.skin.name,
+                rarity: steamItem.skin.rarity,
+                exterior: steamItem.skin.exterior,
+                weaponType: steamItem.skin.weaponType || 'Unknown',
+                float: steamItem.skin.float || 0,
+              },
+            });
+            steamTradeResult = data;
+            steamItemInfo = steamItem;
+          } catch (err: any) {
+            setSellError(err.response?.data?.message || t('tradeOfferError'));
+            setSellModalOpen(false);
+            return;
+          }
         }
       } else {
         await api.post(`/inventory/${inventoryId}/list`, { price });

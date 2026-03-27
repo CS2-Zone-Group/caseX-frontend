@@ -410,6 +410,7 @@
     "steamRateLimitedDescription": "Steam serveriga juda ko'p so'rov yuborildi. Biroz kutib qayta urinib ko'ring",
     "retry": "Qayta urinish",
     "sellError": "Sotish amalga oshmadi. Qayta urinib ko'ring.",
+    "tradeOfferError": "Trade offer jo'natishda xatolik. Qaytadan urinib ko'ring.",
     "withdraw": "Steamdan yechish",
     "sellAsk": "Sotuvga qo'yish",
     "sellNow": "Tezda sotish",

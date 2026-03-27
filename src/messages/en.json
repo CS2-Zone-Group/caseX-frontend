@@ -410,6 +410,7 @@
     "steamRateLimitedDescription": "Too many requests to Steam. Please wait a moment and try again",
     "retry": "Retry",
     "sellError": "Failed to sell item. Please try again.",
+    "tradeOfferError": "Failed to send trade offer. Please try again.",
     "withdraw": "Withdraw",
     "sellAsk": "Sell Ask",
     "sellNow": "Sell Now",
