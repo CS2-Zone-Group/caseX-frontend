@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useTelegramStore } from "@/store/telegramStore";
 import { useTranslations } from 'next-intl';
+import api from "@/lib/api";
 import Navbar from "@/components/Navbar";
 import ChangePasswordModal from "@/components/ChangePasswordModal";
 import AddPhoneModal from "@/components/AddPhoneModal";
@@ -11,12 +12,16 @@ import ProfileSidebar from "@/components/ProfileSidebar";
 import Loader from "@/components/Loader";
 
 function ProfileSettingsContent() {
-  const { user } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const { isTelegramApp } = useTelegramStore();
   const t = useTranslations('ProfilePage');
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
   const [addPhoneModalOpen, setAddPhoneModalOpen] = useState(false);
   const [email, setEmail] = useState(user?.email || "");
+  const [tradeUrl, setTradeUrl] = useState(user?.tradeUrl || "");
+  const [tradeUrlSaving, setTradeUrlSaving] = useState(false);
+  const [tradeUrlError, setTradeUrlError] = useState("");
+  const [tradeUrlSaved, setTradeUrlSaved] = useState(false);
 
   useEffect(() => {
     document.title = `${t('profileSettings')} - CaseX`;
@@ -165,6 +170,63 @@ function ProfileSettingsContent() {
                   )}
                 </div>
               </div>
+
+              {/* Steam Trade URL */}
+              {user?.steamId && (
+                <div className="mb-8">
+                  <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
+                    STEAM TRADE URL
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="text"
+                      value={tradeUrl}
+                      onChange={(e) => {
+                        setTradeUrl(e.target.value);
+                        setTradeUrlError("");
+                        setTradeUrlSaved(false);
+                      }}
+                      placeholder="https://steamcommunity.com/tradeoffer/new/?partner=...&token=..."
+                      className="flex-1 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600 text-sm"
+                    />
+                    {tradeUrlSaved ? (
+                      <svg className="w-6 h-6 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                      </svg>
+                    ) : (
+                      <button
+                        onClick={async () => {
+                          if (!tradeUrl.trim()) {
+                            setTradeUrlError(t('tradeUrlRequired'));
+                            return;
+                          }
+                          setTradeUrlSaving(true);
+                          setTradeUrlError("");
+                          try {
+                            await api.put('/users/trade-url', { tradeUrl: tradeUrl.trim() });
+                            updateUser({ tradeUrl: tradeUrl.trim() });
+                            setTradeUrlSaved(true);
+                          } catch (err: any) {
+                            setTradeUrlError(err.response?.data?.message || t('tradeUrlInvalid'));
+                          } finally {
+                            setTradeUrlSaving(false);
+                          }
+                        }}
+                        disabled={tradeUrlSaving}
+                        className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition whitespace-nowrap"
+                      >
+                        {tradeUrlSaving ? '...' : t('save')}
+                      </button>
+                    )}
+                  </div>
+                  {tradeUrlError && (
+                    <p className="text-red-500 text-xs mt-1">{tradeUrlError}</p>
+                  )}
+                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-2">
+                    {t('tradeUrlHelp')}
+                  </p>
+                </div>
+              )}
 
               {/* Phone Number */}
               <div className="mb-8">

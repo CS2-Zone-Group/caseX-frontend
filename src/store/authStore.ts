@@ -11,6 +11,7 @@ interface User {
   balance?: number;
   role?: string;
   phoneNumber?: string | null;
+  tradeUrl?: string | null;
 }
 
 interface AuthState {
