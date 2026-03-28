@@ -1,11 +1,29 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useTranslations } from 'next-intl';
 import { formatPrice, formatLocalAmount, getCurrencySymbol, usdToLocal, localToUsd } from '@/lib/currency';
+import api from '@/lib/api';
 
-const FEE_RATE = 0.03; // 3%
+interface CommissionTier {
+  id: string;
+  minPrice: number;
+  maxPrice: number | null;
+  rate: number; // percentage, e.g. 5
+}
+
+function getFeeRate(priceUsd: number, tiers: CommissionTier[]): number {
+  if (tiers.length === 0) return 0.03; // default 3%
+  for (const tier of tiers) {
+    const min = Number(tier.minPrice);
+    const max = tier.maxPrice ? Number(tier.maxPrice) : Infinity;
+    if (priceUsd >= min && priceUsd < max) {
+      return Number(tier.rate) / 100;
+    }
+  }
+  return Number(tiers[tiers.length - 1].rate) / 100;
+}
 
 type SellTab = 'list' | 'instant';
 
@@ -60,6 +78,11 @@ export default function SellModal({ items: rawItems, onClose, onSell, onSellNow 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [removedItems, setRemovedItems] = useState<Set<string>>(new Set());
+  const [commissionTiers, setCommissionTiers] = useState<CommissionTier[]>([]);
+
+  useEffect(() => {
+    api.get('/orders/commission-tiers').then(({ data }) => setCommissionTiers(data)).catch(() => {});
+  }, []);
 
   const sellItems = rawItems.filter(item => !removedItems.has(item.id));
 
@@ -91,11 +114,13 @@ export default function SellModal({ items: rawItems, onClose, onSell, onSellNow 
     let totalYouGet = 0;
     for (const item of sellItems) {
       const localPrice = getLocalPrice(item.id, Number(item.skin.price || 0));
+      const usdPrice = getSellingPriceUsd(item.id, Number(item.skin.price || 0));
+      const feeRate = getFeeRate(usdPrice, commissionTiers);
       totalSelling += localPrice;
-      totalYouGet += localPrice * (1 - FEE_RATE);
+      totalYouGet += localPrice * (1 - feeRate);
     }
     return { totalSelling: Math.round(totalSelling * 100) / 100, totalYouGet: Math.round(totalYouGet * 100) / 100 };
-  }, [sellItems, itemPrices]);
+  }, [sellItems, itemPrices, commissionTiers]);
 
   // "Hoziroq sotish" tab — items with bids
   const itemsWithBids = sellItems.filter(item => item.highestBid && item.highestBid > 0);
@@ -181,7 +206,9 @@ export default function SellModal({ items: rawItems, onClose, onSell, onSellNow 
             <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
               {sellItems.map((item) => {
                 const localPrice = getLocalPrice(item.id, Number(item.skin.price || 0));
-                const localYouGet = localPrice * (1 - FEE_RATE);
+                const usdPrice = getSellingPriceUsd(item.id, Number(item.skin.price || 0));
+                const itemFeeRate = getFeeRate(usdPrice, commissionTiers);
+                const localYouGet = localPrice * (1 - itemFeeRate);
                 const recommendedPrice = Number(item.skin.price || 0);
 
                 return (
@@ -267,7 +294,7 @@ export default function SellModal({ items: rawItems, onClose, onSell, onSellNow 
                           </div>
                           <div className="bg-gray-700/50 rounded-lg px-3 py-2">
                             <div className="text-[10px] text-gray-400">{t('fee')}</div>
-                            <div className="text-sm font-semibold text-white">{(FEE_RATE * 100).toFixed(0)}%</div>
+                            <div className="text-sm font-semibold text-white">{(itemFeeRate * 100).toFixed(0)}%</div>
                           </div>
                           <div className="bg-gray-700/50 rounded-lg px-3 py-2">
                             <div className="text-[10px] text-gray-400">{t('youGet')}</div>
