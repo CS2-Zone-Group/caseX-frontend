@@ -33,6 +33,25 @@ interface FinancialReport {
   totalCommission: number;
 }
 
+/* Simple bar chart component */
+function MiniBarChart({ data, color }: { data: { label: string; value: number }[]; color: string }) {
+  const max = Math.max(...data.map(d => d.value), 1);
+  return (
+    <div className="flex items-end gap-1 h-24">
+      {data.map((d, i) => (
+        <div key={i} className="flex-1 flex flex-col items-center gap-1">
+          <div
+            className={`w-full rounded-t ${color} transition-all duration-500`}
+            style={{ height: `${Math.max((d.value / max) * 100, 4)}%`, minHeight: 3 }}
+            title={`${d.label}: ${d.value}`}
+          />
+          <span className="text-[9px] text-gray-500">{d.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [finance, setFinance] = useState<FinancialReport | null>(null);
@@ -40,32 +59,9 @@ export default function AdminDashboard() {
   const [error, setError] = useState<string | null>(null);
   const { currency } = useSettingsStore();
 
-  const t = {
-    title: 'Boshqaruv paneli',
-    totalSkins: 'Jami skinlar',
-    totalUsers: 'Jami foydalanuvchilar',
-    totalTransactions: 'Jami tranzaksiyalar',
-    totalRevenue: 'Jami daromad',
-    activeListings: 'Aktiv listinglar',
-    recentTransactions: 'So\'nggi faoliyat',
-    viewAll: 'Barchasini ko\'rish',
-    steamImport: 'Steam Import',
-    importDescription: 'Steam Market\'dan skinlarni import qilish',
-    manageUsers: 'Foydalanuvchilar',
-    usersDescription: 'Foydalanuvchi akkauntlarini boshqarish',
-    manageSkins: 'Skinlarni boshqarish',
-    skinsDescription: 'Skin qo\'shish, tahrirlash va o\'chirish',
-    viewOrders: 'Buyurtmalar',
-    ordersDescription: 'Tranzaksiyalarni ko\'rish',
-    loading: 'Yuklanmoqda...',
-    noData: 'Ma\'lumot yo\'q',
-  };
+  useEffect(() => { fetchData(); }, []);
 
-  useEffect(() => {
-    fetchDashboardStats();
-  }, []);
-
-  const fetchDashboardStats = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -76,29 +72,20 @@ export default function AdminDashboard() {
       setStats(statsRes.data);
       setFinance(financeRes.data);
     } catch (err: any) {
-      console.error('Failed to fetch dashboard stats:', err);
-      setError(err.response?.data?.message || 'Failed to load dashboard stats');
+      setError(err.response?.data?.message || 'Yuklanmadi');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
-    return <Loader fullScreen />;
-  }
+  if (loading) return <Loader fullScreen />;
 
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 max-w-md text-center">
-          <svg className="w-12 h-12 text-red-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-          </svg>
-          <p className="text-red-700 dark:text-red-300 font-medium mb-3">{error}</p>
-          <button
-            onClick={fetchDashboardStats}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm transition-colors"
-          >
+        <div className="bg-red-900/20 border border-red-800 rounded-xl p-6 max-w-md text-center">
+          <p className="text-red-300 font-medium mb-3">{error}</p>
+          <button onClick={fetchData} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm">
             Qayta urinish
           </button>
         </div>
@@ -106,274 +93,123 @@ export default function AdminDashboard() {
     );
   }
 
+  // Revenue chart data
+  const revenueData = finance ? [
+    { label: 'Bugun', value: finance.todayRevenue },
+    { label: 'Hafta', value: finance.weekRevenue },
+    { label: 'Oy', value: finance.monthRevenue },
+    { label: 'Jami', value: finance.totalRevenue },
+  ] : [];
+
+  // Stats array for grid
+  const statCards = [
+    { label: 'Jami skinlar', value: String(stats?.totalSkins ?? 0), icon: 'M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z', gradient: 'from-blue-500 to-blue-600' },
+    { label: 'Foydalanuvchilar', value: String(stats?.totalUsers ?? 0), icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197', gradient: 'from-green-500 to-green-600' },
+    { label: 'Tranzaksiyalar', value: String(stats?.totalTransactions ?? 0), icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z', gradient: 'from-yellow-500 to-yellow-600' },
+    { label: 'Jami daromad', value: formatPrice(stats?.totalRevenue ?? 0, currency), icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z', gradient: 'from-purple-500 to-purple-600' },
+    { label: 'Aktiv listinglar', value: String(stats?.activeListings ?? 0), icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2', gradient: 'from-cyan-500 to-cyan-600' },
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold mb-1">Xush kelibsiz, Admin!</h1>
-            <p className="text-blue-100">Bugungi platforma holati.</p>
-          </div>
-          <div className="hidden lg:block">
-            <div className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.totalSkins}</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.totalSkins ?? 0}</p>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+        {statCards.map((card) => (
+          <div key={card.label} className="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-gray-600 transition-all group">
+            <div className="flex items-center justify-between mb-2">
+              <div className={`w-9 h-9 bg-gradient-to-br ${card.gradient} rounded-lg flex items-center justify-center shadow group-hover:scale-110 transition-transform`}>
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={card.icon} />
+                </svg>
+              </div>
             </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-              </svg>
-            </div>
+            <p className="text-xl font-bold text-white">{card.value}</p>
+            <p className="text-xs text-gray-400 mt-0.5">{card.label}</p>
           </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.totalUsers}</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.totalUsers ?? 0}</p>
-            </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-md">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.totalTransactions}</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.totalTransactions ?? 0}</p>
-            </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-md">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.totalRevenue}</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {formatPrice(stats?.totalRevenue ?? 0, currency)}
-              </p>
-            </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{t.activeListings}</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.activeListings ?? 0}</p>
-            </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-md">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
 
-      {/* Financial Report */}
-      {finance && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {[
-            { label: 'Bugungi savdo', value: finance.todayRevenue, color: 'text-green-400' },
-            { label: 'Haftalik savdo', value: finance.weekRevenue, color: 'text-blue-400' },
-            { label: 'Oylik savdo', value: finance.monthRevenue, color: 'text-purple-400' },
-            { label: 'Yig\'ilgan komissiya', value: finance.totalCommission, color: 'text-yellow-400' },
-          ].map((item) => (
-            <div key={item.label} className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
-              <p className="text-xs text-gray-500 mb-1">{item.label}</p>
-              <p className={`text-lg font-bold ${item.color}`}>{formatPrice(item.value, currency)}</p>
+      {/* Revenue + Commission Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Revenue Chart */}
+        <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+          <h3 className="text-sm font-semibold text-white mb-4">Daromad</h3>
+          {finance ? (
+            <div className="space-y-4">
+              <MiniBarChart data={revenueData} color="bg-blue-500" />
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { label: 'Bugun', value: finance.todayRevenue, color: 'text-green-400' },
+                  { label: 'Hafta', value: finance.weekRevenue, color: 'text-blue-400' },
+                  { label: 'Oy', value: finance.monthRevenue, color: 'text-purple-400' },
+                  { label: 'Jami', value: finance.totalRevenue, color: 'text-white' },
+                ].map((item) => (
+                  <div key={item.label} className="text-center">
+                    <p className={`text-sm font-bold ${item.color}`}>{formatPrice(item.value, currency)}</p>
+                    <p className="text-[10px] text-gray-500">{item.label}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+          ) : (
+            <p className="text-gray-500 text-sm text-center py-8">Ma&apos;lumot yo&apos;q</p>
+          )}
         </div>
-      )}
 
-      {/* Quick Actions */}
-      <div>
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Tezkor amallar</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link
-            href="/admin/steam-import"
-            className="group bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg hover:scale-105 transition-all duration-300"
-          >
+        {/* Commission Card */}
+        <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+          <h3 className="text-sm font-semibold text-white mb-4">Komissiya</h3>
+          <div className="flex items-center justify-center h-24">
             <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 shadow-md">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
-                </svg>
-              </div>
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                {t.steamImport}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t.importDescription}
-              </p>
+              <p className="text-3xl font-bold text-yellow-400">{formatPrice(finance?.totalCommission ?? 0, currency)}</p>
+              <p className="text-xs text-gray-500 mt-1">Jami yig&apos;ilgan komissiya</p>
             </div>
-          </Link>
-
-          <Link
-            href="/admin/users"
-            className="group bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg hover:scale-105 transition-all duration-300"
-          >
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 shadow-md">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                </svg>
-              </div>
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
-                {t.manageUsers}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t.usersDescription}
-              </p>
-            </div>
-          </Link>
-
-          <Link
-            href="/admin/skins"
-            className="group bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg hover:scale-105 transition-all duration-300"
-          >
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 shadow-md">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                </svg>
-              </div>
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                {t.manageSkins}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t.skinsDescription}
-              </p>
-            </div>
-          </Link>
-
-          <Link
-            href="/admin/orders"
-            className="group bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700 hover:shadow-lg hover:scale-105 transition-all duration-300"
-          >
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 shadow-md">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-              </div>
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors">
-                {t.viewOrders}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t.ordersDescription}
-              </p>
-            </div>
-          </Link>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <Link href="/admin/settings" className="text-center p-2 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition text-xs text-gray-300">
+              Tier&apos;larni sozlash
+            </Link>
+            <Link href="/admin/orders" className="text-center p-2 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition text-xs text-gray-300">
+              Tranzaksiyalar
+            </Link>
+          </div>
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div>
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">So&apos;nggi faoliyat</h2>
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {t.recentTransactions}
-              </h3>
-            </div>
-            <Link
-              href="/admin/orders"
-              className="text-blue-600 hover:text-blue-700 text-sm font-medium hover:underline transition-all"
-            >
-              {t.viewAll}
-            </Link>
-          </div>
-
-          <div className="space-y-3">
-            {stats?.recentTransactions && stats.recentTransactions.length > 0 ? (
-              stats.recentTransactions.map((tx, index) => (
-                <div key={tx.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-6 h-6 rounded-md flex items-center justify-center text-white text-xs font-bold ${
-                      tx.type === 'purchase'
-                        ? 'bg-gradient-to-br from-green-500 to-green-600'
-                        : 'bg-gradient-to-br from-orange-500 to-orange-600'
-                    }`}>
-                      {tx.type === 'purchase' ? 'B' : 'S'}
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900 dark:text-white text-sm">
-                        {tx.user?.username || 'Unknown User'}
-                      </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {tx.skin?.name || 'Unknown Skin'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                      tx.type === 'purchase'
-                        ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
-                        : 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400'
-                    }`}>
-                      {tx.type === 'purchase' ? 'Sotib olish' : 'Sotish'}
-                    </span>
-                    <div className="text-right">
-                      <p className="font-bold text-green-600 dark:text-green-400 text-sm">
-                        {formatPrice(tx.amount, currency)}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {new Date(tx.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-6">
-                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                  </svg>
-                </div>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">{t.noData}</p>
-              </div>
-            )}
-          </div>
+      <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-700">
+          <h3 className="text-sm font-semibold text-white">So&apos;nggi faoliyat</h3>
+          <Link href="/admin/orders" className="text-xs text-blue-400 hover:text-blue-300">
+            Barchasini ko&apos;rish
+          </Link>
         </div>
+
+        {stats?.recentTransactions && stats.recentTransactions.length > 0 ? (
+          <div className="divide-y divide-gray-700/50">
+            {stats.recentTransactions.map((tx) => (
+              <div key={tx.id} className="flex items-center justify-between px-5 py-3 hover:bg-gray-700/30 transition-colors">
+                <div className="flex items-center gap-3">
+                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold ${
+                    tx.type === 'purchase' ? 'bg-green-600' : 'bg-orange-600'
+                  }`}>
+                    {tx.type === 'purchase' ? 'B' : 'S'}
+                  </div>
+                  <div>
+                    <p className="text-sm text-white">{tx.user?.username || '—'}</p>
+                    <p className="text-xs text-gray-500">{tx.skin?.name || '—'}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-semibold text-green-400">{formatPrice(tx.amount, currency)}</p>
+                  <p className="text-[10px] text-gray-500">{new Date(tx.createdAt).toLocaleDateString('uz-UZ')}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center py-10 text-gray-500 text-sm">Hozircha faoliyat yo&apos;q</p>
+        )}
       </div>
     </div>
   );
