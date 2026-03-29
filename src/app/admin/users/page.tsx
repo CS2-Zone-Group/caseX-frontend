@@ -21,7 +21,8 @@ interface User {
 }
 
 interface PaginatedResponse {
-  data: User[];
+  users: User[];
+  data?: User[];
   total: number;
   page: number;
   limit: number;

@@ -22,7 +22,8 @@ interface Skin {
 }
 
 interface PaginatedResponse {
-  data: Skin[];
+  skins: Skin[];
+  data?: Skin[];
   total: number;
   page: number;
   limit: number;
