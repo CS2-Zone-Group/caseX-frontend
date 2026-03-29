@@ -372,7 +372,7 @@ export default function AdminSkinsPage() {
 
                     {/* Float */}
                     <td className="px-4 py-3 text-gray-600 dark:text-gray-400 font-mono text-xs">
-                      {skin.float != null ? skin.float.toFixed(6) : '--'}
+                      {skin.float != null ? Number(skin.float).toFixed(6) : '--'}
                     </td>
 
                     {/* Available toggle */}

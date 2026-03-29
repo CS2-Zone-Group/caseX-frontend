@@ -132,17 +132,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </svg>
             </button>
 
-            {/* Search */}
-            <div className="relative hidden sm:block">
-              <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                type="text"
-                placeholder="Qidirish..."
-                className="w-56 lg:w-72 pl-8 pr-3 py-1.5 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
+            {/* Page title */}
+            <h1 className="text-lg font-semibold text-white">
+              {nav.find(item => item.href === pathname)?.name || 'Admin Panel'}
+            </h1>
           </div>
 
           <div className="flex items-center gap-2">
