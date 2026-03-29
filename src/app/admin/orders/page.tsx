@@ -20,7 +20,8 @@ interface Transaction {
 }
 
 interface PaginatedResponse {
-  data: Transaction[];
+  transactions: Transaction[];
+  data?: Transaction[];
   total: number;
   page: number;
   limit: number;
@@ -45,7 +46,7 @@ export default function AdminOrdersPage() {
       const params: Record<string, any> = { page, limit };
       if (filterType !== 'all') params.type = filterType;
       const response = await api.get<PaginatedResponse>('/admin/transactions', { params });
-      setTransactions(response.data.data || response.data as any);
+      setTransactions(response.data.transactions || response.data.data || []);
       setTotal(response.data.total || 0);
       setTotalPages(response.data.totalPages || Math.ceil((response.data.total || 0) / limit));
     } catch (err: any) {
