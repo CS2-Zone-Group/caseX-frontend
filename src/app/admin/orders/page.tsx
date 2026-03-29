@@ -46,7 +46,8 @@ export default function AdminOrdersPage() {
       const params: Record<string, any> = { page, limit };
       if (filterType !== 'all') params.type = filterType;
       const response = await api.get<PaginatedResponse>('/admin/transactions', { params });
-      setTransactions(response.data.transactions || response.data.data || []);
+      const d = response.data as any;
+      setTransactions(Array.isArray(d.transactions) ? d.transactions : Array.isArray(d.data) ? d.data : Array.isArray(d) ? d : []);
       setTotal(response.data.total || 0);
       setTotalPages(response.data.totalPages || Math.ceil((response.data.total || 0) / limit));
     } catch (err: any) {

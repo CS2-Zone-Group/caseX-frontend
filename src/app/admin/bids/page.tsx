@@ -35,9 +35,9 @@ export default function AdminBidsPage() {
     setLoading(true);
     try {
       const { data } = await api.get('/admin/bids', { params: { page, status: filter || undefined } });
-      setBids(data.bids);
-      setTotal(data.total);
-      setTotalPages(data.totalPages);
+      setBids(Array.isArray(data.bids) ? data.bids : []);
+      setTotal(data.total || 0);
+      setTotalPages(data.totalPages || 1);
     } catch { toast.error('Yuklanmadi'); } finally { setLoading(false); }
   }, [page, filter]);
 

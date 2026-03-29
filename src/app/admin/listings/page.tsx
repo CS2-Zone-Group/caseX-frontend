@@ -29,9 +29,9 @@ export default function AdminListingsPage() {
     setLoading(true);
     try {
       const { data } = await api.get('/admin/listings', { params: { page, search: search || undefined } });
-      setListings(data.listings);
-      setTotal(data.total);
-      setTotalPages(data.totalPages);
+      setListings(Array.isArray(data.listings) ? data.listings : []);
+      setTotal(data.total || 0);
+      setTotalPages(data.totalPages || 1);
     } catch { toast.error('Yuklanmadi'); } finally { setLoading(false); }
   }, [page, search]);
 

@@ -78,7 +78,8 @@ export default function AdminSkinsPage() {
       const params: Record<string, any> = { page, limit };
       if (search.trim()) params.search = search.trim();
       const response = await api.get<PaginatedResponse>('/admin/skins', { params });
-      setSkins(response.data.skins || response.data.data || []);
+      const d = response.data as any;
+      setSkins(Array.isArray(d.skins) ? d.skins : Array.isArray(d.data) ? d.data : Array.isArray(d) ? d : []);
       setTotal(response.data.total || 0);
       setTotalPages(response.data.totalPages || Math.ceil((response.data.total || 0) / limit));
     } catch (err: any) {

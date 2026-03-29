@@ -48,7 +48,8 @@ export default function AdminUsersPage() {
       const params: Record<string, any> = { page, limit };
       if (search.trim()) params.search = search.trim();
       const response = await api.get<PaginatedResponse>('/admin/users', { params });
-      setUsers(response.data.users || response.data.data || []);
+      const d = response.data as any;
+      setUsers(Array.isArray(d.users) ? d.users : Array.isArray(d.data) ? d.data : Array.isArray(d) ? d : []);
       setTotal(response.data.total || 0);
       setTotalPages(response.data.totalPages || Math.ceil((response.data.total || 0) / limit));
     } catch (err: any) {
