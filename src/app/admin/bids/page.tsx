@@ -54,10 +54,7 @@ export default function AdminBidsPage() {
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Target Bids</h1>
-          <p className="text-sm text-gray-500">{total} ta bid</p>
-        </div>
+        <p className="text-sm text-gray-400">{total} ta bid</p>
         <div className="flex gap-2">
           {['', 'active', 'fulfilled', 'cancelled'].map((s) => (
             <button key={s} onClick={() => { setFilter(s); setPage(1); }}

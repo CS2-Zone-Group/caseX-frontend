@@ -81,13 +81,8 @@ export default function AdminOrdersPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tranzaksiyalar</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            {total} ta tranzaksiya
-          </p>
-        </div>
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-400">{total} ta tranzaksiya</p>
       </div>
 
       {/* Filter Tabs */}

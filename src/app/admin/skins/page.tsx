@@ -218,13 +218,8 @@ export default function AdminSkinsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Skinlar</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            {total} total skins
-          </p>
-        </div>
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-400">{total} ta skin</p>
         <button
           onClick={openCreateModal}
           className="inline-flex items-center px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm transition-colors shadow-md hover:shadow-lg"

@@ -66,7 +66,7 @@ export default function AdminSteamBotsPage() {
   return (
     <div className="p-6 max-w-6xl">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Steam Botlar</h1>
+        <p className="text-sm text-gray-400">{readyBots}/{totalBots} bot</p>
         <div className="flex items-center gap-3">
           <span className="text-sm text-gray-500">
             {readyBots}/{totalBots} bot online
