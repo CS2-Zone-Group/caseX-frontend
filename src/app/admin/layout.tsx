@@ -19,12 +19,12 @@ export default function AdminLayout({
   // Update document title based on current page
   useEffect(() => {
     const pageTitles: { [key: string]: string } = {
-      '/admin': 'Dashboard - Admin Panel - CaseX',
-      '/admin/skins': 'Skins Management - Admin Panel - CaseX',
-      '/admin/users': 'Users Management - Admin Panel - CaseX',
-      '/admin/orders': 'Orders Management - Admin Panel - CaseX',
+      '/admin': 'Boshqaruv - Admin Panel - CaseX',
+      '/admin/skins': 'Skinlar - Admin Panel - CaseX',
+      '/admin/users': 'Foydalanuvchilar - Admin Panel - CaseX',
+      '/admin/orders': 'Buyurtmalar - Admin Panel - CaseX',
       '/admin/steam-import': 'Steam Import - Admin Panel - CaseX',
-      '/admin/settings': 'Settings - Admin Panel - CaseX'
+      '/admin/settings': 'Sozlamalar - Admin Panel - CaseX'
     };
     
     document.title = pageTitles[pathname] || 'Admin Panel - CaseX';
@@ -41,7 +41,7 @@ export default function AdminLayout({
 
   const navigation = [
     { 
-      name: 'Dashboard', 
+      name: 'Boshqaruv',
       href: '/admin', 
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,7 +51,7 @@ export default function AdminLayout({
       )
     },
     { 
-      name: 'Skins', 
+      name: 'Skinlar',
       href: '/admin/skins', 
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,7 +60,7 @@ export default function AdminLayout({
       )
     },
     { 
-      name: 'Users', 
+      name: 'Foydalanuvchilar',
       href: '/admin/users', 
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,7 +69,7 @@ export default function AdminLayout({
       )
     },
     { 
-      name: 'Orders', 
+      name: 'Buyurtmalar',
       href: '/admin/orders', 
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +87,7 @@ export default function AdminLayout({
       )
     },
     {
-      name: 'Steam Bots',
+      name: 'Steam Botlar',
       href: '/admin/steam-bots',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,7 +96,7 @@ export default function AdminLayout({
       )
     },
     {
-      name: 'Listings',
+      name: 'Sotuvdagilar',
       href: '/admin/listings',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,7 +105,7 @@ export default function AdminLayout({
       )
     },
     {
-      name: 'Bids',
+      name: 'Bidlar',
       href: '/admin/bids',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,7 +114,7 @@ export default function AdminLayout({
       )
     },
     {
-      name: 'Settings',
+      name: 'Sozlamalar',
       href: '/admin/settings', 
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,7 +257,7 @@ export default function AdminLayout({
             <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            <span>Logout</span>
+            <span>Chiqish</span>
           </button>
         </div>
       </div>

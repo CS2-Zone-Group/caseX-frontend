@@ -52,7 +52,7 @@ export default function AdminUsersPage() {
       setTotalPages(response.data.totalPages || Math.ceil((response.data.total || 0) / limit));
     } catch (err: any) {
       console.error('Failed to fetch users:', err);
-      toast.error(err.response?.data?.message || 'Failed to load users');
+      toast.error(err.response?.data?.message || 'Yuklanmadi');
     } finally {
       setLoading(false);
     }
@@ -75,9 +75,9 @@ export default function AdminUsersPage() {
       setActionLoading(userId);
       await api.patch(`/admin/users/${userId}`, { role: newRole });
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
-      toast.success(`Role updated to ${newRole}`);
+      toast.success('Rol yangilandi');
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to update role');
+      toast.error(err.response?.data?.message || 'Rol yangilanmadi');
     } finally {
       setActionLoading(null);
     }
@@ -90,15 +90,15 @@ export default function AdminUsersPage() {
         // Ban: soft delete
         await api.delete(`/admin/users/${userId}`);
         setUsers(prev => prev.map(u => u.id === userId ? { ...u, isActive: false } : u));
-        toast.success('User banned successfully');
+        toast.success('Foydalanuvchi bloklandi');
       } else {
         // Unban: restore
         await api.patch(`/admin/users/${userId}`, { isActive: true });
         setUsers(prev => prev.map(u => u.id === userId ? { ...u, isActive: true } : u));
-        toast.success('User unbanned successfully');
+        toast.success('Blokdan chiqarildi');
       }
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to update user status');
+      toast.error(err.response?.data?.message || 'Holat yangilanmadi');
     } finally {
       setActionLoading(null);
     }
@@ -107,7 +107,7 @@ export default function AdminUsersPage() {
   const handleSaveBalance = async (userId: string) => {
     const newBalance = parseFloat(balanceValue);
     if (isNaN(newBalance) || newBalance < 0) {
-      toast.error('Invalid balance value');
+      toast.error('Noto\'g\'ri balans qiymati');
       return;
     }
     try {
@@ -116,9 +116,9 @@ export default function AdminUsersPage() {
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, balance: newBalance } : u));
       setEditingBalance(null);
       setBalanceValue('');
-      toast.success('Balance updated successfully');
+      toast.success('Balans yangilandi');
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to update balance');
+      toast.error(err.response?.data?.message || 'Balans yangilanmadi');
     } finally {
       setActionLoading(null);
     }
@@ -139,9 +139,9 @@ export default function AdminUsersPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Users Management</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Foydalanuvchilar</h1>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            {total} total users
+            {total} ta foydalanuvchi
           </p>
         </div>
       </div>
@@ -154,7 +154,7 @@ export default function AdminUsersPage() {
           </svg>
           <input
             type="text"
-            placeholder="Search by username or email..."
+            placeholder="Username yoki email bo'yicha qidirish..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
@@ -171,20 +171,20 @@ export default function AdminUsersPage() {
             <svg className="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197" />
             </svg>
-            <p className="text-gray-500 dark:text-gray-400">No users found</p>
+            <p className="text-gray-500 dark:text-gray-400">Foydalanuvchi topilmadi</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">User</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Foydalanuvchi</th>
                   <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Email</th>
                   <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Steam ID</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Balance</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Role</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Status</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Actions</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Balans</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Rol</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Holat</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Amallar</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -243,7 +243,7 @@ export default function AdminUsersPage() {
                             onClick={() => handleSaveBalance(user.id)}
                             disabled={actionLoading === user.id}
                             className="p-1 text-green-600 hover:text-green-700 disabled:opacity-50"
-                            title="Save"
+                            title="Saqlash"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -252,7 +252,7 @@ export default function AdminUsersPage() {
                           <button
                             onClick={cancelEditBalance}
                             className="p-1 text-red-600 hover:text-red-700"
-                            title="Cancel"
+                            title="Bekor qilish"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -263,7 +263,7 @@ export default function AdminUsersPage() {
                         <button
                           onClick={() => startEditBalance(user)}
                           className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                          title="Click to edit balance"
+                          title="Balansni o'zgartirish"
                         >
                           {formatPrice(user.balance, currency)}
                         </button>
@@ -297,7 +297,7 @@ export default function AdminUsersPage() {
                         <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
                           user.isActive ? 'bg-green-500' : 'bg-red-500'
                         }`} />
-                        {user.isActive ? 'Active' : 'Banned'}
+                        {user.isActive ? 'Aktiv' : 'Bloklangan'}
                       </span>
                     </td>
 
@@ -320,7 +320,7 @@ export default function AdminUsersPage() {
                             </svg>
                             <span>...</span>
                           </span>
-                        ) : user.isActive ? 'Ban' : 'Unban'}
+                        ) : user.isActive ? 'Bloklash' : 'Blokdan chiqarish'}
                       </button>
                     </td>
                   </tr>
@@ -334,7 +334,7 @@ export default function AdminUsersPage() {
         {totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/30">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Page {page} of {totalPages} ({total} users)
+              {page}/{totalPages} sahifa ({total} ta)
             </p>
             <div className="flex items-center space-x-2">
               <button
@@ -342,7 +342,7 @@ export default function AdminUsersPage() {
                 disabled={page === 1}
                 className="px-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                Previous
+                Oldingi
               </button>
               {/* Page number buttons */}
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -375,7 +375,7 @@ export default function AdminUsersPage() {
                 disabled={page === totalPages}
                 className="px-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                Next
+                Keyingi
               </button>
             </div>
           </div>

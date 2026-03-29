@@ -82,7 +82,7 @@ export default function AdminSkinsPage() {
       setTotalPages(response.data.totalPages || Math.ceil((response.data.total || 0) / limit));
     } catch (err: any) {
       console.error('Failed to fetch skins:', err);
-      toast.error(err.response?.data?.message || 'Failed to load skins');
+      toast.error(err.response?.data?.message || 'Xatolik: skinlarni yuklashda muammo');
     } finally {
       setLoading(false);
     }
@@ -104,24 +104,24 @@ export default function AdminSkinsPage() {
       setActionLoading(skinId);
       await api.patch(`/admin/skins/${skinId}`, { isAvailable: !currentAvailable });
       setSkins(prev => prev.map(s => s.id === skinId ? { ...s, isAvailable: !currentAvailable } : s));
-      toast.success(`Skin ${!currentAvailable ? 'enabled' : 'disabled'} successfully`);
+      toast.success(`Skin ${!currentAvailable ? 'yoqildi' : 'o\'chirildi'}`);
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to update skin');
+      toast.error(err.response?.data?.message || 'Xatolik: skinni yangilashda muammo');
     } finally {
       setActionLoading(null);
     }
   };
 
   const handleDeleteSkin = async (skinId: string) => {
-    if (!confirm('Are you sure you want to delete this skin?')) return;
+    if (!confirm('Bu skinni o\'chirmoqchimisiz?')) return;
     try {
       setActionLoading(skinId);
       await api.delete(`/admin/skins/${skinId}`);
       setSkins(prev => prev.filter(s => s.id !== skinId));
       setTotal(prev => prev - 1);
-      toast.success('Skin deleted successfully');
+      toast.success('Skin o\'chirildi');
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to delete skin');
+      toast.error(err.response?.data?.message || 'Xatolik: skinni o\'chirishda muammo');
     } finally {
       setActionLoading(null);
     }
@@ -130,7 +130,7 @@ export default function AdminSkinsPage() {
   const handleSavePrice = async (skinId: string) => {
     const newPrice = parseFloat(priceValue);
     if (isNaN(newPrice) || newPrice < 0) {
-      toast.error('Invalid price value');
+      toast.error('Noto\'g\'ri narx qiymati');
       return;
     }
     try {
@@ -139,9 +139,9 @@ export default function AdminSkinsPage() {
       setSkins(prev => prev.map(s => s.id === skinId ? { ...s, price: newPrice } : s));
       setEditingPrice(null);
       setPriceValue('');
-      toast.success('Price updated successfully');
+      toast.success('Narx yangilandi');
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to update price');
+      toast.error(err.response?.data?.message || 'Xatolik: narxni yangilashda muammo');
     } finally {
       setActionLoading(null);
     }
@@ -172,7 +172,7 @@ export default function AdminSkinsPage() {
     e.preventDefault();
 
     if (!form.name.trim() || !form.price) {
-      toast.error('Name and price are required');
+      toast.error('Nomi va narx majburiy');
       return;
     }
 
@@ -192,18 +192,18 @@ export default function AdminSkinsPage() {
       if (editingSkin) {
         const response = await api.patch(`/admin/skins/${editingSkin.id}`, payload);
         setSkins(prev => prev.map(s => s.id === editingSkin.id ? { ...s, ...response.data } : s));
-        toast.success('Skin updated successfully');
+        toast.success('Skin yangilandi');
       } else {
         const response = await api.post('/admin/skins', payload);
         setSkins(prev => [response.data, ...prev]);
         setTotal(prev => prev + 1);
-        toast.success('Skin created successfully');
+        toast.success('Skin yaratildi');
       }
       setShowModal(false);
       setForm(EMPTY_FORM);
       setEditingSkin(null);
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to save skin');
+      toast.error(err.response?.data?.message || 'Xatolik: skinni saqlashda muammo');
     } finally {
       setFormLoading(false);
     }
@@ -218,7 +218,7 @@ export default function AdminSkinsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Skins Management</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Skinlar</h1>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
             {total} total skins
           </p>
@@ -230,7 +230,7 @@ export default function AdminSkinsPage() {
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
-          Add Skin
+          Skin qo'shish
         </button>
       </div>
 
@@ -242,7 +242,7 @@ export default function AdminSkinsPage() {
           </svg>
           <input
             type="text"
-            placeholder="Search skins by name..."
+            placeholder="Skin nomi bo'yicha qidirish..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
@@ -259,7 +259,7 @@ export default function AdminSkinsPage() {
             <svg className="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
-            <p className="text-gray-500 dark:text-gray-400">No skins found</p>
+            <p className="text-gray-500 dark:text-gray-400">Skin topilmadi</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -267,13 +267,13 @@ export default function AdminSkinsPage() {
               <thead>
                 <tr className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
                   <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Skin</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Weapon</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Rarity</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Exterior</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Price</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Qurol</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Kamyoblik</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Holat</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Narx</th>
                   <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Float</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Available</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Actions</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Mavjud</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Amallar</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -432,7 +432,7 @@ export default function AdminSkinsPage() {
                 disabled={page === 1}
                 className="px-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                Previous
+                Oldingi
               </button>
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                 let pageNum: number;
@@ -464,7 +464,7 @@ export default function AdminSkinsPage() {
                 disabled={page === totalPages}
                 className="px-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                Next
+                Keyingi
               </button>
             </div>
           </div>
@@ -478,7 +478,7 @@ export default function AdminSkinsPage() {
           <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-                {editingSkin ? 'Edit Skin' : 'Add New Skin'}
+                {editingSkin ? 'Skinni tahrirlash' : 'Yangi skin qo\'shish'}
               </h2>
               <button
                 onClick={() => { setShowModal(false); setEditingSkin(null); }}
@@ -494,13 +494,13 @@ export default function AdminSkinsPage() {
               {/* Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Name <span className="text-red-500">*</span>
+                  Nomi <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))}
-                  placeholder="AK-47 | Redline"
+                  placeholder="masalan: AK-47 | Redline"
                   className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                   required
                 />
@@ -509,23 +509,23 @@ export default function AdminSkinsPage() {
               {/* Weapon Type + Rarity */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Weapon Type</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Qurol turi</label>
                   <input
                     type="text"
                     value={form.weaponType}
                     onChange={(e) => setForm(f => ({ ...f, weaponType: e.target.value }))}
-                    placeholder="AK-47"
+                    placeholder="masalan: AK-47"
                     className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Rarity</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kamyoblik</label>
                   <select
                     value={form.rarity}
                     onChange={(e) => setForm(f => ({ ...f, rarity: e.target.value }))}
                     className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                   >
-                    <option value="">Select rarity</option>
+                    <option value="">Kamyoblikni tanlang</option>
                     <option value="Consumer Grade">Consumer Grade</option>
                     <option value="Industrial Grade">Industrial Grade</option>
                     <option value="Mil-Spec">Mil-Spec</option>
@@ -540,13 +540,13 @@ export default function AdminSkinsPage() {
               {/* Exterior + Price */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Exterior</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Holat</label>
                   <select
                     value={form.exterior}
                     onChange={(e) => setForm(f => ({ ...f, exterior: e.target.value }))}
                     className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                   >
-                    <option value="">Select exterior</option>
+                    <option value="">Holatni tanlang</option>
                     <option value="Factory New">Factory New</option>
                     <option value="Minimal Wear">Minimal Wear</option>
                     <option value="Field-Tested">Field-Tested</option>
@@ -556,7 +556,7 @@ export default function AdminSkinsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Price (USD) <span className="text-red-500">*</span>
+                    Narx (USD) <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
@@ -574,7 +574,7 @@ export default function AdminSkinsPage() {
               {/* Float + Market Hash Name */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Float Value</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Float qiymati</label>
                   <input
                     type="number"
                     step="0.000001"
@@ -600,7 +600,7 @@ export default function AdminSkinsPage() {
 
               {/* Image URL */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Image URL</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Rasm URL</label>
                 <input
                   type="text"
                   value={form.imageUrl}
@@ -617,7 +617,7 @@ export default function AdminSkinsPage() {
                   onClick={() => { setShowModal(false); setEditingSkin(null); }}
                   className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
                 >
-                  Cancel
+                  Bekor qilish
                 </button>
                 <button
                   type="submit"
@@ -630,7 +630,7 @@ export default function AdminSkinsPage() {
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
                   )}
-                  <span>{editingSkin ? 'Update Skin' : 'Create Skin'}</span>
+                  <span>{editingSkin ? 'Yangilash' : 'Yaratish'}</span>
                 </button>
               </div>
             </form>

@@ -41,24 +41,24 @@ export default function AdminDashboard() {
   const { currency } = useSettingsStore();
 
   const t = {
-    title: 'Admin Dashboard',
-    totalSkins: 'Total Skins',
-    totalUsers: 'Total Users',
-    totalTransactions: 'Total Transactions',
-    totalRevenue: 'Total Revenue',
-    activeListings: 'Active Listings',
-    recentTransactions: 'Recent Transactions',
-    viewAll: 'View All',
+    title: 'Boshqaruv paneli',
+    totalSkins: 'Jami skinlar',
+    totalUsers: 'Jami foydalanuvchilar',
+    totalTransactions: 'Jami tranzaksiyalar',
+    totalRevenue: 'Jami daromad',
+    activeListings: 'Aktiv listinglar',
+    recentTransactions: 'So\'nggi faoliyat',
+    viewAll: 'Barchasini ko\'rish',
     steamImport: 'Steam Import',
-    importDescription: 'Import skins from Steam Market',
-    manageUsers: 'Manage Users',
-    usersDescription: 'View and manage user accounts',
-    manageSkins: 'Manage Skins',
-    skinsDescription: 'Add, edit, and remove skins',
-    viewOrders: 'View Orders',
-    ordersDescription: 'Manage customer orders',
-    loading: 'Loading...',
-    noData: 'No data available',
+    importDescription: 'Steam Market\'dan skinlarni import qilish',
+    manageUsers: 'Foydalanuvchilar',
+    usersDescription: 'Foydalanuvchi akkauntlarini boshqarish',
+    manageSkins: 'Skinlarni boshqarish',
+    skinsDescription: 'Skin qo\'shish, tahrirlash va o\'chirish',
+    viewOrders: 'Buyurtmalar',
+    ordersDescription: 'Tranzaksiyalarni ko\'rish',
+    loading: 'Yuklanmoqda...',
+    noData: 'Ma\'lumot yo\'q',
   };
 
   useEffect(() => {
@@ -99,7 +99,7 @@ export default function AdminDashboard() {
             onClick={fetchDashboardStats}
             className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm transition-colors"
           >
-            Try Again
+            Qayta urinish
           </button>
         </div>
       </div>
@@ -112,8 +112,8 @@ export default function AdminDashboard() {
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold mb-1">Welcome back, Admin!</h1>
-            <p className="text-blue-100">Here&apos;s what&apos;s happening with your platform today.</p>
+            <h1 className="text-2xl font-bold mb-1">Xush kelibsiz, Admin!</h1>
+            <p className="text-blue-100">Bugungi platforma holati.</p>
           </div>
           <div className="hidden lg:block">
             <div className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
@@ -219,7 +219,7 @@ export default function AdminDashboard() {
 
       {/* Quick Actions */}
       <div>
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Tezkor amallar</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             href="/admin/steam-import"
@@ -301,7 +301,7 @@ export default function AdminDashboard() {
 
       {/* Recent Activity */}
       <div>
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Recent Activity</h2>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">So&apos;nggi faoliyat</h2>
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
@@ -349,7 +349,7 @@ export default function AdminDashboard() {
                         ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
                         : 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400'
                     }`}>
-                      {tx.type === 'purchase' ? 'Purchase' : 'Sale'}
+                      {tx.type === 'purchase' ? 'Sotib olish' : 'Sotish'}
                     </span>
                     <div className="text-right">
                       <p className="font-bold text-green-600 dark:text-green-400 text-sm">

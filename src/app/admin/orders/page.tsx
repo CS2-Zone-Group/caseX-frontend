@@ -50,7 +50,7 @@ export default function AdminOrdersPage() {
       setTotalPages(response.data.totalPages || Math.ceil((response.data.total || 0) / limit));
     } catch (err: any) {
       console.error('Failed to fetch transactions:', err);
-      toast.error(err.response?.data?.message || 'Failed to load transactions');
+      toast.error(err.response?.data?.message || 'Yuklanmadi');
     } finally {
       setLoading(false);
     }
@@ -67,7 +67,7 @@ export default function AdminOrdersPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString('uz-UZ', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -81,9 +81,9 @@ export default function AdminOrdersPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Transactions</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tranzaksiyalar</h1>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            {total} total transactions
+            {total} ta tranzaksiya
           </p>
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function AdminOrdersPage() {
       {/* Filter Tabs */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700">
         <div className="flex items-center space-x-2">
-          <span className="text-sm font-medium text-gray-600 dark:text-gray-400 mr-2">Filter:</span>
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-400 mr-2">Filtr:</span>
           {(['all', 'purchase', 'sale'] as FilterType[]).map((type) => (
             <button
               key={type}
@@ -102,7 +102,7 @@ export default function AdminOrdersPage() {
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
-              {type === 'all' ? 'All' : type === 'purchase' ? 'Purchases' : 'Sales'}
+              {type === 'all' ? 'Barchasi' : type === 'purchase' ? 'Sotib olishlar' : 'Sotishlar'}
             </button>
           ))}
         </div>
@@ -117,18 +117,18 @@ export default function AdminOrdersPage() {
             <svg className="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
-            <p className="text-gray-500 dark:text-gray-400">No transactions found</p>
+            <p className="text-gray-500 dark:text-gray-400">Tranzaksiya topilmadi</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Date</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">User</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Type</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Sana</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Foydalanuvchi</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Turi</th>
                   <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Skin</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Amount</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-300">Summa</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -167,7 +167,7 @@ export default function AdminOrdersPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1" />
                           </svg>
                         )}
-                        {tx.type === 'purchase' ? 'Purchase' : 'Sale'}
+                        {tx.type === 'purchase' ? 'Sotib olish' : 'Sotish'}
                       </span>
                     </td>
 
@@ -204,7 +204,7 @@ export default function AdminOrdersPage() {
         {totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/30">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Page {page} of {totalPages} ({total} transactions)
+              {page}/{totalPages} sahifa ({total} ta)
             </p>
             <div className="flex items-center space-x-2">
               <button
@@ -212,7 +212,7 @@ export default function AdminOrdersPage() {
                 disabled={page === 1}
                 className="px-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                Previous
+                Oldingi
               </button>
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                 let pageNum: number;
@@ -244,7 +244,7 @@ export default function AdminOrdersPage() {
                 disabled={page === totalPages}
                 className="px-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                Next
+                Keyingi
               </button>
             </div>
           </div>

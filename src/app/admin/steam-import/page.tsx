@@ -27,26 +27,27 @@ export default function SteamImportPage() {
   const [selectedSkin, setSelectedSkin] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Simple English translations for now
   const t = {
-    title: 'Steam Skin Import',
-    searchPlaceholder: 'Search for skins (e.g., AK-47, AWP)',
-    search: 'Search',
-    popularSkins: 'Popular Skins',
-    loadPopular: 'Load Popular Skins',
-    selectAll: 'Select All',
-    deselectAll: 'Deselect All',
-    importSelected: 'Import Selected',
-    importing: 'Importing...',
-    importProgress: 'Progress: {imported} imported, {failed} failed, {remaining} remaining',
-    noResults: 'No results found',
-    weapon: 'Weapon',
-    rarity: 'Rarity',
-    exterior: 'Exterior',
-    price: 'Price',
-    selected: 'selected',
-    importSuccess: 'Successfully imported {count} skins',
-    importError: 'Import completed with {failed} errors',
+    title: 'Steam Import',
+    description: 'Steam Market\'dan CS2 skinlarni import qilish',
+    searchPlaceholder: 'Steam Market\'dan qidirish...',
+    search: 'Qidirish',
+    popularSkins: 'Mashhur skinlar',
+    loadPopular: 'Mashhur skinlarni yuklash',
+    selectAll: 'Barchasini tanlash',
+    deselectAll: 'Barchasini bekor qilish',
+    importSelected: 'Import qilish',
+    importing: 'Import qilinmoqda...',
+    importProgress: 'Import qilindi: {imported}, Xato: {failed}, Qoldi: {remaining}',
+    noResults: 'Natija topilmadi',
+    weapon: 'Qurol',
+    rarity: 'Kamyoblik',
+    exterior: 'Holat',
+    price: 'Narx',
+    selected: 'ta tanlangan',
+    alreadyExists: 'Allaqachon mavjud',
+    importSuccess: 'Muvaffaqiyatli import qilindi: {count} ta skin',
+    importError: 'Import xatoligi: {failed} ta xato',
   };
 
   useEffect(() => {
@@ -169,7 +170,7 @@ export default function SteamImportPage() {
         key={item.market_hash_name}
         className={`border rounded-lg p-4 cursor-pointer transition-all ${
           isSelected 
-            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' 
+            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
             : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
         }`}
       >
@@ -178,7 +179,7 @@ export default function SteamImportPage() {
             type="checkbox"
             checked={isSelected}
             onChange={() => toggleSelection(item.market_hash_name)}
-            className="w-4 h-4 text-primary-600 rounded"
+            className="w-4 h-4 text-blue-600 rounded"
             onClick={(e) => e.stopPropagation()}
           />
           
@@ -212,7 +213,7 @@ export default function SteamImportPage() {
           
           <div className="flex-1 min-w-0">
             <h3 
-              className="text-sm font-medium text-gray-900 dark:text-white truncate cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+              className="text-sm font-medium text-gray-900 dark:text-white truncate cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               onClick={() => openSkinDetails(item)}
             >
               {item.market_name || item.name}
@@ -258,7 +259,7 @@ export default function SteamImportPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold mb-1">{t.title}</h1>
-            <p className="text-blue-100">Import CS:GO skins directly from Steam Market</p>
+            <p className="text-blue-100">{t.description}</p>
           </div>
           <div className="hidden lg:block">
             <div className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
@@ -284,7 +285,7 @@ export default function SteamImportPage() {
           <button
             onClick={handleSearch}
             disabled={loading}
-            className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
           >
             {loading ? '...' : t.search}
           </button>
@@ -306,7 +307,7 @@ export default function SteamImportPage() {
             <div className="flex gap-4">
               <button
                 onClick={() => selectAll([...searchResults, ...popularSkins])}
-                className="text-primary-600 hover:text-primary-700"
+                className="text-blue-600 hover:text-blue-700"
               >
                 {t.selectAll}
               </button>
@@ -355,7 +356,7 @@ export default function SteamImportPage() {
       {searchResults.length > 0 && (
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Search Results ({searchResults.length})
+            Qidiruv natijalari ({searchResults.length})
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {searchResults.map(renderSkinCard)}
