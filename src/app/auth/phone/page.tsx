@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import { useTranslations } from 'next-intl';
 
 const RESEND_COOLDOWN = 60;
 
@@ -12,6 +13,7 @@ export default function PhoneAuthPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setAuth } = useAuthStore();
+  const t = useTranslations('PhonePage');
 
   const phoneFromQuery = searchParams.get('number') || '';
   const [step, setStep] = useState<'phone' | 'otp'>(phoneFromQuery ? 'otp' : 'phone');
@@ -23,7 +25,7 @@ export default function PhoneAuthPage() {
   const [resending, setResending] = useState(false);
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
-  useEffect(() => { document.title = 'Telefon bilan kirish - CaseX'; }, []);
+  useEffect(() => { document.title = t('pageTitle'); }, [t]);
 
   useEffect(() => {
     if (countdown <= 0) return;
@@ -35,7 +37,7 @@ export default function PhoneAuthPage() {
     e.preventDefault();
     setError('');
     if (!/^\+[1-9]\d{7,14}$/.test(phoneNumber)) {
-      return setError('+998XXXXXXXXX formatida kiriting');
+      return setError(t('errors.phoneFormat'));
     }
     setLoading(true);
     try {
@@ -44,8 +46,8 @@ export default function PhoneAuthPage() {
       setCountdown(RESEND_COOLDOWN);
     } catch (err: any) {
       const msg = err.response?.data?.message;
-      if (msg === 'RESEND_TOO_SOON') setError('Biroz kuting va qayta urinib ko\'ring.');
-      else setError(err.response?.data?.message || 'Kod yuborishda xatolik.');
+      if (msg === 'RESEND_TOO_SOON') setError(t('errors.resendTooSoon'));
+      else setError(err.response?.data?.message || t('errors.sendError'));
     } finally {
       setLoading(false);
     }
@@ -89,14 +91,14 @@ export default function PhoneAuthPage() {
       }
     } catch (err: any) {
       const msg = err.response?.data?.message;
-      if (msg === 'INVALID_OTP') setError('Kod noto\'g\'ri. Qayta kiriting.');
-      else if (msg === 'OTP_EXPIRED') setError('Kod muddati tugagan. Yangi kod so\'rang.');
-      else if (msg === 'MAX_ATTEMPTS_EXCEEDED') setError('Urinishlar soni tugadi. Yangi kod so\'rang.');
-      else setError('Xatolik yuz berdi. Qayta urinib ko\'ring.');
+      if (msg === 'INVALID_OTP') setError(t('errors.invalidOtp'));
+      else if (msg === 'OTP_EXPIRED') setError(t('errors.otpExpired'));
+      else if (msg === 'MAX_ATTEMPTS_EXCEEDED') setError(t('errors.maxAttempts'));
+      else setError(t('errors.generalError'));
     } finally {
       setLoading(false);
     }
-  }, [code, phoneNumber, router, setAuth]);
+  }, [code, phoneNumber, router, setAuth, t]);
 
   useEffect(() => {
     if (code.length === 6) handleVerifyOtp();
@@ -113,8 +115,8 @@ export default function PhoneAuthPage() {
       inputsRef.current[0]?.focus();
     } catch (err: any) {
       const msg = err.response?.data?.message;
-      if (msg === 'RESEND_TOO_SOON') setError('Biroz kuting va qayta urinib ko\'ring.');
-      else setError('Kod yuborishda xatolik.');
+      if (msg === 'RESEND_TOO_SOON') setError(t('errors.resendTooSoon'));
+      else setError(t('errors.sendError'));
     } finally {
       setResending(false);
     }
@@ -133,9 +135,9 @@ export default function PhoneAuthPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Telefon orqali kirish</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('heading')}</h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Telegram Verification Codes bot orqali tasdiqlash kodi yuboriladi
+                {t('subtitle')}
               </p>
             </div>
 
@@ -148,7 +150,7 @@ export default function PhoneAuthPage() {
             <form onSubmit={handleRequestOtp} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
-                  Telefon raqam
+                  {t('phoneLabel')}
                 </label>
                 <input
                   type="tel" required value={phoneNumber}
@@ -156,20 +158,20 @@ export default function PhoneAuthPage() {
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white text-lg"
                   placeholder="+998901234567"
                 />
-                <p className="mt-1 text-xs text-gray-500">Xalqaro formatda kiriting (+998XXXXXXXXX)</p>
+                <p className="mt-1 text-xs text-gray-500">{t('phoneHint')}</p>
               </div>
 
               <button
                 type="submit" disabled={loading}
                 className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition disabled:opacity-50 font-medium"
               >
-                {loading ? 'Yuborilmoqda...' : 'Kod yuborish'}
+                {loading ? t('sending') : t('sendCode')}
               </button>
             </form>
 
             <div className="text-center">
               <Link href="/auth/login" className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-                ← Kirish sahifasiga qaytish
+                &larr; {t('backToLogin')}
               </Link>
             </div>
           </>
@@ -184,10 +186,10 @@ export default function PhoneAuthPage() {
                   <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Telegram kodi</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('telegramCode')}</h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="font-medium text-gray-900 dark:text-white">{phoneNumber}</span> raqamiga
-                Telegram Verification Codes boti orqali 6 xonali kod yuborildi.
+                <span className="font-medium text-gray-900 dark:text-white">{phoneNumber}</span>{' '}
+                {t('codeSentTo')}
               </p>
             </div>
 
@@ -213,16 +215,16 @@ export default function PhoneAuthPage() {
               ))}
             </div>
 
-            {loading && <p className="text-center text-sm text-gray-500">Tekshirilmoqda...</p>}
+            {loading && <p className="text-center text-sm text-gray-500">{t('verifying')}</p>}
 
             <div className="text-center space-y-3">
-              <p className="text-sm text-gray-600 dark:text-gray-400">Kod kelmadimi?</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{t('codeNotReceived')}</p>
               <button
                 type="button" onClick={handleResend}
                 disabled={countdown > 0 || resending}
                 className="text-sm font-medium text-blue-600 hover:text-blue-500 disabled:text-gray-400 disabled:cursor-not-allowed"
               >
-                {resending ? 'Yuborilmoqda...' : countdown > 0 ? `Qayta yuborish (${countdown}s)` : 'Qayta yuborish'}
+                {resending ? t('resending') : countdown > 0 ? t('resendIn', { seconds: countdown }) : t('resend')}
               </button>
             </div>
 
@@ -231,7 +233,7 @@ export default function PhoneAuthPage() {
                 type="button" onClick={() => { setStep('phone'); setDigits(['', '', '', '', '', '']); setError(''); }}
                 className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
               >
-                ← Raqamni o'zgartirish
+                &larr; {t('changeNumber')}
               </button>
             </div>
           </>

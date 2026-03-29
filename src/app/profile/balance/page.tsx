@@ -1,22 +1,45 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSettingsStore } from "@/store/settingsStore";
 import { useAuthStore } from "@/store/authStore";
 import { useTranslations } from 'next-intl';
-import { convertCurrency, formatPrice, getExchangeRates } from "@/lib/currency";
+import { formatPrice, getExchangeRates } from "@/lib/currency";
 import Navbar from "@/components/Navbar";
 import ProfileSidebar from "@/components/ProfileSidebar";
-import { changeLanguage, getCurrentLanguage } from "@/lib/language";
+import api from "@/lib/api";
+import Loader from "@/components/Loader";
 
-function ProfileBalanceContent() {
-  const [currentLanguage, setCurrentLanguage] = useState(getCurrentLanguage());
-  const { currency, theme, setCurrency, setTheme } = useSettingsStore();
+interface Transaction {
+  id: string;
+  type: 'purchase' | 'sale';
+  amount: number;
+  skinId: string | null;
+  skin: {
+    name: string;
+    imageUrl: string;
+  } | null;
+  metadata: {
+    skinName?: string;
+    skinPrice?: number;
+    source?: string;
+  } | null;
+  createdAt: string;
+}
+
+type FilterType = 'all' | 'purchase' | 'sale';
+
+function BalanceAndPaymentsContent() {
+  const { currency } = useSettingsStore();
   const { user, fetchUserBalance } = useAuthStore();
   const t = useTranslations('ProfilePage');
 
-  const baseBalance = user?.balance || 0;
-  const [convertedBalance, setConvertedBalance] = useState(baseBalance);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<FilterType>('all');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   const [exchangeRates, setExchangeRates] = useState<{
     USD: number;
     UZS: number;
@@ -25,33 +48,17 @@ function ProfileBalanceContent() {
   const [ratesLoading, setRatesLoading] = useState(false);
 
   useEffect(() => {
-    document.title = `${t('languageAndCurrency')} - CaseX`;
+    document.title = `${t('balanceAndPayments')} - CaseX`;
   }, [t]);
 
-  // Fetch user balance when component mounts
+  // Fetch user balance
   useEffect(() => {
     if (user?.id) {
-      const { fetchUserBalance } = useAuthStore.getState();
       fetchUserBalance();
     }
-  }, [user?.id]);
+  }, [user?.id, fetchUserBalance]);
 
-  // Convert balance when currency changes
-  useEffect(() => {
-    const convertBalance = async () => {
-      try {
-        const converted = await convertCurrency(baseBalance, "USD", currency);
-        setConvertedBalance(converted);
-      } catch (error) {
-        console.error("Currency conversion failed:", error);
-        setConvertedBalance(baseBalance);
-      }
-    };
-
-    convertBalance();
-  }, [currency, baseBalance]);
-
-  // Fetch exchange rates when component mounts
+  // Fetch exchange rates
   useEffect(() => {
     const fetchRates = async () => {
       setRatesLoading(true);
@@ -66,11 +73,47 @@ function ProfileBalanceContent() {
     };
 
     fetchRates();
-
-    // Refresh rates every 5 minutes
     const interval = setInterval(fetchRates, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // Fetch transactions
+  const fetchTransactions = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data } = await api.get('/orders/transactions', {
+        params: { page, limit: 20 },
+      });
+      setTransactions(data.transactions || []);
+      setTotalPages(data.totalPages || 1);
+    } catch (error) {
+      console.error('Failed to fetch transactions:', error);
+      setTransactions([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [page]);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
+
+  const filteredTransactions = filter === 'all'
+    ? transactions
+    : transactions.filter((tx) => tx.type === filter);
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('ru-RU', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  const baseBalance = user?.balance || 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -80,20 +123,19 @@ function ProfileBalanceContent() {
         <div className="flex flex-col lg:flex-row gap-6">
           <ProfileSidebar activeTab="balance" />
 
-          {/* Main Content */}
           <div className="flex-1">
             <div className="bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-8 shadow-lg border border-gray-200 dark:border-gray-700">
               <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-6 lg:mb-8">
-                {t('languageAndCurrency')}
+                {t('balanceAndPayments')}
               </h1>
 
-              {/* Balance and Exchange Rates Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              {/* Balance + Exchange Rates Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 {/* Balance Card */}
                 <div className="bg-gradient-to-br from-primary-600 to-blue-600 rounded-xl p-6">
                   <div className="text-white/80 text-sm mb-2">{t('availableBalance')}</div>
                   <div className="text-4xl font-bold text-white mb-4">
-                    {formatPrice(convertedBalance, currency)}
+                    {formatPrice(baseBalance, currency)}
                   </div>
                   <div className="flex gap-3">
                     <button className="px-6 py-2 bg-white text-primary-600 rounded-lg font-semibold hover:bg-gray-100 transition">
@@ -174,122 +216,105 @@ function ProfileBalanceContent() {
                 </div>
               </div>
 
-              {/* Settings */}
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                    {t('preferredCurrency')}
-                  </label>
-                  <select
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value as any)}
-                    className="w-full bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-600"
-                  >
-                    <option value="USD">USD - US Dollar</option>
-                    <option value="UZS">UZS - Uzbek Som</option>
-                    <option value="RUB">RUB - Russian Ruble</option>
-                  </select>
+              {/* Transaction History Section */}
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                  {t('transactionHistory')}
+                </h2>
+
+                {/* Filters */}
+                <div className="flex flex-wrap gap-2 lg:gap-4 mb-4 lg:mb-6">
+                  {(['all', 'purchase', 'sale'] as FilterType[]).map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setFilter(f)}
+                      className={`px-3 lg:px-4 py-2 rounded-lg text-sm lg:text-base transition-colors ${
+                        filter === f
+                          ? 'bg-primary-600 text-white'
+                          : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                      }`}
+                    >
+                      {f === 'all' ? t('all') : f === 'purchase' ? t('purchases') : t('sales')}
+                    </button>
+                  ))}
                 </div>
 
-                <div>
-                  <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                    {t('language')}
-                  </label>
-                  <div className="flex gap-3">
+                {/* Transaction List */}
+                <div className="space-y-3 lg:space-y-4">
+                  {loading ? (
+                    <div className="flex items-center justify-center py-12">
+                      <div className="animate-spin rounded-full h-10 w-10 border-2 border-primary-600 border-t-transparent"></div>
+                    </div>
+                  ) : filteredTransactions.length === 0 ? (
+                    <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                      {t('noTransactions')}
+                    </div>
+                  ) : (
+                    filteredTransactions.map((tx) => (
+                      <div
+                        key={tx.id}
+                        className="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 lg:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between hover:bg-gray-200 dark:hover:bg-gray-650 transition border border-gray-200 dark:border-gray-600 gap-3 sm:gap-0"
+                      >
+                        <div className="flex items-center gap-3 lg:gap-4">
+                          <div
+                            className={`w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
+                              tx.type === 'sale'
+                                ? 'bg-green-500/20 text-green-600 dark:text-green-500'
+                                : 'bg-blue-500/20 text-blue-600 dark:text-blue-500'
+                            }`}
+                          >
+                            {tx.type === 'sale' ? '↑' : '↓'}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-gray-900 dark:text-white font-semibold text-sm lg:text-base">
+                              {tx.type === 'purchase' ? t('purchase') : t('sale')}
+                            </div>
+                            <div className="text-gray-600 dark:text-gray-400 text-xs lg:text-sm truncate">
+                              {tx.metadata?.skinName || tx.skin?.name || '—'} • {formatDate(tx.createdAt)}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-left sm:text-right flex-shrink-0">
+                          <div
+                            className={`text-base lg:text-lg font-bold ${
+                              tx.type === 'sale'
+                                ? 'text-green-600 dark:text-green-500'
+                                : 'text-red-600 dark:text-red-500'
+                            }`}
+                          >
+                            {tx.type === 'sale' ? '+' : '-'}{formatPrice(Number(tx.amount), currency)}
+                          </div>
+                          <div className="text-xs lg:text-sm text-green-600 dark:text-green-500">
+                            {t('completed')}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center gap-2 mt-6">
                     <button
-                      onClick={() => {
-                        changeLanguage('uz');
-                        setCurrentLanguage('uz');
-                      }}
-                      className={`flex-1 flex items-center justify-center px-4 py-3 rounded-lg border transition ${
-                        currentLanguage === 'uz'
-                          ? "border-primary-600 bg-primary-600/20 text-primary-600 dark:text-primary-400"
-                          : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500"
-                      }`}
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                      className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-50 text-sm"
                     >
-                      <span>🇺🇿 O'zbek</span>
-                      {currentLanguage === 'uz' && <span className="ml-2">✓</span>}
+                      &larr;
                     </button>
+                    <span className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400">
+                      {page} / {totalPages}
+                    </span>
                     <button
-                      onClick={() => {
-                        changeLanguage('ru');
-                        setCurrentLanguage('ru');
-                      }}
-                      className={`flex-1 flex items-center justify-center px-4 py-3 rounded-lg border transition ${
-                        currentLanguage === 'ru'
-                          ? "border-primary-600 bg-primary-600/20 text-primary-600 dark:text-primary-400"
-                          : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500"
-                      }`}
+                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={page === totalPages}
+                      className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-50 text-sm"
                     >
-                      <span>🇷🇺 Русский</span>
-                      {currentLanguage === 'ru' && <span className="ml-2">✓</span>}
-                    </button>
-                    <button
-                      onClick={() => {
-                        changeLanguage('en');
-                        setCurrentLanguage('en');
-                      }}
-                      className={`flex-1 flex items-center justify-center px-4 py-3 rounded-lg border transition ${
-                        currentLanguage === 'en'
-                          ? "border-primary-600 bg-primary-600/20 text-primary-600 dark:text-primary-400"
-                          : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500"
-                      }`}
-                    >
-                      <span>🇬🇧 English</span>
-                      {currentLanguage === 'en' && <span className="ml-2">✓</span>}
+                      &rarr;
                     </button>
                   </div>
-                </div>
-
-                {/* Theme Toggle Buttons */}
-                <div>
-                  <label className="block text-gray-600 dark:text-gray-400 text-sm mb-3">
-                    {t('quickThemeSwitch')}
-                  </label>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => setTheme("light")}
-                      className={`flex-1 px-4 py-3 rounded-lg border-2 transition ${
-                        theme === "light"
-                          ? "border-primary-600 bg-primary-600/20 text-primary-600 dark:text-primary-400"
-                          : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500"
-                      }`}
-                    >
-                      <div className="flex items-center justify-center gap-2">
-                        <span className="text-xl">☀️</span>
-                        <span>{t('light')}</span>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={() => setTheme("dark")}
-                      className={`flex-1 px-4 py-3 rounded-lg border-2 transition ${
-                        theme === "dark"
-                          ? "border-primary-600 bg-primary-600/20 text-primary-400"
-                          : "border-gray-600 text-gray-400 hover:border-gray-500"
-                      }`}
-                    >
-                      <div className="flex items-center justify-center gap-2">
-                        <span className="text-xl">🌙</span>
-                        <span>{t('dark')}</span>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={() => setTheme("system")}
-                      className={`flex-1 px-4 py-3 rounded-lg border-2 transition ${
-                        theme === "system"
-                          ? "border-primary-600 bg-primary-600/20 text-primary-400"
-                          : "border-gray-600 text-gray-400 hover:border-gray-500"
-                      }`}
-                    >
-                      <div className="flex items-center justify-center gap-2">
-                        <span className="text-xl">🖥️</span>
-                        <span>{t('auto')}</span>
-                      </div>
-                    </button>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
@@ -299,10 +324,10 @@ function ProfileBalanceContent() {
   );
 }
 
-export default function ProfileBalancePage() {
+export default function BalanceAndPaymentsPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
-      <ProfileBalanceContent />
+    <Suspense fallback={<Loader fullScreen />}>
+      <BalanceAndPaymentsContent />
     </Suspense>
   );
 }

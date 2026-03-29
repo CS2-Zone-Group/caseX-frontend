@@ -4,83 +4,15 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import api from '@/lib/api';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from 'next-intl';
+import { useSettingsStore } from '@/store/settingsStore';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
-const T = {
-  en: {
-    title: 'Sign Up', emailTab: 'Email', phoneTab: 'Phone',
-    email: 'Email Address', emailPh: 'john@example.com',
-    password: 'Password', passwordPh: '••••••••',
-    passwordHint: 'At least 8 characters with letters and numbers',
-    confirmPassword: 'Confirm Password',
-    acceptTerms: 'I agree to the', terms: 'Terms of Service', and: 'and', privacy: 'Privacy Policy',
-    register: 'Sign Up', registering: 'Signing up...',
-    or: 'Or', google: 'Sign up with Google', steam: 'Sign up with Steam',
-    loginLink: 'sign in', loginText: 'Already have an account?',
-    emailInvalid: 'Please enter a valid email address',
-    passwordShort: 'Password must be at least 8 characters',
-    passwordWeak: 'Password must contain at least one letter and one number',
-    passwordMismatch: 'Passwords do not match',
-    termsRequired: 'You must accept the Terms of Service',
-    emailExists: 'This email is already registered',
-    failed: 'Registration failed. Please try again.',
-    phone: 'Phone Number', phonePh: '+998901234567',
-    phoneHint: 'Enter in international format (+998XXXXXXXXX)',
-    sendOtp: 'Send Code', sending: 'Sending...',
-    phoneInvalid: 'Enter phone in +998XXXXXXXXX format',
-  },
-  uz: {
-    title: "Ro'yxatdan O'tish", emailTab: 'Email', phoneTab: 'Telefon',
-    email: 'Email manzil', emailPh: 'john@example.com',
-    password: 'Parol', passwordPh: '••••••••',
-    passwordHint: 'Kamida 8 ta belgi, harf va raqam bo\'lishi kerak',
-    confirmPassword: 'Parolni tasdiqlang',
-    acceptTerms: 'Men', terms: 'Foydalanish shartlari', and: 'va', privacy: 'Maxfiylik siyosati',
-    register: "Ro'yxatdan O'tish", registering: "Ro'yxatdan o'tmoqda...",
-    or: 'Yoki', google: "Google orqali ro'yxatdan o'tish", steam: "Steam orqali ro'yxatdan o'tish",
-    loginLink: 'kiring', loginText: 'Hisobingiz bormi?',
-    emailInvalid: "To'g'ri email manzilini kiriting",
-    passwordShort: 'Parol kamida 8 ta belgidan iborat bo\'lishi kerak',
-    passwordWeak: 'Parolda kamida bitta harf va bitta raqam bo\'lishi kerak',
-    passwordMismatch: 'Parollar mos kelmaydi',
-    termsRequired: 'Foydalanish shartlarini qabul qilishingiz kerak',
-    emailExists: 'Bu email allaqachon ro\'yxatdan o\'tgan',
-    failed: "Ro'yxatdan o'tishda xatolik. Qayta urinib ko'ring.",
-    phone: 'Telefon raqam', phonePh: '+998901234567',
-    phoneHint: 'Xalqaro formatda kiriting (+998XXXXXXXXX)',
-    sendOtp: 'Kod yuborish', sending: 'Yuborilmoqda...',
-    phoneInvalid: '+998XXXXXXXXX formatida kiriting',
-  },
-  ru: {
-    title: 'Регистрация', emailTab: 'Email', phoneTab: 'Телефон',
-    email: 'Email адрес', emailPh: 'john@example.com',
-    password: 'Пароль', passwordPh: '••••••••',
-    passwordHint: 'Минимум 8 символов, буквы и цифры',
-    confirmPassword: 'Подтвердите пароль',
-    acceptTerms: 'Я согласен с', terms: 'Условиями использования', and: 'и', privacy: 'Политикой конфиденциальности',
-    register: 'Зарегистрироваться', registering: 'Регистрация...',
-    or: 'Или', google: 'Регистрация через Google', steam: 'Регистрация через Steam',
-    loginLink: 'войдите', loginText: 'Уже есть аккаунт?',
-    emailInvalid: 'Введите корректный email',
-    passwordShort: 'Пароль должен содержать минимум 8 символов',
-    passwordWeak: 'Пароль должен содержать буквы и цифры',
-    passwordMismatch: 'Пароли не совпадают',
-    termsRequired: 'Примите условия использования',
-    emailExists: 'Этот email уже зарегистрирован',
-    failed: 'Ошибка регистрации. Попробуйте ещё раз.',
-    phone: 'Номер телефона', phonePh: '+998901234567',
-    phoneHint: 'Введите в международном формате (+998XXXXXXXXX)',
-    sendOtp: 'Отправить код', sending: 'Отправка...',
-    phoneInvalid: 'Введите в формате +998XXXXXXXXX',
-  },
-};
-
 export default function RegisterPage() {
   const router = useRouter();
-  const { language } = useLanguage();
-  const t = T[language as keyof typeof T] || T.en;
+  const t = useTranslations('RegisterPage');
+  const { language } = useSettingsStore();
 
   const [tab, setTab] = useState<'email' | 'phone'>('email');
   const [form, setForm] = useState({ email: '', password: '', confirmPassword: '', acceptTerms: false });
@@ -90,14 +22,14 @@ export default function RegisterPage() {
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  useEffect(() => { document.title = `${t.title} - CaseX`; }, [t.title]);
+  useEffect(() => { document.title = `${t('title')} - CaseX`; }, [t]);
 
   const validateEmail = () => {
-    if (!form.email.includes('@')) return setError(t.emailInvalid), false;
-    if (form.password.length < 8) return setError(t.passwordShort), false;
-    if (!/[a-zA-Z]/.test(form.password) || !/\d/.test(form.password)) return setError(t.passwordWeak), false;
-    if (form.password !== form.confirmPassword) return setError(t.passwordMismatch), false;
-    if (!form.acceptTerms) return setError(t.termsRequired), false;
+    if (!form.email.includes('@')) return setError(t('errors.emailInvalid')), false;
+    if (form.password.length < 8) return setError(t('errors.passwordTooShort')), false;
+    if (!/[a-zA-Z]/.test(form.password) || !/\d/.test(form.password)) return setError(t('errors.passwordTooWeak')), false;
+    if (form.password !== form.confirmPassword) return setError(t('errors.passwordMismatch')), false;
+    if (!form.acceptTerms) return setError(t('errors.termsRequired')), false;
     return true;
   };
 
@@ -111,9 +43,9 @@ export default function RegisterPage() {
       router.push(`/auth/verify-email?email=${encodeURIComponent(form.email)}`);
     } catch (err: any) {
       const code = err.response?.data?.message;
-      if (code === 'EMAIL_ALREADY_EXISTS') setError(t.emailExists);
-      else if (code === 'PASSWORD_TOO_WEAK') setError(t.passwordWeak);
-      else setError(t.failed);
+      if (code === 'EMAIL_ALREADY_EXISTS') setError(t('errors.emailExists'));
+      else if (code === 'PASSWORD_TOO_WEAK') setError(t('errors.passwordTooWeak'));
+      else setError(t('errors.registrationFailed'));
     } finally {
       setLoading(false);
     }
@@ -122,15 +54,15 @@ export default function RegisterPage() {
   const handlePhoneRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (!/^\+[1-9]\d{7,14}$/.test(phoneNumber)) return setError(t.phoneInvalid);
+    if (!/^\+[1-9]\d{7,14}$/.test(phoneNumber)) return setError(t('phone.invalid'));
     setLoading(true);
     try {
       await api.post('/auth/phone/request-otp', { phoneNumber });
       router.push(`/auth/phone?number=${encodeURIComponent(phoneNumber)}`);
     } catch (err: any) {
       const code = err.response?.data?.message;
-      if (code === 'RESEND_TOO_SOON') setError('Biroz kuting va qayta urinib ko\'ring.');
-      else setError(err.response?.data?.message || t.failed);
+      if (code === 'RESEND_TOO_SOON') setError(t('resendTooSoon'));
+      else setError(err.response?.data?.message || t('errors.registrationFailed'));
     } finally {
       setLoading(false);
     }
@@ -145,14 +77,14 @@ export default function RegisterPage() {
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        Bosh sahifa
+        {t('backToHome')}
       </Link>
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white">{t.title}</h2>
+          <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white">{t('title')}</h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-            {t.loginText}{' '}
-            <Link href="/auth/login" className="text-primary-600 hover:text-primary-500">{t.loginLink}</Link>
+            {t('loginText')}{' '}
+            <Link href="/auth/login" className="text-primary-600 hover:text-primary-500">{t('loginLink')}</Link>
           </p>
         </div>
 
@@ -163,14 +95,14 @@ export default function RegisterPage() {
             onClick={() => { setTab('email'); setError(''); }}
             className={`flex-1 py-2 text-sm font-medium transition ${tab === 'email' ? 'bg-primary-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
           >
-            {t.emailTab}
+            {t('emailTab')}
           </button>
           <button
             type="button"
             onClick={() => { setTab('phone'); setError(''); }}
             className={`flex-1 py-2 text-sm font-medium transition ${tab === 'phone' ? 'bg-primary-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
           >
-            {t.phoneTab}
+            {t('phoneTab')}
           </button>
         </div>
 
@@ -184,23 +116,23 @@ export default function RegisterPage() {
         {tab === 'email' && (
           <form className="space-y-4" onSubmit={handleEmailRegister}>
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">{t.email}</label>
+              <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">{t('form.email')}</label>
               <input
                 type="email" required value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:text-white"
-                placeholder={t.emailPh}
+                placeholder={t('form.emailPlaceholder')}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">{t.password}</label>
+              <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">{t('form.password')}</label>
               <div className="relative">
                 <input
                   type={showPass ? 'text' : 'password'} required value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:text-white"
-                  placeholder={t.passwordPh}
+                  placeholder={t('form.passwordPlaceholder')}
                 />
                 <button type="button" onClick={() => setShowPass(!showPass)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400">
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -211,17 +143,17 @@ export default function RegisterPage() {
                   </svg>
                 </button>
               </div>
-              <p className="mt-1 text-xs text-gray-500">{t.passwordHint}</p>
+              <p className="mt-1 text-xs text-gray-500">{t('form.passwordHint')}</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">{t.confirmPassword}</label>
+              <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">{t('form.confirmPassword')}</label>
               <div className="relative">
                 <input
                   type={showConfirm ? 'text' : 'password'} required value={form.confirmPassword}
                   onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
                   className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:text-white"
-                  placeholder={t.passwordPh}
+                  placeholder={t('form.passwordPlaceholder')}
                 />
                 <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400">
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -241,11 +173,11 @@ export default function RegisterPage() {
                 className="mt-1 h-4 w-4 text-primary-600 border-gray-300 rounded"
               />
               <label htmlFor="terms" className="ml-2 text-sm text-gray-600 dark:text-gray-400">
-                {t.acceptTerms}{' '}
-                <Link href="/terms" className="text-primary-600 hover:text-primary-500">{t.terms}</Link>{' '}
-                {t.and}{' '}
-                <Link href="/privacy" className="text-primary-600 hover:text-primary-500">{t.privacy}</Link>
-                {language === 'uz' ? 'ni qabul qilaman' : ''}
+                {t('form.acceptTerms')}{' '}
+                <Link href="/terms" className="text-primary-600 hover:text-primary-500">{t('form.termsLink')}</Link>{' '}
+                {t('form.and')}{' '}
+                <Link href="/privacy" className="text-primary-600 hover:text-primary-500">{t('form.privacyLink')}</Link>
+                {t('form.termsAcceptSuffix')}
               </label>
             </div>
 
@@ -253,7 +185,7 @@ export default function RegisterPage() {
               type="submit" disabled={loading}
               className="w-full py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition disabled:opacity-50"
             >
-              {loading ? t.registering : t.register}
+              {loading ? t('form.registering') : t('form.register')}
             </button>
           </form>
         )}
@@ -262,21 +194,21 @@ export default function RegisterPage() {
         {tab === 'phone' && (
           <form className="space-y-4" onSubmit={handlePhoneRequest}>
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">{t.phone}</label>
+              <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">{t('phone.label')}</label>
               <input
                 type="tel" required value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:text-white"
-                placeholder={t.phonePh}
+                placeholder={t('phone.placeholder')}
               />
-              <p className="mt-1 text-xs text-gray-500">{t.phoneHint}</p>
+              <p className="mt-1 text-xs text-gray-500">{t('phone.hint')}</p>
             </div>
 
             <button
               type="submit" disabled={loading}
               className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition disabled:opacity-50"
             >
-              {loading ? t.sending : t.sendOtp}
+              {loading ? t('phone.sending') : t('phone.sendOtp')}
             </button>
           </form>
         )}
@@ -288,7 +220,7 @@ export default function RegisterPage() {
               <div className="w-full border-t border-gray-300 dark:border-gray-700" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-50 dark:bg-gray-900 text-gray-500">{t.or}</span>
+              <span className="px-2 bg-gray-50 dark:bg-gray-900 text-gray-500">{t('form.or')}</span>
             </div>
           </div>
 
@@ -303,7 +235,7 @@ export default function RegisterPage() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
               </svg>
-              <span>{t.google}</span>
+              <span>{t('form.googleRegister')}</span>
             </button>
 
             <button
@@ -313,7 +245,7 @@ export default function RegisterPage() {
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.56 3.79 10.24 8.93 11.61l3.37-6.97C10.97 16.1 10 14.67 10 13c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4c-.21 0-.42-.02-.62-.05l-2.97 6.16C17.34 22.43 24 17.73 24 12 24 5.37 18.63 0 12 0z" />
               </svg>
-              <span>{t.steam}</span>
+              <span>{t('form.steamRegister')}</span>
             </button>
           </div>
         </div>

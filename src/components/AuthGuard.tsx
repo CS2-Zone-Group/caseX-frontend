@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 
@@ -10,43 +10,37 @@ interface AuthGuardProps {
   redirectTo?: string;
 }
 
-export default function AuthGuard({ 
-  children, 
-  requireAuth = true, 
-  redirectTo = '/auth/login' 
+export default function AuthGuard({
+  children,
+  requireAuth = true,
+  redirectTo = '/auth/login'
 }: AuthGuardProps) {
   const router = useRouter();
-  const { user, token, checkTokenValidity } = useAuthStore();
-  const [isChecking, setIsChecking] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { user, token, hasHydrated } = useAuthStore();
+
+  const isAuthenticated = !!token && !!user;
 
   useEffect(() => {
-    const checkAuth = async () => {
-      if (!token || !user) {
-        setIsAuthenticated(false);
-        setIsChecking(false);
-        
-        if (requireAuth) {
+    if (!hasHydrated) return;
+
+    if (requireAuth && !isAuthenticated) {
+      router.push(redirectTo);
+      return;
+    }
+
+    // Background token validity check — don't block render
+    if (isAuthenticated) {
+      const { checkTokenValidity } = useAuthStore.getState();
+      checkTokenValidity().then((isValid) => {
+        if (!isValid && requireAuth) {
           router.push(redirectTo);
         }
-        return;
-      }
+      });
+    }
+  }, [hasHydrated, isAuthenticated, requireAuth, redirectTo]);
 
-      // Check if token is still valid
-      const { checkTokenValidity } = useAuthStore.getState();
-      const isValid = await checkTokenValidity();
-      setIsAuthenticated(isValid);
-      setIsChecking(false);
-
-      if (requireAuth && !isValid) {
-        router.push(redirectTo);
-      }
-    };
-
-    checkAuth();
-  }, [token, user?.id, requireAuth, redirectTo]); // Only depend on primitive values
-
-  if (isChecking) {
+  // Wait only for Zustand hydration (instant from localStorage), not API calls
+  if (!hasHydrated) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
@@ -55,7 +49,7 @@ export default function AuthGuard({
   }
 
   if (requireAuth && !isAuthenticated) {
-    return null; // Will redirect
+    return null;
   }
 
   return <>{children}</>;

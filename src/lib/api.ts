@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { isTelegramWebApp, getTelegramInitData } from '@/lib/telegram';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api',
@@ -17,30 +18,62 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Track if a Telegram re-auth is in progress to avoid loops
+let isTelegramReAuthInProgress = false;
+
 // Response interceptor for handling token expiry
 api.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
-    if (error.response?.status === 401) {
-      // Token expired or invalid
-      if (typeof window !== 'undefined') {
-        // Clear auth data
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        
-        // Import auth store dynamically to avoid circular dependency
-        import('@/store/authStore').then(({ useAuthStore }) => {
-          const { logout } = useAuthStore.getState();
-          logout();
-        });
+  async (error) => {
+    const originalRequest = error.config;
 
-        // Show notification
-        if (window.location.pathname !== '/auth/login') {
-          alert('Your session has expired. Please login again.');
-          window.location.href = '/auth/login';
+    if (error.response?.status === 401 && typeof window !== 'undefined') {
+      // Telegram Mini App: try silent re-auth before redirecting
+      if (isTelegramWebApp() && !originalRequest._telegramRetry && !isTelegramReAuthInProgress) {
+        const initData = getTelegramInitData();
+        if (initData) {
+          originalRequest._telegramRetry = true;
+          isTelegramReAuthInProgress = true;
+
+          try {
+            const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+            const reAuthResponse = await axios.post(`${baseURL}/auth/telegram`, { initData });
+            const { token: newToken, user: userData } = reAuthResponse.data;
+
+            if (newToken && userData) {
+              // Update auth store dynamically (setAuth also sets localStorage)
+              const { useAuthStore } = await import('@/store/authStore');
+              useAuthStore.getState().setAuth(userData, newToken);
+
+              // Retry the original request with the new token
+              originalRequest.headers.Authorization = `Bearer ${newToken}`;
+              isTelegramReAuthInProgress = false;
+              return api(originalRequest);
+            }
+          } catch (reAuthError) {
+            console.warn('Telegram silent re-auth failed:', reAuthError);
+          } finally {
+            isTelegramReAuthInProgress = false;
+          }
         }
+      }
+
+      // Default 401 handling: clear auth and redirect
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+
+      // Import auth store dynamically to avoid circular dependency
+      import('@/store/authStore').then(({ useAuthStore }) => {
+        const { logout } = useAuthStore.getState();
+        logout();
+      });
+
+      // Redirect to login
+      if (window.location.pathname !== '/auth/login') {
+        console.warn('Session expired. Redirecting to login.');
+        window.location.href = '/auth/login';
       }
     }
     return Promise.reject(error);

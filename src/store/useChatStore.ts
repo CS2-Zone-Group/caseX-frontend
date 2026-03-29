@@ -1,6 +1,7 @@
 import {create} from "zustand"
 import { useAuthStore } from "./authStore";
 import { getCurrentLanguage } from "@/lib/language";
+import { toast } from "@/store/toastStore";
 
 interface ChatState {
     isChatOpen:boolean;
@@ -24,7 +25,7 @@ export const useChatStore=create<ChatState>((set)=>({
                 const message = language === 'uz' ? 'Iltimos, avval tizimga kiring' : 
                                 language === 'ru' ? 'Пожалуйста, сначала войдите в систему' : 
                                 'Please login first';
-                alert(message);
+                toast.info(message);
                 return;
               }
 

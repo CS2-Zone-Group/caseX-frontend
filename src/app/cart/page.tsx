@@ -141,17 +141,18 @@ export default function CartPage() {
                     <img
                       src={item.skin.imageUrl}
                       alt={item.skin.name}
-                      
                       className="w-full h-full object-contain p-2"
                       onError={(e) => {
-                        const target = e.target as HTMLImageElement;
+                        const target = e.currentTarget as HTMLImageElement;
                         target.style.display = 'none';
-                        const parent = target.parentElement;
-                        if (parent) {
-                          parent.innerHTML = `<div class="text-gray-400 text-xs">${t('noImage')}</div>`;
+                        if (target.nextElementSibling) {
+                          (target.nextElementSibling as HTMLElement).style.display = 'flex';
                         }
                       }}
                     />
+                    <div style={{display: 'none'}} className="flex items-center justify-center h-full text-xs text-gray-400">
+                      {t('noImage')}
+                    </div>
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900 dark:text-white">{item.skin.name}</h3>

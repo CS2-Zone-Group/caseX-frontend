@@ -3,6 +3,8 @@
 import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
+import { toast } from '@/store/toastStore';
+import Loader from '@/components/Loader';
 
 function AuthCallbackContent() {
   const router = useRouter();
@@ -16,7 +18,7 @@ function AuthCallbackContent() {
 
       if (error) {
         console.error('Authentication error:', error);
-        alert('Authentication failed. Please try again.');
+        toast.error('Authentication failed. Please try again.');
         router.push('/auth/login');
         return;
       }
@@ -45,7 +47,7 @@ function AuthCallbackContent() {
         }
       } else {
         console.error('No token received');
-        alert('Authentication failed. No token received.');
+        toast.error('Authentication failed. No token received.');
         router.push('/auth/login');
       }
     };
@@ -70,16 +72,7 @@ function AuthCallbackContent() {
 
 export default function AuthCallbackPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-            Loading...
-          </h2>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<Loader fullScreen />}>
       <AuthCallbackContent />
     </Suspense>
   );

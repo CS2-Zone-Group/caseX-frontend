@@ -19,6 +19,7 @@ interface CartState {
   total: number;
   itemCount: number;
   loading: boolean;
+  error: string | null;
   fetchCart: () => Promise<void>;
   addToCart: (skinId: string) => Promise<void>;
   removeFromCart: (cartItemId: string) => Promise<void>;
@@ -30,6 +31,7 @@ export const useCartStore = create<CartState>((set, get) => ({
   total: 0,
   itemCount: 0,
   loading: false,
+  error: null,
 
   fetchCart: async () => {
     const currentState = get();
@@ -68,25 +70,33 @@ export const useCartStore = create<CartState>((set, get) => ({
       await api.post('/cart', { skinId });
       await get().fetchCart();
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Cartga qo\'shishda xatolik');
+      throw new Error(error.response?.data?.message || 'Failed to add to cart');
     }
   },
 
   removeFromCart: async (cartItemId: string) => {
     try {
+      set({ error: null });
       await api.delete(`/cart/${cartItemId}`);
       await get().fetchCart();
-    } catch (error) {
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Failed to remove item from cart';
+      set({ error: message });
       console.error('Remove from cart error:', error);
+      throw error;
     }
   },
 
   clearCart: async () => {
     try {
+      set({ error: null });
       await api.delete('/cart');
       set({ items: [], total: 0, itemCount: 0 });
-    } catch (error) {
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Failed to clear cart';
+      set({ error: message });
       console.error('Clear cart error:', error);
+      throw error;
     }
   },
 }));

@@ -1,24 +1,24 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 import { useCartStore } from '@/store/cartStore';
+import { useAuthStore } from '@/store/authStore';
 import { useTranslations } from 'next-intl';
 import { useSettingsStore } from '@/store/settingsStore';
 import { formatPrice } from '@/lib/currency';
 import { useRouter } from 'next/navigation';
+import api from '@/lib/api';
 
 export default function CheckoutPage() {
-  const router = useRouter(); 
-  const { items, fetchCart, removeFromCart, loading, clearCart } = useCartStore();
+  const router = useRouter();
+  const { items, fetchCart, removeFromCart, loading } = useCartStore();
+  const { fetchUserBalance } = useAuthStore();
   const { currency } = useSettingsStore();
   const t = useTranslations('CheckoutPage');
-  
-  type PaymentMethod = "click" | "payme" | "visa" | null;
-  
+
   const [isHydrated, setIsHydrated] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   useEffect(() => {
     setIsHydrated(true);
     if (items.length === 0) {
@@ -26,30 +26,23 @@ export default function CheckoutPage() {
     }
   }, [fetchCart, items.length]);
 
-  const price = items.map((item) => Number(item.skin.price));
-  const totalAmount = price.reduce((acc, item) => acc + item, 0);
-  const tax = totalAmount * 0.05;
-  const finalTotal = totalAmount + tax;
+  const totalAmount = items.reduce((acc, item) => acc + Number(item.skin.price), 0);
 
-  const handlePayment = async () => {
+  const handleCheckout = async () => {
     setError(null);
-    
-    if (!paymentMethod) {
-      setError("Iltimos, to'lov usulini tanlang");
-      return;
-    }
-
     setIsProcessing(true);
-    
-    setTimeout(() => {
-      clearCart();
+
+    try {
+      await api.post('/orders/checkout');
+      await fetchUserBalance();
+      await fetchCart();
+      router.push('/checkout/success');
+    } catch (err: any) {
+      setError(err.response?.data?.message || t('checkoutError'));
+    } finally {
       setIsProcessing(false);
-      
-      const randomNum = Math.floor(100000 + Math.random() * 900000);
-      const mockTrxId = `#TRX-${randomNum}`;
-      router.push(`/checkout/success?transactionId=${mockTrxId}`);
-    }, 2000);
-  }; 
+    }
+  };
 
   if (!isHydrated || loading) {
     return (
@@ -65,49 +58,14 @@ export default function CheckoutPage() {
         <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">{t('title')}</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
+
           <div className="lg:col-span-2 space-y-6">
-            
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
-               <h2 className="text-xl font-semibold mb-4">{t('selectPaymentMethod')}</h2>
-               
-               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                 
-                 <div 
-                   onClick={() => setPaymentMethod('click')}
-                   className={`cursor-pointer border rounded-xl p-4 flex flex-col items-center justify-center gap-2 transition-all 
-                     ${paymentMethod === 'click' 
-                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-500/10 ring-2 ring-blue-500/20' 
-                       : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
-                 >
-                   <span className="font-bold text-xl text-blue-600 dark:text-white">CLICK</span>
-                 </div>
 
-                 <div 
-                   onClick={() => setPaymentMethod('payme')}
-                   className={`cursor-pointer border rounded-xl p-4 flex flex-col items-center justify-center gap-2 transition-all 
-                     ${paymentMethod === 'payme' 
-                       ? 'border-teal-500 bg-teal-50 dark:bg-teal-500/10 ring-2 ring-teal-500/20' 
-                       : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
-                 >
-                   <span className="font-bold text-xl text-teal-600 dark:text-teal-400">Payme</span>
-                 </div>
-
-                 <div 
-                   onClick={() => setPaymentMethod('visa')}
-                   className={`cursor-pointer border rounded-xl p-4 flex flex-col items-center justify-center gap-2 transition-all 
-                     ${paymentMethod === 'visa' 
-                       ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-500/10 ring-2 ring-yellow-500/20' 
-                       : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
-                 >
-                   <span className="font-bold text-xl text-yellow-600 dark:text-yellow-500">VISA</span>
-                 </div>
-               </div>
-
-               {error && (
-                 <p className="text-red-500 text-sm mt-3 animate-pulse">⚠️ {t('paymentMethodError')}</p>
-               )}
-            </div>
+            {error && (
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-red-600 dark:text-red-400 text-sm">
+                {error}
+              </div>
+            )}
 
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
               <h2 className="text-xl font-semibold mb-4">{t('cartTitle')} ({items.length} {t('ta')} {t('skin')})</h2>
@@ -151,23 +109,19 @@ export default function CheckoutPage() {
                   <span>{t('skinsPrice')}:</span>
                   <span>{formatPrice(Number(totalAmount), currency)}</span>
                 </div>
-                <div className="flex justify-between text-gray-500 dark:text-gray-400">
-                  <span>{t('commission')} (5%):</span>
-                  <span>{formatPrice(Number(tax), currency)} </span>
-                </div>
                 <div className="h-px bg-gray-200 dark:bg-gray-700 my-4"></div>
                 <div className="flex justify-between text-xl font-bold">
                   <span className="text-gray-900 dark:text-white">{t('checkTotal')}:</span>
-                  <span className="text-green-600 dark:text-green-400">{formatPrice(Number(finalTotal), currency)}</span>
+                  <span className="text-green-600 dark:text-green-400">{formatPrice(Number(totalAmount), currency)}</span>
                 </div>
               </div>
 
-              <button 
-                onClick={handlePayment} 
-                disabled={isProcessing}
+              <button
+                onClick={handleCheckout}
+                disabled={isProcessing || items.length === 0}
                 className={`w-full font-bold py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2
-                  ${isProcessing 
-                    ? 'bg-gray-200 dark:bg-gray-700 cursor-not-allowed text-gray-400 dark:text-gray-500' 
+                  ${isProcessing || items.length === 0
+                    ? 'bg-gray-200 dark:bg-gray-700 cursor-not-allowed text-gray-400 dark:text-gray-500'
                     : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20 active:scale-95'
                   }`}
               >
@@ -177,13 +131,9 @@ export default function CheckoutPage() {
                      {t('processing')}
                    </>
                 ) : (
-                   t('paymentToDo')
+                   t('payFromBalance')
                 )}
               </button>
-              
-              <p className="text-xs text-center text-gray-400 dark:text-gray-500 mt-4">
-                {t('clickingAgree')}
-              </p>
             </div>
           </div>
 

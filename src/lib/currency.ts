@@ -86,11 +86,23 @@ export async function convertCurrency(
   return usdAmount * rates[toCurrency];
 }
 
+// Pre-fetch rates on module load (non-blocking)
+if (typeof window !== 'undefined') {
+  getExchangeRates().catch(() => {});
+}
+
 export function formatPrice(amount: number | string | null | undefined, currency: Currency): string {
   // Convert to number and handle invalid values
   const numAmount = typeof amount === 'number' ? amount : parseFloat(String(amount || 0));
   const safeAmount = isNaN(numAmount) ? 0 : numAmount;
-  
+
+  // DB prices are stored in USD — convert to target currency
+  let converted = safeAmount;
+  if (currency !== 'USD') {
+    const rates = cachedRates || { USD: 1, UZS: 12800, RUB: 95 };
+    converted = safeAmount * rates[currency];
+  }
+
   // Format number with space as thousand separator
   const formatNumber = (num: number, decimals: number = 2) => {
     return num.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
@@ -98,13 +110,38 @@ export function formatPrice(amount: number | string | null | undefined, currency
 
   switch (currency) {
     case 'USD':
-      return `$${formatNumber(safeAmount, 2)}`;
+      return `$${formatNumber(converted, 2)}`;
     case 'UZS':
-      return `${formatNumber(safeAmount, 0)} so'm`;
+      return `${formatNumber(converted, 0)} so'm`;
     case 'RUB':
-      return `${formatNumber(safeAmount, 2)} ₽`;
+      return `${formatNumber(converted, 2)} ₽`;
     default:
-      return `$${formatNumber(safeAmount, 2)}`;
+      return `$${formatNumber(converted, 2)}`;
+  }
+}
+
+export function usdToLocal(amount: number, currency: Currency): number {
+  if (currency === 'USD') return amount;
+  const rates = cachedRates || { USD: 1, UZS: 12800, RUB: 95 };
+  return amount * rates[currency];
+}
+
+export function localToUsd(amount: number, currency: Currency): number {
+  if (currency === 'USD') return amount;
+  const rates = cachedRates || { USD: 1, UZS: 12800, RUB: 95 };
+  return amount / rates[currency];
+}
+
+// Format a value that is ALREADY in the target currency (no conversion)
+export function formatLocalAmount(amount: number, currency: Currency): string {
+  const formatNumber = (num: number, decimals: number = 2) => {
+    return num.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  };
+  switch (currency) {
+    case 'USD': return `$${formatNumber(amount, 2)}`;
+    case 'UZS': return `${formatNumber(amount, 0)} so'm`;
+    case 'RUB': return `${formatNumber(amount, 2)} ₽`;
+    default: return `$${formatNumber(amount, 2)}`;
   }
 }
 

@@ -8,18 +8,6 @@ export const translations = {
     logout: 'Chiqish',
     register: 'Ro\'yxatdan o\'tish',
 
-    //MySharing
-    modalTitle: "Narxni Tahrirlash", // Update share info (PUT) uchun
-    inputLabel: "Yangi Narx",
-    btnCancel: "Bekor qilish",
-    btnSave: "Saqlash",
-    emptyState: "Siz hali hech narsa ulashmadingiz.",
-    tableSkinName: "Skin nomi",
-    tableStats: "Statistika", // Sharing analytics (GET stats) uchun
-    tableActions: "Amallar",
-    viewCount: "ko'rish", // Views (Public GET) uchun
-    myShares: "Mening Ulashganlarim",
-    
     // Auth
     email: 'Email',
     password: 'Parol',
@@ -193,18 +181,6 @@ export const translations = {
     or: 'Или',
     alreadyHaveAccount: 'Уже есть аккаунт?',
     dontHaveAccount: 'Нет аккаунта?',
-
-    //MySharing
-    modalTitle: "Редактировать цену",
-    inputLabel: "Новая цена",
-    btnCancel: "Отмена",
-    btnSave: "Сохранить",
-    emptyState: "Вы еще ничего не расшарили.",
-    tableSkinName: "Название скина",
-    tableStats: "Статистика",
-    tableActions: "Действия",
-    viewCount: "просмотров",
-    myShares: "Мои ссылки",
 
     //Favorites
     loading:'загрузка...',
@@ -498,18 +474,6 @@ export const translations = {
     // Common
     goToMarketplace: 'Go to marketplace',
     currency: 'sum',
-    //MySharing
-    modalTitle: "Edit Price",
-    inputLabel: "New Price",
-    btnCancel: "Cancel",
-    btnSave: "Save",
-    emptyState: "You haven't shared anything yet.",
-    tableSkinName: "Skin Name",
-    tableStats: "Statistics",
-    tableActions: "Actions",
-    viewCount: "views",
-    myShares: "My Shares",
-    
     // Filters
     filters: 'Filters',
     sort: 'Sort',

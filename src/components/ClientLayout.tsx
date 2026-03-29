@@ -4,7 +4,12 @@ import { useEffect, useState } from "react";
 import { NextIntlClientProvider } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
 import { useSettingsStore } from "@/store/settingsStore";
+import { useTelegramStore } from "@/store/telegramStore";
+import { isTelegramWebApp, getTelegramInitData } from "@/lib/telegram";
+import api from "@/lib/api";
 import ChatSupport from "@/components/ChatSupport";
+import Loader from "@/components/Loader";
+import ToastContainer from "@/components/ToastContainer";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
 export default function ClientLayout({
@@ -23,22 +28,77 @@ export default function ClientLayout({
       await useSettingsStore.persist.rehydrate();
 
       useAuthStore.getState().setHasHydrated(true);
-      
-      // localStorage dan tilni olish
-      const savedLanguage = typeof window !== 'undefined' ? localStorage.getItem('language') || 'uz' : 'uz';
-      setLocale(savedLanguage);
-      
+
+      // settingsStore dan tilni olish (primary source)
+      const settingsLanguage = useSettingsStore.getState().language;
+      // Eski localStorage 'language' key dan ham tekshirish (backward compat)
+      const legacyLanguage = typeof window !== 'undefined' ? localStorage.getItem('language') : null;
+
+      // settingsStore ga ustunlik berish, lekin agar bo'sh bo'lsa legacy dan olish
+      const resolvedLanguage = settingsLanguage || legacyLanguage || 'uz';
+      setLocale(resolvedLanguage);
+
+      // Sinxronlash: ikkala joyda ham bir xil qiymat bo'lishi kerak
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('language', resolvedLanguage);
+      }
+      if (settingsLanguage !== resolvedLanguage) {
+        useSettingsStore.getState().setLanguage(resolvedLanguage as any);
+      }
+
       // Tarjima fayllarini yuklash
       try {
-        const messagesModule = await import(`../messages/${savedLanguage}.json`);
+        const messagesModule = await import(`../messages/${resolvedLanguage}.json`);
         setMessages(messagesModule.default);
       } catch (error) {
         console.error('Failed to load messages:', error);
         const fallbackMessages = await import('../messages/uz.json');
         setMessages(fallbackMessages.default);
       }
-      
+
       setIsLoaded(true);
+
+      // Telegram Mini App detection and auto-login
+      try {
+        if (isTelegramWebApp()) {
+          useTelegramStore.getState().setIsTelegramApp(true);
+
+          const tgWebApp = window.Telegram?.WebApp;
+          if (tgWebApp) {
+            tgWebApp.ready();
+            tgWebApp.expand();
+
+            // Apply Telegram theme
+            const tgColorScheme = tgWebApp.colorScheme;
+            if (tgColorScheme) {
+              const root = window.document.documentElement;
+              root.classList.remove("light", "dark");
+              root.classList.add(tgColorScheme);
+              useSettingsStore.getState().setTheme(tgColorScheme as any);
+            }
+
+            // Auto-login if no valid auth token exists
+            const existingToken = useAuthStore.getState().token;
+            if (!existingToken) {
+              const initData = getTelegramInitData();
+              if (initData) {
+                api.post('/auth/telegram', { initData })
+                  .then((response) => {
+                    const { token: newToken, user: userData } = response.data;
+                    if (newToken && userData) {
+                      useAuthStore.getState().setAuth(userData, newToken);
+                    }
+                  })
+                  .catch((err) => {
+                    console.warn('Telegram auto-login failed:', err?.message || err);
+                  });
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Telegram Mini App initialization failed:', err);
+      }
     };
 
     rehydrateStores();
@@ -72,7 +132,12 @@ export default function ClientLayout({
       const customEvent = event as CustomEvent;
       const newLanguage = customEvent.detail;
       setLocale(newLanguage);
-      
+
+      // localStorage ni ham yangilash
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('language', newLanguage);
+      }
+
       try {
         const messagesModule = await import(`../messages/${newLanguage}.json`);
         setMessages(messagesModule.default);
@@ -83,7 +148,7 @@ export default function ClientLayout({
 
     if (typeof window !== 'undefined') {
       window.addEventListener('languageChange', handleLanguageChange);
-      
+
       return () => {
         window.removeEventListener('languageChange', handleLanguageChange);
       };
@@ -91,11 +156,7 @@ export default function ClientLayout({
   }, []);
 
   if (!isLoaded) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900">
-        <div className="text-white">Loading...</div>
-      </div>
-    );
+    return <Loader fullScreen size="lg" />;
   }
 
   return (
@@ -103,6 +164,7 @@ export default function ClientLayout({
       <NextIntlClientProvider locale={locale} messages={messages}>
         {children}
         <ChatSupport />
+        <ToastContainer />
       </NextIntlClientProvider>
     </LanguageProvider>
   );

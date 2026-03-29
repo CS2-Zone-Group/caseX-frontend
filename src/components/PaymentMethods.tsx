@@ -94,7 +94,7 @@ const PaymentMethods = () => {
       <section className="py-20 px-4 bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white uppercase tracking-wide">
               {t("title")}
             </h2>
             <div className="mt-3 w-16 h-1 bg-blue-600 mx-auto rounded-full" />
@@ -104,7 +104,7 @@ const PaymentMethods = () => {
             {methods.map((item, index) => (
               <div
                 key={index}
-                className="cursor-pointer bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors shadow-sm dark:shadow-none"
+                className="cursor-pointer bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 shadow-sm dark:shadow-none hover:-translate-y-1 hover:shadow-md"
               >
                 <div className="text-center mb-3">
                   <div
@@ -135,7 +135,7 @@ const PaymentMethods = () => {
               </div>
             ))}
 
-            <div className="cursor-pointer bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors shadow-sm dark:shadow-none">
+            <div className="cursor-pointer bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 shadow-sm dark:shadow-none hover:-translate-y-1 hover:shadow-md">
               <div className="text-center mb-3">
                 <div className="flex items-center justify-center mb-16 h-20">
                   <div className="text-7xl">💎</div>
