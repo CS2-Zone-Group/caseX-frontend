@@ -511,8 +511,13 @@
     "phoneLinked": "Телефон привязан",
     "save": "Сохранить",
     "tradeUrlRequired": "Введите Trade URL",
+    "tradeUrlNotSet": "Trade URL не указан",
     "tradeUrlInvalid": "Неверный формат Trade URL",
     "tradeUrlHelp": "Вы можете найти свой Steam Trade URL здесь: Steam > Инвентарь > Предложения обмена > \"Кто может отправлять мне предложения обмена?\" > Trade URL",
+    "emailRequired": "Введите email",
+    "emailInvalid": "Неверный формат email",
+    "emailNotSet": "Email не указан",
+    "tradeUrlWarning": "Укажите Steam Trade URL в настройках профиля перед размещением",
     "sale": "Продажа",
     "sales": "Продажи",
     "noTransactions": "Транзакций пока нет",
@@ -627,7 +632,9 @@
     "editPrice": "Изменить цену",
     "listedAt": "Дата размещения",
     "listPrice": "Цена продажи",
-    "items": "предметов"
+    "items": "предметов",
+    "delistSuccess": "Предмет снят с продажи",
+    "delistError": "Ошибка при снятии с продажи"
   },
   "TargetsPage": {
     "title": "Цели",

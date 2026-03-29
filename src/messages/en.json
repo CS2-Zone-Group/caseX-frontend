@@ -511,8 +511,13 @@
     "phoneLinked": "Phone linked",
     "save": "Save",
     "tradeUrlRequired": "Trade URL is required",
+    "tradeUrlNotSet": "Trade URL not set",
     "tradeUrlInvalid": "Invalid Trade URL format",
     "tradeUrlHelp": "You can find your Steam Trade URL here: Steam > Inventory > Trade Offers > \"Who can send me Trade Offers?\" > Trade URL",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email format",
+    "emailNotSet": "Email not set",
+    "tradeUrlWarning": "Please set your Steam Trade URL in profile settings before listing",
     "sale": "Sale",
     "sales": "Sales",
     "noTransactions": "No transactions yet",
@@ -627,7 +632,9 @@
     "editPrice": "Edit price",
     "listedAt": "Listed date",
     "listPrice": "List price",
-    "items": "items"
+    "items": "items",
+    "delistSuccess": "Item removed from sale",
+    "delistError": "Failed to remove from sale"
   },
   "TargetsPage": {
     "title": "Targets",

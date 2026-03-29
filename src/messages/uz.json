@@ -511,8 +511,13 @@
     "phoneLinked": "Telefon biriktirilgan",
     "save": "Saqlash",
     "tradeUrlRequired": "Trade URL kiritilmagan",
+    "tradeUrlNotSet": "Trade URL kiritilmagan",
     "tradeUrlInvalid": "Noto'g'ri Trade URL formati",
     "tradeUrlHelp": "Steam Trade URL'ni bu yerdan olishingiz mumkin: Steam > Inventar > Trade Offers > \"Who can send me Trade Offers?\" > Trade URL",
+    "emailRequired": "Email kiritilmagan",
+    "emailInvalid": "Noto'g'ri email formati",
+    "emailNotSet": "Email kiritilmagan",
+    "tradeUrlWarning": "Sotuvga qo'yish uchun avval profildan Steam Trade URL'ni kiriting",
     "sale": "Sotish",
     "sales": "Sotuvlar",
     "noTransactions": "Hozircha tranzaksiyalar yo'q",
@@ -627,7 +632,9 @@
     "editPrice": "Narxni o'zgartirish",
     "listedAt": "Joylashtirilgan sana",
     "listPrice": "Sotish narxi",
-    "items": "ta inventar"
+    "items": "ta inventar",
+    "delistSuccess": "Item sotuvdan olib tashlandi",
+    "delistError": "Sotuvdan olishda xatolik"
   },
   "TargetsPage": {
     "title": "Targetlar",
