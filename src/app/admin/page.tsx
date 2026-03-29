@@ -25,8 +25,17 @@ interface DashboardStats {
   recentTransactions: RecentTransaction[];
 }
 
+interface FinancialReport {
+  totalRevenue: number;
+  todayRevenue: number;
+  weekRevenue: number;
+  monthRevenue: number;
+  totalCommission: number;
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [finance, setFinance] = useState<FinancialReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { currency } = useSettingsStore();
@@ -60,8 +69,12 @@ export default function AdminDashboard() {
     try {
       setLoading(true);
       setError(null);
-      const response = await api.get('/admin/stats');
-      setStats(response.data);
+      const [statsRes, financeRes] = await Promise.all([
+        api.get('/admin/stats'),
+        api.get('/admin/financial-report').catch(() => ({ data: null })),
+      ]);
+      setStats(statsRes.data);
+      setFinance(financeRes.data);
     } catch (err: any) {
       console.error('Failed to fetch dashboard stats:', err);
       setError(err.response?.data?.message || 'Failed to load dashboard stats');
@@ -186,6 +199,23 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Financial Report */}
+      {finance && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {[
+            { label: 'Bugungi savdo', value: finance.todayRevenue, color: 'text-green-400' },
+            { label: 'Haftalik savdo', value: finance.weekRevenue, color: 'text-blue-400' },
+            { label: 'Oylik savdo', value: finance.monthRevenue, color: 'text-purple-400' },
+            { label: 'Yig\'ilgan komissiya', value: finance.totalCommission, color: 'text-yellow-400' },
+          ].map((item) => (
+            <div key={item.label} className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
+              <p className="text-xs text-gray-500 mb-1">{item.label}</p>
+              <p className={`text-lg font-bold ${item.color}`}>{formatPrice(item.value, currency)}</p>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Quick Actions */}
       <div>
