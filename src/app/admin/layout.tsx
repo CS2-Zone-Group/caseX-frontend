@@ -15,9 +15,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     const pageTitles: Record<string, string> = {
       '/admin': 'Statistika', '/admin/skins': 'Skinlar', '/admin/users': 'Foydalanuvchilar',
-      '/admin/orders': 'Buyurtmalar', '/admin/steam-import': 'Steam Import',
-      '/admin/settings': 'Sozlamalar', '/admin/steam-bots': 'Steam Botlar',
-      '/admin/listings': 'Sotuvdagilar', '/admin/bids': 'Bidlar',
+      '/admin/orders': 'Buyurtmalar', '/admin/settings': 'Sozlamalar',
+      '/admin/steam-bots': 'Steam Botlar', '/admin/listings': 'Sotuvdagilar', '/admin/bids': 'Bidlar',
     };
     document.title = `${pageTitles[pathname] || 'Admin'} - CaseX`;
   }, [pathname]);
@@ -29,7 +28,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Skinlar', href: '/admin/skins', icon: 'M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z' },
     { name: 'Foydalanuvchilar', href: '/admin/users', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197' },
     { name: 'Buyurtmalar', href: '/admin/orders', icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' },
-    { name: 'Steam Import', href: '/admin/steam-import', icon: 'M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10' },
     { name: 'Steam Botlar', href: '/admin/steam-bots', icon: 'M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z' },
     { name: 'Sotuvdagilar', href: '/admin/listings', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
     { name: 'Bidlar', href: '/admin/bids', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
