@@ -637,7 +637,15 @@ export default function InventoryPage() {
                       {/* Sotuvga qo'yish — opens sell modal on list tab */}
                       {hasListableItems && (
                         <button
-                          onClick={() => setSellModalOpen(true)}
+                          onClick={() => {
+                            // Check if any selected item is Steam item and user has no trade URL
+                            const hasSteamItem = selectedItems.some(id => id.startsWith('steam_'));
+                            if (hasSteamItem && !user?.tradeUrl) {
+                              setSellError(t('tradeUrlWarning'));
+                              return;
+                            }
+                            setSellModalOpen(true);
+                          }}
                           className="flex items-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

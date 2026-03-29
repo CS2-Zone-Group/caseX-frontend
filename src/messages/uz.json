@@ -411,6 +411,7 @@
     "retry": "Qayta urinish",
     "sellError": "Sotish amalga oshmadi. Qayta urinib ko'ring.",
     "tradeOfferError": "Trade offer jo'natishda xatolik. Qaytadan urinib ko'ring.",
+    "tradeUrlWarning": "Steam itemlarni sotuvga qo'yish uchun avval profildan Trade URL kiriting.",
     "withdraw": "Steamdan yechish",
     "sellAsk": "Sotuvga qo'yish",
     "sellNow": "Tezda sotish",

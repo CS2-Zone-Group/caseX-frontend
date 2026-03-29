@@ -411,6 +411,7 @@
     "retry": "Retry",
     "sellError": "Failed to sell item. Please try again.",
     "tradeOfferError": "Failed to send trade offer. Please try again.",
+    "tradeUrlWarning": "Please set your Steam Trade URL in profile settings before listing Steam items.",
     "withdraw": "Withdraw",
     "sellAsk": "Sell Ask",
     "sellNow": "Sell Now",
