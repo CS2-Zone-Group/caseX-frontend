@@ -65,6 +65,14 @@ export default function VerifyEmailPage() {
     try {
       const { data } = await api.post('/auth/verify-email-code', { email, code });
       setAuth(data.user, data.access_token);
+
+      // Apply pending referral code
+      const pendingRef = localStorage.getItem('pending_referral_code');
+      if (pendingRef) {
+        api.post('/referral/apply', { code: pendingRef }).catch(() => {});
+        localStorage.removeItem('pending_referral_code');
+      }
+
       router.push('/marketplace');
     } catch (err: any) {
       const msg = err.response?.data?.message;

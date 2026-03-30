@@ -36,6 +36,14 @@ function AuthCallbackContent() {
 
           if (response.data) {
             setAuth(response.data, token);
+
+            // Apply pending referral code
+            const pendingRef = localStorage.getItem('pending_referral_code');
+            if (pendingRef) {
+              api.post('/referral/apply', { code: pendingRef }).catch(() => {});
+              localStorage.removeItem('pending_referral_code');
+            }
+
             router.push('/marketplace');
           } else {
             throw new Error('Token validation failed');

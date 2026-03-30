@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import api from '@/lib/api';
 import { useTranslations } from 'next-intl';
@@ -11,6 +11,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations('RegisterPage');
   const { language } = useSettingsStore();
 
@@ -21,6 +22,25 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [referrerName, setReferrerName] = useState('');
+
+  // Capture referral code from URL
+  useEffect(() => {
+    const refCode = searchParams.get('ref');
+    if (refCode) {
+      localStorage.setItem('pending_referral_code', refCode);
+      api.get(`/referral/validate/${refCode}`).then(({ data }) => {
+        if (data.valid) setReferrerName(data.ownerUsername);
+      }).catch(() => {});
+    } else {
+      const stored = localStorage.getItem('pending_referral_code');
+      if (stored) {
+        api.get(`/referral/validate/${stored}`).then(({ data }) => {
+          if (data.valid) setReferrerName(data.ownerUsername);
+        }).catch(() => {});
+      }
+    }
+  }, [searchParams]);
 
   useEffect(() => { document.title = `${t('title')} - CaseX`; }, [t]);
 
@@ -87,6 +107,13 @@ export default function RegisterPage() {
             <Link href="/auth/login" className="text-primary-600 hover:text-primary-500">{t('loginLink')}</Link>
           </p>
         </div>
+
+        {/* Referral badge */}
+        {referrerName && (
+          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-2 rounded-lg text-sm text-center">
+            <span className="font-medium">{referrerName}</span> taklif qildi
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="flex border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
