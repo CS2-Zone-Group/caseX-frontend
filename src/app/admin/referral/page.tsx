@@ -41,6 +41,22 @@ interface RewardItem {
   sortOrder: number;
 }
 
+interface SkinOption {
+  id: string;
+  name: string;
+  imageUrl: string;
+  rarity: string;
+  exterior: string;
+  price: number;
+}
+
+interface UserOption {
+  id: string;
+  username: string;
+  email: string | null;
+  steamId: string | null;
+}
+
 type Tab = 'settings' | 'streamers' | 'stats';
 
 export default function AdminReferralPage() {
@@ -57,7 +73,10 @@ export default function AdminReferralPage() {
 
   // Reward items
   const [rewardItems, setRewardItems] = useState<RewardItem[]>([]);
-  const [newSkinId, setNewSkinId] = useState('');
+  const [showSkinPicker, setShowSkinPicker] = useState(false);
+  const [skinSearch, setSkinSearch] = useState('');
+  const [skinResults, setSkinResults] = useState<SkinOption[]>([]);
+  const [skinSearching, setSkinSearching] = useState(false);
 
   // Streamer codes
   const [codes, setCodes] = useState<ReferralCodeItem[]>([]);
@@ -66,6 +85,11 @@ export default function AdminReferralPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createForm, setCreateForm] = useState({ code: '', userId: '', commissionRate: 2 });
   const [creating, setCreating] = useState(false);
+  const [userSearch, setUserSearch] = useState('');
+  const [userResults, setUserResults] = useState<UserOption[]>([]);
+  const [userSearching, setUserSearching] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<UserOption | null>(null);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
 
   const fetchStats = useCallback(async () => {
     try {
@@ -116,14 +140,46 @@ export default function AdminReferralPage() {
     finally { setSavingConfig(false); }
   };
 
-  const addRewardItem = async () => {
-    if (!newSkinId.trim()) return;
+  const searchSkins = async (query: string) => {
+    setSkinSearch(query);
+    if (query.length < 2) { setSkinResults([]); return; }
+    setSkinSearching(true);
     try {
-      await api.post('/admin/referral/reward-items', { skinId: newSkinId });
+      const { data } = await api.get('/admin/skins', { params: { search: query, limit: 20 } });
+      const skins = Array.isArray(data.skins) ? data.skins : Array.isArray(data) ? data : [];
+      setSkinResults(skins);
+    } catch { setSkinResults([]); }
+    finally { setSkinSearching(false); }
+  };
+
+  const addRewardItem = async (skinId: string) => {
+    try {
+      await api.post('/admin/referral/reward-items', { skinId });
       toast.success('Sovg\'a qo\'shildi');
-      setNewSkinId('');
+      setShowSkinPicker(false);
+      setSkinSearch('');
+      setSkinResults([]);
       fetchRewardItems();
     } catch { toast.error('Xatolik'); }
+  };
+
+  const searchUsers = async (query: string) => {
+    setUserSearch(query);
+    if (query.length < 2) { setUserResults([]); setShowUserDropdown(false); return; }
+    setUserSearching(true);
+    try {
+      const { data } = await api.get('/admin/users', { params: { search: query, limit: 8 } });
+      setUserResults(Array.isArray(data.users) ? data.users : []);
+      setShowUserDropdown(true);
+    } catch { setUserResults([]); }
+    finally { setUserSearching(false); }
+  };
+
+  const selectUser = (user: UserOption) => {
+    setSelectedUser(user);
+    setCreateForm({ ...createForm, userId: user.id });
+    setUserSearch(user.username);
+    setShowUserDropdown(false);
   };
 
   const removeRewardItem = async (id: string) => {
@@ -263,17 +319,10 @@ export default function AdminReferralPage() {
 
           {/* Reward Items */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-white mb-4">Sovg&apos;a itemlar</h3>
-            <div className="flex gap-2 mb-4">
-              <input
-                type="text"
-                value={newSkinId}
-                onChange={(e) => setNewSkinId(e.target.value)}
-                placeholder="Skin ID kiriting"
-                className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm"
-              />
-              <button onClick={addRewardItem} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 transition">
-                Qo&apos;shish
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">Sovg&apos;a itemlar</h3>
+              <button onClick={() => setShowSkinPicker(true)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 transition">
+                + Skin qo&apos;shish
               </button>
             </div>
             <div className="space-y-2">
@@ -306,7 +355,7 @@ export default function AdminReferralPage() {
         <div className="space-y-4">
           <div className="flex justify-end">
             <button
-              onClick={() => setShowCreateModal(true)}
+              onClick={() => { setShowCreateModal(true); setSelectedUser(null); setUserSearch(''); setUserResults([]); }}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition"
             >
               + Streamer kod yaratish
@@ -378,15 +427,39 @@ export default function AdminReferralPage() {
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm"
                 />
               </div>
-              <div>
-                <label className="block text-xs text-gray-400 mb-1">User ID</label>
+              <div className="relative">
+                <label className="block text-xs text-gray-400 mb-1">Foydalanuvchi</label>
                 <input
                   type="text"
-                  value={createForm.userId}
-                  onChange={(e) => setCreateForm({ ...createForm, userId: e.target.value })}
-                  placeholder="Streamer ning user ID si"
+                  value={userSearch}
+                  onChange={(e) => searchUsers(e.target.value)}
+                  onFocus={() => { if (userResults.length > 0) setShowUserDropdown(true); }}
+                  placeholder="Username bo'yicha qidirish..."
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm"
                 />
+                {selectedUser && (
+                  <div className="mt-1 flex items-center gap-2 text-xs text-green-400">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                    {selectedUser.username} tanlandi
+                  </div>
+                )}
+                {showUserDropdown && userResults.length > 0 && (
+                  <div className="absolute z-10 mt-1 w-full bg-gray-700 border border-gray-600 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    {userResults.map((u) => (
+                      <button
+                        key={u.id}
+                        onClick={() => selectUser(u)}
+                        className="w-full text-left px-3 py-2 hover:bg-gray-600 transition flex items-center justify-between"
+                      >
+                        <div>
+                          <p className="text-sm text-white">{u.username}</p>
+                          <p className="text-xs text-gray-400">{u.email || u.steamId || u.id.slice(0, 8)}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {userSearching && <p className="text-xs text-gray-500 mt-1">Qidirilmoqda...</p>}
               </div>
               <div>
                 <label className="block text-xs text-gray-400 mb-1">Komissiya foizi (%)</label>
@@ -413,6 +486,53 @@ export default function AdminReferralPage() {
                 {creating ? 'Yaratilmoqda...' : 'Yaratish'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Skin Picker Modal */}
+      {showSkinPicker && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => { setShowSkinPicker(false); setSkinSearch(''); setSkinResults([]); }}>
+          <div className="bg-gray-800 rounded-xl p-6 max-w-lg w-full mx-4 max-h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-semibold text-white mb-4">Sovg&apos;a uchun skin tanlang</h3>
+            <input
+              type="text"
+              value={skinSearch}
+              onChange={(e) => searchSkins(e.target.value)}
+              placeholder="Skin nomi bo'yicha qidirish..."
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm mb-4"
+              autoFocus
+            />
+            <div className="flex-1 overflow-y-auto space-y-1 min-h-0">
+              {skinSearching && <p className="text-center text-gray-500 py-4 text-sm">Qidirilmoqda...</p>}
+              {!skinSearching && skinSearch.length >= 2 && skinResults.length === 0 && (
+                <p className="text-center text-gray-500 py-4 text-sm">Natija topilmadi</p>
+              )}
+              {skinResults.map((skin) => (
+                <button
+                  key={skin.id}
+                  onClick={() => addRewardItem(skin.id)}
+                  className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-700 rounded-lg transition text-left"
+                >
+                  <div className="w-10 h-10 bg-gray-700 rounded flex-shrink-0 flex items-center justify-center overflow-hidden">
+                    {skin.imageUrl && <img src={skin.imageUrl} alt="" className="w-full h-full object-contain" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-white truncate">{skin.name}</p>
+                    <p className="text-xs text-gray-500">{skin.exterior} &middot; ${Number(skin.price).toFixed(2)}</p>
+                  </div>
+                  <span className="text-xs text-gray-500">{skin.rarity}</span>
+                </button>
+              ))}
+              {skinSearch.length < 2 && (
+                <p className="text-center text-gray-500 py-8 text-sm">Kamida 2 ta harf kiriting</p>
+              )}
+            </div>
+            <button
+              onClick={() => { setShowSkinPicker(false); setSkinSearch(''); setSkinResults([]); }}
+              className="w-full mt-4 py-2 text-sm text-gray-400 hover:text-white transition"
+            >
+              Yopish
+            </button>
           </div>
         </div>
       )}
