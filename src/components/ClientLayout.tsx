@@ -21,6 +21,17 @@ export default function ClientLayout({
   const [messages, setMessages] = useState({});
   const [isLoaded, setIsLoaded] = useState(false);
 
+  // Capture referral code from URL globally
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      const refCode = url.searchParams.get('ref');
+      if (refCode) {
+        localStorage.setItem('pending_referral_code', refCode);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     // Rehydrate stores and set hydration state
     const rehydrateStores = async () => {
