@@ -63,6 +63,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={false}
                 onClick={() => setSidebarOpen(false)}
                 title={collapsed ? item.name : undefined}
                 className={`flex items-center gap-3 px-3 py-2 mb-0.5 rounded-lg text-sm transition ${
