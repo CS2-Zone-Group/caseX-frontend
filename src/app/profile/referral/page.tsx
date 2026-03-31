@@ -109,12 +109,14 @@ export default function ReferralPage() {
     : t('conditionEmailVerify');
 
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <Navbar />
-      <div className="flex flex-col lg:flex-row gap-6 p-4 lg:p-8 pt-20 max-w-6xl mx-auto">
-        <ProfileSidebar activeTab="referral" />
 
-        <div className="flex-1 space-y-6">
+      <div className="container mx-auto px-4 py-8 pt-20">
+        <div className="flex flex-col lg:flex-row gap-6">
+          <ProfileSidebar activeTab="referral" />
+
+          <div className="flex-1 space-y-6">
           {loading ? (
             <div className="flex justify-center py-20"><Loader /></div>
           ) : (
@@ -221,43 +223,45 @@ export default function ReferralPage() {
           )}
         </div>
 
-        {/* Reward Claim Modal */}
-        {showRewardModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowRewardModal(false)}>
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">{t('selectReward')}</h3>
-              {rewards.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">{t('noRewardsAvailable')}</p>
-              ) : (
-                <div className="grid grid-cols-2 gap-3">
-                  {rewards.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => claimReward(item.id)}
-                      disabled={claiming}
-                      className="p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition disabled:opacity-50"
-                    >
-                      <div className="aspect-square bg-gray-100 dark:bg-gray-700 rounded mb-2 flex items-center justify-center overflow-hidden">
-                        {item.imageUrl && (
-                          <img src={item.imageUrl} alt={item.name} className="w-full h-full object-contain p-2" />
-                        )}
-                      </div>
-                      <p className="text-xs text-gray-900 dark:text-white truncate font-medium">{item.name}</p>
-                      {item.exterior && <p className="text-[10px] text-gray-500">{item.exterior}</p>}
-                    </button>
-                  ))}
-                </div>
-              )}
-              <button
-                onClick={() => setShowRewardModal(false)}
-                className="w-full mt-4 py-2 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition"
-              >
-                {t('close')}
-              </button>
-            </div>
-          </div>
-        )}
       </div>
-    </>
+      </div>
+
+      {/* Reward Claim Modal */}
+      {showRewardModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowRewardModal(false)}>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">{t('selectReward')}</h3>
+            {rewards.length === 0 ? (
+              <p className="text-center text-gray-500 py-8">{t('noRewardsAvailable')}</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                {rewards.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => claimReward(item.id)}
+                    disabled={claiming}
+                    className="p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition disabled:opacity-50"
+                  >
+                    <div className="aspect-square bg-gray-100 dark:bg-gray-700 rounded mb-2 flex items-center justify-center overflow-hidden">
+                      {item.imageUrl && (
+                        <img src={item.imageUrl} alt={item.name} className="w-full h-full object-contain p-2" />
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-900 dark:text-white truncate font-medium">{item.name}</p>
+                    {item.exterior && <p className="text-[10px] text-gray-500">{item.exterior}</p>}
+                  </button>
+                ))}
+              </div>
+            )}
+            <button
+              onClick={() => setShowRewardModal(false)}
+              className="w-full mt-4 py-2 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition"
+            >
+              {t('close')}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
