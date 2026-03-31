@@ -13,7 +13,15 @@ interface RecentTransaction {
   amount: number;
   createdAt: string;
   user?: { id: string; username: string };
-  skin?: { id: string; name: string };
+  skin?: { id: string; name: string; imageUrl?: string };
+  metadata?: {
+    source?: string;
+    commission?: number;
+    commissionRate?: number;
+    skinName?: string;
+    sellerId?: string;
+    buyerId?: string;
+  };
 }
 
 interface DashboardStats {
@@ -21,6 +29,7 @@ interface DashboardStats {
   totalUsers: number;
   totalTransactions: number;
   totalRevenue: number;
+  totalTurnover: number;
   activeListings: number;
   recentTransactions: RecentTransaction[];
 }
@@ -30,7 +39,7 @@ interface FinancialReport {
   todayRevenue: number;
   weekRevenue: number;
   monthRevenue: number;
-  totalCommission: number;
+  totalTurnover: number;
 }
 
 /* Simple bar chart component */
@@ -106,7 +115,7 @@ export default function AdminDashboard() {
     { label: 'Jami skinlar', value: String(stats?.totalSkins ?? 0), icon: 'M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z', gradient: 'from-blue-500 to-blue-600' },
     { label: 'Foydalanuvchilar', value: String(stats?.totalUsers ?? 0), icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197', gradient: 'from-green-500 to-green-600' },
     { label: 'Tranzaksiyalar', value: String(stats?.totalTransactions ?? 0), icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z', gradient: 'from-yellow-500 to-yellow-600' },
-    { label: 'Jami daromad', value: formatPrice(stats?.totalRevenue ?? 0, currency), icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z', gradient: 'from-purple-500 to-purple-600' },
+    { label: 'Daromad (komissiya)', value: formatPrice(stats?.totalRevenue ?? 0, currency), icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z', gradient: 'from-purple-500 to-purple-600' },
     { label: 'Aktiv listinglar', value: String(stats?.activeListings ?? 0), icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2', gradient: 'from-cyan-500 to-cyan-600' },
   ];
 
@@ -129,14 +138,17 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      {/* Revenue + Commission Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Revenue Chart */}
-        <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-          <h3 className="text-sm font-semibold text-white mb-4">Daromad</h3>
+      {/* Revenue (Commission) + Turnover Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Revenue Chart (Commission = actual platform earnings) */}
+        <div className="lg:col-span-2 bg-gray-800 rounded-xl p-5 border border-gray-700">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-white">Platforma daromadi (komissiya)</h3>
+            <span className="text-[10px] text-gray-500 bg-gray-700 px-2 py-0.5 rounded">P2P tranzaksiyalardan</span>
+          </div>
           {finance ? (
             <div className="space-y-4">
-              <MiniBarChart data={revenueData} color="bg-blue-500" />
+              <MiniBarChart data={revenueData} color="bg-green-500" />
               <div className="grid grid-cols-4 gap-2">
                 {[
                   { label: 'Bugun', value: finance.todayRevenue, color: 'text-green-400' },
@@ -156,13 +168,19 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        {/* Commission Card */}
+        {/* Turnover Card */}
         <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-          <h3 className="text-sm font-semibold text-white mb-4">Komissiya</h3>
-          <div className="flex items-center justify-center h-24">
-            <div className="text-center">
-              <p className="text-3xl font-bold text-yellow-400">{formatPrice(finance?.totalCommission ?? 0, currency)}</p>
-              <p className="text-xs text-gray-500 mt-1">Jami yig&apos;ilgan komissiya</p>
+          <h3 className="text-sm font-semibold text-white mb-4">Oborot</h3>
+          <div className="space-y-4">
+            <div className="text-center py-2">
+              <p className="text-2xl font-bold text-blue-400">{formatPrice(finance?.totalTurnover ?? stats?.totalTurnover ?? 0, currency)}</p>
+              <p className="text-[10px] text-gray-500 mt-1">Jami oldi-sotdi summasi</p>
+            </div>
+            <div className="border-t border-gray-700 pt-3">
+              <div className="text-center">
+                <p className="text-xl font-bold text-green-400">{formatPrice(finance?.totalRevenue ?? stats?.totalRevenue ?? 0, currency)}</p>
+                <p className="text-[10px] text-gray-500 mt-1">Platforma daromadi</p>
+              </div>
             </div>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-3">
@@ -187,25 +205,58 @@ export default function AdminDashboard() {
 
         {stats?.recentTransactions && stats.recentTransactions.length > 0 ? (
           <div className="divide-y divide-gray-700/50">
-            {stats.recentTransactions.map((tx) => (
-              <div key={tx.id} className="flex items-center justify-between px-5 py-3 hover:bg-gray-700/30 transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold ${
+            {stats.recentTransactions.map((tx) => {
+              const sourceLabels: Record<string, string> = {
+                checkout: 'Savat',
+                quick_buy: 'Tezkor xarid',
+                buy_listing: 'Listing xarid',
+                listing_sold: 'Listing sotildi',
+                sell_to_bid: 'Bidga sotish',
+                bid_purchase: 'Bid xaridi',
+                steam_sell: 'Steam sotish',
+                admin_auto_buy: 'Admin auto-buy',
+              };
+              const source = tx.metadata?.source || '';
+              const commission = tx.metadata?.commission;
+              const time = new Date(tx.createdAt);
+              const timeStr = time.toLocaleString('uz-UZ', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+              });
+
+              return (
+                <div key={tx.id} className="flex items-center gap-3 px-5 py-3 hover:bg-gray-700/30 transition-colors">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0 ${
                     tx.type === 'purchase' ? 'bg-green-600' : 'bg-orange-600'
                   }`}>
                     {tx.type === 'purchase' ? 'B' : 'S'}
                   </div>
-                  <div>
-                    <p className="text-sm text-white">{tx.user?.username || '—'}</p>
-                    <p className="text-xs text-gray-500">{tx.skin?.name || '—'}</p>
+                  {tx.skin?.imageUrl && (
+                    <div className="w-10 h-10 bg-gray-700 rounded overflow-hidden flex-shrink-0">
+                      <img src={tx.skin.imageUrl} alt="" className="w-full h-full object-contain p-0.5" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-white truncate">{tx.user?.username || '—'}</p>
+                    <p className="text-xs text-gray-500 truncate">{tx.skin?.name || tx.metadata?.skinName || '—'}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      {source && <span className="text-[9px] px-1.5 py-0.5 bg-gray-700 text-gray-400 rounded">{sourceLabels[source] || source}</span>}
+                      {commission != null && commission > 0 && (
+                        <span className="text-[9px] px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 rounded">
+                          Fee: ${Number(commission).toFixed(2)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className={`text-sm font-semibold ${tx.type === 'purchase' ? 'text-green-400' : 'text-orange-400'}`}>
+                      {formatPrice(tx.amount, currency)}
+                    </p>
+                    <p className="text-[9px] text-gray-500 whitespace-nowrap">{timeStr}</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-green-400">{formatPrice(tx.amount, currency)}</p>
-                  <p className="text-[10px] text-gray-500">{new Date(tx.createdAt).toLocaleDateString('uz-UZ')}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <p className="text-center py-10 text-gray-500 text-sm">Hozircha faoliyat yo&apos;q</p>
