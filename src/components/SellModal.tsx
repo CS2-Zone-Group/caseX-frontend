@@ -117,7 +117,8 @@ export default function SellModal({ items: rawItems, onClose, onSell, onSellNow 
       const usdPrice = getSellingPriceUsd(item.id, Number(item.skin.price || 0));
       const feeRate = getFeeRate(usdPrice, commissionTiers);
       totalSelling += localPrice;
-      totalYouGet += localPrice * (1 - feeRate);
+      const fee = Math.ceil(localPrice * feeRate * 100) / 100;
+      totalYouGet += localPrice - fee;
     }
     return { totalSelling: Math.round(totalSelling * 100) / 100, totalYouGet: Math.round(totalYouGet * 100) / 100 };
   }, [sellItems, itemPrices, commissionTiers]);
@@ -208,7 +209,8 @@ export default function SellModal({ items: rawItems, onClose, onSell, onSellNow 
                 const localPrice = getLocalPrice(item.id, Number(item.skin.price || 0));
                 const usdPrice = getSellingPriceUsd(item.id, Number(item.skin.price || 0));
                 const itemFeeRate = getFeeRate(usdPrice, commissionTiers);
-                const localYouGet = localPrice * (1 - itemFeeRate);
+                const feeAmount = Math.ceil(localPrice * itemFeeRate * 100) / 100;
+                const localYouGet = localPrice - feeAmount;
                 const recommendedPrice = Number(item.skin.price || 0);
 
                 return (
