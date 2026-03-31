@@ -84,6 +84,14 @@ export default function PhoneAuthPage() {
     try {
       const { data } = await api.post('/auth/phone/verify-otp', { phoneNumber, code });
       setAuth(data.user, data.access_token);
+
+      // Apply pending referral code
+      const pendingRef = localStorage.getItem('pending_referral_code');
+      if (pendingRef) {
+        api.post('/referral/apply', { code: pendingRef }).catch(() => {});
+        localStorage.removeItem('pending_referral_code');
+      }
+
       if (data.needsPasswordSetup) {
         router.push('/auth/set-password');
       } else {

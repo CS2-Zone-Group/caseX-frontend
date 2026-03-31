@@ -98,6 +98,12 @@ export default function ClientLayout({
                     const { token: newToken, user: userData } = response.data;
                     if (newToken && userData) {
                       useAuthStore.getState().setAuth(userData, newToken);
+                      // Apply pending referral code
+                      const pendingRef = localStorage.getItem('pending_referral_code');
+                      if (pendingRef) {
+                        api.post('/referral/apply', { code: pendingRef }).catch(() => {});
+                        localStorage.removeItem('pending_referral_code');
+                      }
                     }
                   })
                   .catch((err) => {
