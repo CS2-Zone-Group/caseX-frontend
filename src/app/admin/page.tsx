@@ -61,9 +61,56 @@ function MiniBarChart({ data, color }: { data: { label: string; value: number }[
   );
 }
 
+interface DailyRevenue {
+  date: string;
+  revenue: number;
+}
+
+function DailyRevenueChart({ data, currency }: { data: DailyRevenue[]; currency: any }) {
+  const maxRevenue = Math.max(...data.map(d => d.revenue), 0.01);
+
+  return (
+    <div className="space-y-2">
+      {/* Chart */}
+      <div className="flex items-end gap-1 h-32">
+        {data.map((d, i) => {
+          const height = maxRevenue > 0 ? (d.revenue / maxRevenue) * 100 : 0;
+          const isToday = i === data.length - 1;
+          return (
+            <div key={d.date} className="flex-1 flex flex-col items-center justify-end h-full group relative">
+              <div
+                className={`w-full rounded-t transition-all ${isToday ? 'bg-green-500' : 'bg-blue-500/70'} hover:bg-blue-400 min-h-[2px]`}
+                style={{ height: `${Math.max(height, 2)}%` }}
+              />
+              {/* Tooltip */}
+              <div className="absolute bottom-full mb-1 hidden group-hover:block z-10">
+                <div className="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-[9px] text-white whitespace-nowrap shadow-lg">
+                  <div>{d.date.slice(5)}</div>
+                  <div className="text-green-400 font-bold">{formatPrice(d.revenue, currency)}</div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {/* Date labels - show every 5th */}
+      <div className="flex gap-1">
+        {data.map((d, i) => (
+          <div key={d.date} className="flex-1 text-center">
+            {(i % 5 === 0 || i === data.length - 1) && (
+              <span className="text-[8px] text-gray-500">{d.date.slice(5)}</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [finance, setFinance] = useState<FinancialReport | null>(null);
+  const [dailyRevenue, setDailyRevenue] = useState<DailyRevenue[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { currency } = useSettingsStore();
@@ -74,12 +121,14 @@ export default function AdminDashboard() {
     try {
       setLoading(true);
       setError(null);
-      const [statsRes, financeRes] = await Promise.all([
+      const [statsRes, financeRes, dailyRes] = await Promise.all([
         api.get('/admin/stats'),
         api.get('/admin/financial-report').catch(() => ({ data: null })),
+        api.get('/admin/daily-revenue?days=20').catch(() => ({ data: [] })),
       ]);
       setStats(statsRes.data);
       setFinance(financeRes.data);
+      setDailyRevenue(Array.isArray(dailyRes.data) ? dailyRes.data : []);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Yuklanmadi');
     } finally {
@@ -140,29 +189,28 @@ export default function AdminDashboard() {
 
       {/* Revenue (Commission) + Turnover Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Revenue Chart (Commission = actual platform earnings) */}
+        {/* Daily Revenue Chart */}
         <div className="lg:col-span-2 bg-gray-800 rounded-xl p-5 border border-gray-700">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-white">Platforma daromadi (komissiya)</h3>
-            <span className="text-[10px] text-gray-500 bg-gray-700 px-2 py-0.5 rounded">P2P tranzaksiyalardan</span>
-          </div>
-          {finance ? (
-            <div className="space-y-4">
-              <MiniBarChart data={revenueData} color="bg-green-500" />
-              <div className="grid grid-cols-4 gap-2">
-                {[
+            <h3 className="text-sm font-semibold text-white">Kunlik daromad (komissiya)</h3>
+            <div className="flex items-center gap-2">
+              <div className="grid grid-cols-4 gap-1.5">
+                {finance && [
                   { label: 'Bugun', value: finance.todayRevenue, color: 'text-green-400' },
                   { label: 'Hafta', value: finance.weekRevenue, color: 'text-blue-400' },
                   { label: 'Oy', value: finance.monthRevenue, color: 'text-purple-400' },
                   { label: 'Jami', value: finance.totalRevenue, color: 'text-white' },
                 ].map((item) => (
-                  <div key={item.label} className="text-center">
-                    <p className={`text-sm font-bold ${item.color}`}>{formatPrice(item.value, currency)}</p>
-                    <p className="text-[10px] text-gray-500">{item.label}</p>
+                  <div key={item.label} className="text-center px-2">
+                    <p className={`text-[10px] font-bold ${item.color}`}>{formatPrice(item.value, currency)}</p>
+                    <p className="text-[8px] text-gray-500">{item.label}</p>
                   </div>
                 ))}
               </div>
             </div>
+          </div>
+          {dailyRevenue.length > 0 ? (
+            <DailyRevenueChart data={dailyRevenue} currency={currency} />
           ) : (
             <p className="text-gray-500 text-sm text-center py-8">Ma&apos;lumot yo&apos;q</p>
           )}
@@ -170,7 +218,7 @@ export default function AdminDashboard() {
 
         {/* Turnover Card */}
         <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-          <h3 className="text-sm font-semibold text-white mb-4">Oborot</h3>
+          <h3 className="text-sm font-semibold text-white mb-4">Aylanma summa</h3>
           <div className="space-y-4">
             <div className="text-center py-2">
               <p className="text-2xl font-bold text-blue-400">{formatPrice(finance?.totalTurnover ?? stats?.totalTurnover ?? 0, currency)}</p>
