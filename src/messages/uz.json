@@ -92,6 +92,7 @@
       "sending": "Yuborilmoqda...",
       "invalid": "+998XXXXXXXXX formatida kiriting"
     },
+    "referralCodePlaceholder": "Referral kod (ixtiyoriy)",
     "errors": {
       "usernameRequired": "Foydalanuvchi nomi kamida 3 ta belgidan iborat bo'lishi kerak",
       "emailInvalid": "To'g'ri email manzilini kiriting",
@@ -556,7 +557,16 @@
     "conditionMet": "Bajarildi",
     "pending": "Kutilmoqda",
     "close": "Yopish",
-    "loadError": "Ma'lumot yuklanmadi"
+    "loadError": "Ma'lumot yuklanmadi",
+    "howItWorks": "Qanday ishlaydi?",
+    "step1": "Referral havolangizni do'stlaringiz bilan ulashing",
+    "step2": "{count} ta do'stingiz ro'yxatdan o'tishi kerak",
+    "step3": "Shart bajarilganda Siz bepul sovg'a olasiz!",
+    "condition": "Shart",
+    "conditionBuySell": "Do'stingiz buy yoki sell qilishi kerak",
+    "conditionEmailVerify": "Do'stingiz emailni tasdiqlashi kerak",
+    "rewardReceived": "Sovg'a olindi",
+    "noRewardYet": "Hali sovg'a olinmadi"
   },
   "VerifyEmailPage": {
     "title": "Email Tasdiqlash",

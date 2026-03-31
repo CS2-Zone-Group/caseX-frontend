@@ -23,6 +23,7 @@ export default function RegisterPage() {
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [referrerName, setReferrerName] = useState('');
+  const [refCodeInput, setRefCodeInput] = useState('');
 
   // Capture referral code from URL
   useEffect(() => {
@@ -108,10 +109,31 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        {/* Referral badge */}
-        {referrerName && (
+        {/* Referral code */}
+        {referrerName ? (
           <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-2 rounded-lg text-sm text-center">
             <span className="font-medium">{referrerName}</span> taklif qildi
+          </div>
+        ) : (
+          <div>
+            <input
+              type="text"
+              value={refCodeInput}
+              onChange={(e) => {
+                const val = e.target.value.toUpperCase();
+                setRefCodeInput(val);
+                if (val.length >= 3) {
+                  api.get(`/referral/validate/${val}`).then(({ data }) => {
+                    if (data.valid) {
+                      setReferrerName(data.ownerUsername);
+                      localStorage.setItem('pending_referral_code', val);
+                    }
+                  }).catch(() => {});
+                }
+              }}
+              placeholder={t('referralCodePlaceholder')}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:text-white text-sm"
+            />
           </div>
         )}
 

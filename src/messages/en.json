@@ -92,6 +92,7 @@
       "sending": "Sending...",
       "invalid": "Enter phone in +998XXXXXXXXX format"
     },
+    "referralCodePlaceholder": "Referral code (optional)",
     "errors": {
       "usernameRequired": "Username must be at least 3 characters long",
       "emailInvalid": "Please enter a valid email address",
@@ -556,7 +557,16 @@
     "conditionMet": "Completed",
     "pending": "Pending",
     "close": "Close",
-    "loadError": "Failed to load data"
+    "loadError": "Failed to load data",
+    "howItWorks": "How it works?",
+    "step1": "Share your referral link with friends",
+    "step2": "{count} friends need to register",
+    "step3": "Once the condition is met, you get a free reward!",
+    "condition": "Condition",
+    "conditionBuySell": "Your friend must buy or sell",
+    "conditionEmailVerify": "Your friend must verify their email",
+    "rewardReceived": "Reward received",
+    "noRewardYet": "No reward yet"
   },
   "VerifyEmailPage": {
     "title": "Email Verification",
