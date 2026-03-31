@@ -43,7 +43,7 @@ export default function SkinDetailsModal({
   onClose,
   skin,
 }: SkinDetailsModalProps) {
-  const [activeTab, setActiveTab] = useState<"details" | "sales" | "priceHistory">("details");
+  const [activeTab, setActiveTab] = useState<"details" | "sales">("details");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [url, setUrl] = useState("");
@@ -130,7 +130,7 @@ export default function SkinDetailsModal({
       if (event.key === "Escape") {
         onClose();
       } else if (event.key === "Tab") {
-        const tabs: typeof activeTab[] = ["details", "sales", "priceHistory"];
+        const tabs: typeof activeTab[] = ["details", "sales"];
         const currentIdx = tabs.indexOf(activeTab);
         if (event.shiftKey) {
           if (currentIdx > 0) {
@@ -203,16 +203,6 @@ export default function SkinDetailsModal({
                 }`}
               >
                 {t("salesInfo")}
-              </button>
-              <button
-                onClick={() => setActiveTab("priceHistory")}
-                className={`pb-2 text-lg font-medium transition-colors border-b-2 ${
-                  activeTab === "priceHistory"
-                    ? "text-gray-900 dark:text-white border-green-500"
-                    : "text-gray-400 dark:text-gray-500 border-transparent hover:text-gray-600 dark:hover:text-gray-300"
-                }`}
-              >
-                {t("priceHistoryTab")}
               </button>
             </div>
 
@@ -483,11 +473,11 @@ export default function SkinDetailsModal({
             )}
 
             {activeTab === "sales" && (
-              <SalesInfoTab skinId={skin.id} currency={currency} t={t} />
-            )}
-
-            {activeTab === "priceHistory" && (
-              <PriceHistoryTab skinId={skin.id} currency={currency} t={t} />
+              <>
+                <PriceHistoryTab skinId={skin.id} currency={currency} t={t} />
+                <div className="mt-6" />
+                <SalesInfoTab skinId={skin.id} currency={currency} t={t} />
+              </>
             )}
           </div>
 
