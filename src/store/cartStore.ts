@@ -11,6 +11,8 @@ interface CartItem {
     price: number;
     imageUrl: string;
     rarity: string;
+    exterior?: string;
+    float?: number;
   };
 }
 
