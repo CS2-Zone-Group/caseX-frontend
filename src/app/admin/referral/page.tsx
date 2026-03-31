@@ -68,7 +68,7 @@ export default function AdminReferralPage() {
 
   // Config
   const [config, setConfig] = useState<ReferralConfig | null>(null);
-  const [configForm, setConfigForm] = useState({ requiredFriendsCount: 5, completionCondition: 'transaction' as string, isActive: true });
+  const [configForm, setConfigForm] = useState({ requiredFriendsCount: 5, completionCondition: 'transaction' as string, minTransactionAmount: 5, isActive: true });
   const [savingConfig, setSavingConfig] = useState(false);
 
   // Reward items
@@ -105,6 +105,7 @@ export default function AdminReferralPage() {
       setConfigForm({
         requiredFriendsCount: data.requiredFriendsCount,
         completionCondition: data.completionCondition,
+        minTransactionAmount: data.minTransactionAmount ?? 5,
         isActive: data.isActive,
       });
     } catch { /* ignore */ }
@@ -277,7 +278,7 @@ export default function AdminReferralPage() {
           {/* Config */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold text-white mb-4">Referral sozlamalari</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <label className="block text-xs text-gray-400 mb-1">Kerakli do&apos;stlar soni</label>
                 <input
@@ -286,6 +287,16 @@ export default function AdminReferralPage() {
                   onChange={(e) => setConfigForm({ ...configForm, requiredFriendsCount: +e.target.value })}
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm"
                 />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">Minimum tranzaksiya ($)</label>
+                <input
+                  type="number" min={0} max={10000} step={0.5}
+                  value={configForm.minTransactionAmount}
+                  onChange={(e) => setConfigForm({ ...configForm, minTransactionAmount: +e.target.value })}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm"
+                />
+                <p className="text-[10px] text-gray-500 mt-1">Do&apos;st bu summaga buy/sell qilishi kerak</p>
               </div>
               <div>
                 <label className="block text-xs text-gray-400 mb-1">Shart turi</label>
