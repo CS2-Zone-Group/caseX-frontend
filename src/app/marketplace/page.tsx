@@ -17,6 +17,7 @@ import TargetBidModal from '@/components/TargetBidModal';
 import { toast } from '@/store/toastStore';
 import Loader from '@/components/Loader';
 import { getRarityStyle } from '@/lib/rarity';
+import { useMarketplaceSocket, ItemListedPayload, ItemSoldPayload, ItemUnlistedPayload } from '@/lib/socket';
 
 interface Skin {
   id: string;
@@ -142,6 +143,61 @@ function MarketplaceContent() {
       }
     }
   }, [searchParams, skins]);
+
+  // Real-time marketplace updates via WebSocket
+  useMarketplaceSocket({
+    'item:listed': (payload: ItemListedPayload) => {
+      setSkins((prev) => {
+        // Avoid duplicates
+        if (prev.some((s) => s.id === payload.skinId)) return prev;
+        const newSkin: Skin = {
+          id: payload.skinId,
+          name: payload.name,
+          price: payload.price,
+          imageUrl: payload.imageUrl,
+          weaponType: payload.weaponType || '',
+          rarity: payload.rarity || '',
+          exterior: payload.exterior || '',
+          float: payload.float,
+          isUserListing: true,
+          inventoryId: payload.inventoryId,
+          sellerName: payload.seller,
+        };
+        return [newSkin, ...prev];
+      });
+    },
+    'item:sold': (payload: ItemSoldPayload) => {
+      setSkins((prev) =>
+        prev.filter((s) => {
+          if (payload.inventoryId && s.inventoryId === payload.inventoryId) return false;
+          if (s.id === payload.skinId) return false;
+          return true;
+        }),
+      );
+      // Also remove from selection if selected
+      setSelectedItems((prev) => {
+        const next = new Set(prev);
+        if (payload.inventoryId) next.delete(payload.inventoryId);
+        next.delete(payload.skinId);
+        return next;
+      });
+    },
+    'item:unlisted': (payload: ItemUnlistedPayload) => {
+      setSkins((prev) =>
+        prev.filter((s) => {
+          if (payload.inventoryId && s.inventoryId === payload.inventoryId) return false;
+          if (s.id === payload.skinId && s.isUserListing) return false;
+          return true;
+        }),
+      );
+      setSelectedItems((prev) => {
+        const next = new Set(prev);
+        if (payload.inventoryId) next.delete(payload.inventoryId);
+        next.delete(payload.skinId);
+        return next;
+      });
+    },
+  });
 
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
 

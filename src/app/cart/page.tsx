@@ -13,6 +13,7 @@ import { getRarityStyle } from '@/lib/rarity';
 import { toast } from '@/store/toastStore';
 import Loader from '@/components/Loader';
 import api from '@/lib/api';
+import { useMarketplaceSocket, ItemSoldPayload } from '@/lib/socket';
 
 export default function CartPage() {
   const router = useRouter();
@@ -25,6 +26,20 @@ export default function CartPage() {
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
+  const [unavailableIds, setUnavailableIds] = useState<Set<string>>(new Set());
+
+  // Real-time: mark cart items as unavailable when sold elsewhere
+  useMarketplaceSocket({
+    'item:sold': (payload: ItemSoldPayload) => {
+      const match = items.find(
+        (i) => i.skin.id === payload.skinId || i.skinId === payload.skinId,
+      );
+      if (match) {
+        setUnavailableIds((prev) => new Set(prev).add(match.id));
+        toast.info(t('itemSoldElsewhere') || `${match.skin.name} has been sold`);
+      }
+    },
+  });
 
   useEffect(() => { document.title = `${t('title')} - CaseX`; }, [t]);
   useEffect(() => { setIsHydrated(true); }, []);
@@ -149,30 +164,42 @@ export default function CartPage() {
 
                 {items.map((item) => {
                   const isSelected = selectedIds.has(item.id);
+                  const isUnavailable = unavailableIds.has(item.id);
                   const rarityStyle = getRarityStyle(item.skin.rarity);
                   return (
                     <div
                       key={item.id}
-                      onClick={() => toggleSelect(item.id)}
-                      className={`flex items-center gap-4 p-3 bg-white dark:bg-gray-800/80 rounded-xl border transition-all cursor-pointer ${
-                        isSelected
-                          ? 'border-primary-500/50 bg-primary-50 dark:bg-primary-900/10'
-                          : 'border-gray-200 dark:border-gray-700/50 opacity-60'
+                      onClick={() => !isUnavailable && toggleSelect(item.id)}
+                      className={`flex items-center gap-4 p-3 bg-white dark:bg-gray-800/80 rounded-xl border transition-all ${isUnavailable ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${
+                        isUnavailable
+                          ? 'border-red-500/50 bg-red-50 dark:bg-red-900/10'
+                          : isSelected
+                            ? 'border-primary-500/50 bg-primary-50 dark:bg-primary-900/10'
+                            : 'border-gray-200 dark:border-gray-700/50 opacity-60'
                       }`}
                     >
                       {/* Checkbox */}
-                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition ${isSelected ? 'bg-primary-600 border-primary-600' : 'border-gray-500'}`}>
-                        {isSelected && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition ${isUnavailable ? 'bg-red-500 border-red-500' : isSelected ? 'bg-primary-600 border-primary-600' : 'border-gray-500'}`}>
+                        {isUnavailable ? (
+                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                        ) : isSelected ? (
+                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                        ) : null}
                       </div>
 
                       {/* Image */}
-                      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0" style={{ background: rarityStyle.gradient, backgroundColor: 'rgb(31 41 55 / 0.5)' }}>
+                      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 relative" style={{ background: rarityStyle.gradient, backgroundColor: 'rgb(31 41 55 / 0.5)' }}>
                         <img src={item.skin.imageUrl} alt={item.skin.name} className="w-full h-full object-contain p-1.5" />
+                        {isUnavailable && (
+                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                            <span className="text-[8px] font-bold text-red-400 uppercase">{t('unavailable') || 'Sold'}</span>
+                          </div>
+                        )}
                       </div>
 
                       {/* Info */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-gray-900 dark:text-white text-sm truncate">{item.skin.name}</h3>
+                        <h3 className={`font-medium text-sm truncate ${isUnavailable ? 'text-gray-400 line-through' : 'text-gray-900 dark:text-white'}`}>{item.skin.name}</h3>
                         <div className="flex items-center gap-2 mt-0.5">
                           <span className="text-[10px] font-medium" style={{ color: rarityStyle.color }}>{item.skin.rarity}</span>
                           {item.skin.exterior && (
