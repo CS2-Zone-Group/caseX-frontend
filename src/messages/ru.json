@@ -249,7 +249,20 @@
     "avgPrice": "средняя цена",
     "loadingSales": "Загрузка данных о продажах...",
     "target": "Цель",
-    "offer": "Предложение"
+    "offer": "Предложение",
+    "priceHistoryTab": "ИСТОРИЯ ЦЕН",
+    "priceHistory": "История цен",
+    "loadingPriceHistory": "Загрузка истории цен...",
+    "noPriceHistory": "История цен для этого предмета недоступна",
+    "avgPriceLabel": "Средняя цена",
+    "minPriceLabel": "Мин. цена",
+    "maxPriceLabel": "Макс. цена",
+    "totalTrades": "Всего сделок",
+    "avg": "Сред",
+    "min": "Мин",
+    "max": "Макс",
+    "trades": "Сделки",
+    "noTrades": "Нет сделок"
   },
   "SettingsModal": {
     "title": "Настройки",
@@ -847,5 +860,30 @@
     "warningPoint4": "Вы можете выставить предметы на продажу сразу",
     "dontShowAgain": "Больше не показывать",
     "agreeAndContinue": "Согласен, продолжить"
+  },
+  "SkinPage": {
+    "home": "Главная",
+    "marketplace": "Маркетплейс",
+    "price": "Цена",
+    "steamPrice": "Цена в Steam",
+    "buyNow": "Купить сейчас",
+    "addToCart": "В корзину",
+    "viewOnSteam": "Смотреть в Steam",
+    "inspectInGame": "Осмотреть в игре",
+    "itemType": "Тип предмета",
+    "exterior": "Внешний вид",
+    "rarity": "Редкость",
+    "collection": "Коллекция",
+    "floatValue": "Значение Float",
+    "description": "Описание",
+    "shareThisSkin": "Поделиться скином",
+    "copyLink": "Копировать ссылку",
+    "copied": "Скопировано",
+    "linkCopied": "Ссылка скопирована!",
+    "viewInMarketplace": "Смотреть на маркетплейсе",
+    "loginRequired": "Пожалуйста, войдите в систему",
+    "addedToCart": "Добавлено в корзину",
+    "purchaseSuccess": "Успешно куплено!",
+    "purchaseError": "Произошла ошибка"
   }
 }

@@ -249,7 +249,20 @@
     "avgPrice": "o'rtacha narx",
     "loadingSales": "Sotuv ma'lumotlari yuklanmoqda...",
     "target": "Target",
-    "offer": "Offer"
+    "offer": "Offer",
+    "priceHistoryTab": "NARX TARIXI",
+    "priceHistory": "Narx tarixi",
+    "loadingPriceHistory": "Narx tarixi yuklanmoqda...",
+    "noPriceHistory": "Bu inventar uchun narx tarixi mavjud emas",
+    "avgPriceLabel": "O'rtacha narx",
+    "minPriceLabel": "Min narx",
+    "maxPriceLabel": "Maks narx",
+    "totalTrades": "Jami savdolar",
+    "avg": "O'rt",
+    "min": "Min",
+    "max": "Maks",
+    "trades": "Savdolar",
+    "noTrades": "Savdo yo'q"
   },
   "SettingsModal": {
     "title": "Sozlamalar",
@@ -847,5 +860,30 @@
     "warningPoint4": "Himoya tugagunga qadar itemlarni sotishga qo'yishingiz mumkin",
     "dontShowAgain": "Boshqa ko'rsatilmasin",
     "agreeAndContinue": "Roziman, davom etish"
+  },
+  "SkinPage": {
+    "home": "Bosh sahifa",
+    "marketplace": "Bozor",
+    "price": "Narx",
+    "steamPrice": "Steam narxi",
+    "buyNow": "Sotib olish",
+    "addToCart": "Savatga qo'shish",
+    "viewOnSteam": "Steam'da ko'rish",
+    "inspectInGame": "O'yinda ko'rish",
+    "itemType": "Inventar turi",
+    "exterior": "Tashqi ko'rinish",
+    "rarity": "Kamyoblik",
+    "collection": "Kolleksiya",
+    "floatValue": "Float qiymati",
+    "description": "Tavsif",
+    "shareThisSkin": "Bu skinni ulashing",
+    "copyLink": "Havolani nusxalash",
+    "copied": "Nusxalandi",
+    "linkCopied": "Havola nusxalandi!",
+    "viewInMarketplace": "Bozorda ko'rish",
+    "loginRequired": "Iltimos, avval tizimga kiring",
+    "addedToCart": "Savatga qo'shildi",
+    "purchaseSuccess": "Muvaffaqiyatli sotib olindi!",
+    "purchaseError": "Xatolik yuz berdi"
   }
 }

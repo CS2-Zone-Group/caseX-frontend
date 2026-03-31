@@ -13,6 +13,7 @@ import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "@/store/toastStore";
 import SalesInfoTab from "@/components/SalesInfoTab";
+import PriceHistoryTab from "@/components/PriceHistoryTab";
 
 interface SkinDetailsModalProps {
   isOpen: boolean;
@@ -42,7 +43,7 @@ export default function SkinDetailsModal({
   onClose,
   skin,
 }: SkinDetailsModalProps) {
-  const [activeTab, setActiveTab] = useState<"details" | "sales">("details");
+  const [activeTab, setActiveTab] = useState<"details" | "sales" | "priceHistory">("details");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [url, setUrl] = useState("");
@@ -99,10 +100,10 @@ export default function SkinDetailsModal({
         return;
       }
       
-      // To'g'ridan-to'g'ri skin ID yordamida link yaratish
+      // SEO-friendly skin sahifasi URL
       const host = window.location.host;
       const protocol = window.location.protocol;
-      const shareUrl = `${protocol}//${host}/marketplace?openSkin=${skin.id}`;
+      const shareUrl = `${protocol}//${host}/skin/${skin.id}`;
       
       setUrl(shareUrl);
     } catch (error) {
@@ -129,12 +130,18 @@ export default function SkinDetailsModal({
       if (event.key === "Escape") {
         onClose();
       } else if (event.key === "Tab") {
-        if (event.shiftKey && activeTab === "sales") {
-          event.preventDefault();
-          setActiveTab("details");
-        } else if (!event.shiftKey && activeTab === "details") {
-          event.preventDefault();
-          setActiveTab("sales");
+        const tabs: typeof activeTab[] = ["details", "sales", "priceHistory"];
+        const currentIdx = tabs.indexOf(activeTab);
+        if (event.shiftKey) {
+          if (currentIdx > 0) {
+            event.preventDefault();
+            setActiveTab(tabs[currentIdx - 1]);
+          }
+        } else {
+          if (currentIdx < tabs.length - 1) {
+            event.preventDefault();
+            setActiveTab(tabs[currentIdx + 1]);
+          }
         }
       }
     };
@@ -196,6 +203,16 @@ export default function SkinDetailsModal({
                 }`}
               >
                 {t("salesInfo")}
+              </button>
+              <button
+                onClick={() => setActiveTab("priceHistory")}
+                className={`pb-2 text-lg font-medium transition-colors border-b-2 ${
+                  activeTab === "priceHistory"
+                    ? "text-gray-900 dark:text-white border-green-500"
+                    : "text-gray-400 dark:text-gray-500 border-transparent hover:text-gray-600 dark:hover:text-gray-300"
+                }`}
+              >
+                {t("priceHistoryTab")}
               </button>
             </div>
 
@@ -467,6 +484,10 @@ export default function SkinDetailsModal({
 
             {activeTab === "sales" && (
               <SalesInfoTab skinId={skin.id} currency={currency} t={t} />
+            )}
+
+            {activeTab === "priceHistory" && (
+              <PriceHistoryTab skinId={skin.id} currency={currency} t={t} />
             )}
           </div>
 

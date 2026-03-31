@@ -249,7 +249,20 @@
     "avgPrice": "avg price",
     "loadingSales": "Loading sales data...",
     "target": "Target",
-    "offer": "Offer"
+    "offer": "Offer",
+    "priceHistoryTab": "PRICE HISTORY",
+    "priceHistory": "Price History",
+    "loadingPriceHistory": "Loading price history...",
+    "noPriceHistory": "No price history available for this item",
+    "avgPriceLabel": "Avg Price",
+    "minPriceLabel": "Min Price",
+    "maxPriceLabel": "Max Price",
+    "totalTrades": "Total Trades",
+    "avg": "Avg",
+    "min": "Min",
+    "max": "Max",
+    "trades": "Trades",
+    "noTrades": "No trades"
   },
   "SettingsModal": {
     "title": "Settings",
@@ -847,5 +860,30 @@
     "warningPoint4": "You can still list them for sale or sell instantly",
     "dontShowAgain": "Don't show again",
     "agreeAndContinue": "Agree and continue"
+  },
+  "SkinPage": {
+    "home": "Home",
+    "marketplace": "Marketplace",
+    "price": "Price",
+    "steamPrice": "Steam price",
+    "buyNow": "Buy Now",
+    "addToCart": "Add to Cart",
+    "viewOnSteam": "View on Steam",
+    "inspectInGame": "Inspect in Game",
+    "itemType": "Item type",
+    "exterior": "Exterior",
+    "rarity": "Rarity",
+    "collection": "Collection",
+    "floatValue": "Float Value",
+    "description": "Description",
+    "shareThisSkin": "Share this skin",
+    "copyLink": "Copy link",
+    "copied": "Copied",
+    "linkCopied": "Link copied!",
+    "viewInMarketplace": "View in Marketplace",
+    "loginRequired": "Please log in first",
+    "addedToCart": "Added to cart",
+    "purchaseSuccess": "Purchase successful!",
+    "purchaseError": "An error occurred"
   }
 }
