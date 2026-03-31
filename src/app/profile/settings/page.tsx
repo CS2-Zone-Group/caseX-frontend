@@ -88,9 +88,9 @@ function ProfileSettingsContent() {
   };
 
   /* ─── Action button for each row ─── */
-  const iconBtn = "p-2 rounded-lg transition-colors flex-shrink-0";
-  const iconBtnGreen = `${iconBtn} text-green-500 hover:bg-green-500/10`;
-  const iconBtnGray = `${iconBtn} text-gray-400 hover:bg-gray-500/10 hover:text-white`;
+  const iconBtn = "w-10 h-10 flex items-center justify-center rounded-lg transition-colors flex-shrink-0 border";
+  const iconBtnGreen = `${iconBtn} text-green-500 border-green-500/30 bg-green-500/10 hover:bg-green-500/20`;
+  const iconBtnGray = `${iconBtn} text-gray-400 border-gray-600 bg-gray-700/50 hover:bg-gray-600 hover:text-white`;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -143,55 +143,6 @@ function ProfileSettingsContent() {
                 </div>
               </div>
 
-              {/* ─── Email ─── */}
-              <div className="mb-6">
-                <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                  {t('yourEmail').toUpperCase()}
-                </label>
-                <div className="flex items-center gap-2">
-                  {emailEditing ? (
-                    <>
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => { setEmail(e.target.value); setEmailError(""); }}
-                        className="flex-1 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500"
-                        autoFocus
-                      />
-                      <button onClick={saveEmail} disabled={emailSaving} className={iconBtnGreen} title={t('save')}>
-                        {emailSaving ? <Loader /> : <SaveIcon />}
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex-1 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 text-sm">
-                        {user?.email || <span className="text-gray-400">{t('emailNotSet')}</span>}
-                      </div>
-                      <button onClick={() => setEmailEditing(true)} className={user?.email ? iconBtnGray : iconBtnGreen} title={user?.email ? undefined : undefined}>
-                        {user?.email ? <PencilIcon /> : <PlusIcon />}
-                      </button>
-                    </>
-                  )}
-                </div>
-                {emailError && <p className="text-red-500 text-xs mt-1">{emailError}</p>}
-              </div>
-
-              {/* ─── Password ─── */}
-              <div className="mb-6">
-                <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">{t('password')}</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="password"
-                    value="••••••••"
-                    readOnly
-                    className="flex-1 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none"
-                  />
-                  <button onClick={() => setChangePasswordModalOpen(true)} className={iconBtnGray}>
-                    <PencilIcon />
-                  </button>
-                </div>
-              </div>
-
               {/* ─── Steam Account ─── */}
               <div className="mb-6">
                 <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
@@ -230,6 +181,55 @@ function ProfileSettingsContent() {
                 </div>
               </div>
 
+              {/* ─── Email ─── */}
+              <div className="mb-6">
+                <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
+                  {t('yourEmail').toUpperCase()}
+                </label>
+                <div className="flex items-center gap-2">
+                  {emailEditing ? (
+                    <>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => { setEmail(e.target.value); setEmailError(""); }}
+                        className="flex-1 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+                        autoFocus
+                      />
+                      <button onClick={saveEmail} disabled={emailSaving} className={iconBtnGreen} title={t('save')}>
+                        {emailSaving ? <Loader size="sm" /> : <SaveIcon />}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex-1 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 text-sm">
+                        {user?.email || <span className="text-gray-400">{t('emailNotSet')}</span>}
+                      </div>
+                      <button onClick={() => setEmailEditing(true)} className={user?.email ? iconBtnGray : iconBtnGreen} title={user?.email ? undefined : undefined}>
+                        {user?.email ? <PencilIcon /> : <PlusIcon />}
+                      </button>
+                    </>
+                  )}
+                </div>
+                {emailError && <p className="text-red-500 text-xs mt-1">{emailError}</p>}
+              </div>
+
+              {/* ─── Password ─── */}
+              <div className="mb-6">
+                <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">{t('password')}</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="password"
+                    value="••••••••"
+                    readOnly
+                    className="flex-1 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none"
+                  />
+                  <button onClick={() => setChangePasswordModalOpen(true)} className={iconBtnGray}>
+                    <PencilIcon />
+                  </button>
+                </div>
+              </div>
+
               {/* ─── Trade URL ─── */}
               {user?.steamId && (
                 <div className="mb-6">
@@ -246,7 +246,7 @@ function ProfileSettingsContent() {
                           autoFocus
                         />
                         <button onClick={saveTradeUrl} disabled={tradeUrlSaving} className={iconBtnGreen}>
-                          {tradeUrlSaving ? <Loader /> : <SaveIcon />}
+                          {tradeUrlSaving ? <Loader size="sm" /> : <SaveIcon />}
                         </button>
                       </>
                     ) : (

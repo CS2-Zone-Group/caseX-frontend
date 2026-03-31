@@ -13,6 +13,7 @@ import { useFilterStore } from '@/store/filterStore';
 import api from '@/lib/api';
 import Navbar from '@/components/Navbar';
 import AuthGuard from '@/components/AuthGuard';
+import { getRarityStyle } from '@/lib/rarity';
 import { toast } from '@/store/toastStore';
 
 export default function FavoritesPage() {
@@ -257,7 +258,8 @@ export default function FavoritesPage() {
                       className="group bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700/50 hover:border-primary-300 dark:hover:border-primary-600/50 transition-all duration-200 hover:shadow-lg overflow-hidden"
                     >
                       <div
-                        className="relative aspect-square bg-gray-100 dark:bg-gray-800/50 overflow-hidden"
+                        className="relative aspect-square overflow-hidden"
+                        style={{ background: getRarityStyle(skin.rarity).gradient, backgroundColor: 'rgb(31 41 55 / 0.5)' }}
                       >
                         <img
                           src={skin.imageUrl}

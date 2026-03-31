@@ -16,6 +16,7 @@ import FavoriteButton from '@/components/FavoriteButton';
 import TargetBidModal from '@/components/TargetBidModal';
 import { toast } from '@/store/toastStore';
 import Loader from '@/components/Loader';
+import { getRarityStyle } from '@/lib/rarity';
 
 interface Skin {
   id: string;
@@ -308,14 +309,16 @@ function MarketplaceContent() {
                   <div
                     key={itemKey}
                     onClick={() => toggleSelectItem(skin)}
-                    className={`group bg-white dark:bg-gray-900 rounded-lg border transition-all duration-200 hover:shadow-lg overflow-hidden cursor-pointer ${
+                    className={`group bg-white dark:bg-gray-900 rounded-lg transition-all duration-200 hover:shadow-lg overflow-hidden cursor-pointer ${
                       isSelected
-                        ? 'border-primary-500 dark:border-primary-500 ring-2 ring-primary-500/30'
-                        : 'border-gray-200 dark:border-gray-700/50 hover:border-primary-300 dark:hover:border-primary-600/50'
+                        ? 'ring-2 ring-primary-500/30'
+                        : ''
                     }`}
+                    style={{ border: `1px solid ${isSelected ? 'rgb(var(--color-primary-500))' : getRarityStyle(skin.rarity).color + '30'}` }}
                   >
                     <div
-                      className="relative aspect-square bg-gray-100 dark:bg-gray-800/50 overflow-hidden"
+                      className="relative aspect-square overflow-hidden"
+                      style={{ background: getRarityStyle(skin.rarity).gradient, backgroundColor: 'rgb(31 41 55 / 0.5)' }}
                     >
                       <img
                         src={skin.imageUrl}
@@ -369,7 +372,7 @@ function MarketplaceContent() {
                         {skin.name}
                       </h3>
 
-                      <p className="text-[9px] text-gray-400/80 dark:text-gray-500/80 truncate">
+                      <p className="text-[9px] truncate" style={{ color: getRarityStyle(skin.rarity).color + '99' }}>
                         {skin.exterior}
                       </p>
 
@@ -394,9 +397,7 @@ function MarketplaceContent() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              skin.isUserListing
-                                ? handleBuyListing(skin.inventoryId!)
-                                : handleAddToCart(skin.id);
+                              handleAddToCart(skin.id);
                             }}
                             className="p-1.5 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition"
                             title={t('addToCart')}

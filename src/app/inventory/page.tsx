@@ -15,6 +15,7 @@ import api from '@/lib/api';
 import { useFilterStore } from '@/store/filterStore';
 import { useRouter } from 'next/navigation';
 import Loader from '@/components/Loader';
+import { getRarityStyle } from '@/lib/rarity';
 
 interface InventoryItemType {
   id: string;
@@ -502,7 +503,7 @@ export default function InventoryPage() {
                       }`}
                       title={nonListable ? t('nonListableItem') : listed ? t('onSale') : undefined}
                     >
-                      <div className="relative aspect-square bg-gray-100 dark:bg-gray-800/50 overflow-hidden">
+                      <div className="relative aspect-square overflow-hidden" style={{ background: getRarityStyle(item.skin?.rarity).gradient, backgroundColor: 'rgb(31 41 55 / 0.5)' }}>
                         <img
                           src={item.skin?.imageUrl}
                           alt={item.skin?.name}

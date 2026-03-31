@@ -11,6 +11,7 @@ import api from '@/lib/api';
 import Link from 'next/link';
 import { toast } from '@/store/toastStore';
 import Loader from '@/components/Loader';
+import { getRarityStyle } from '@/lib/rarity';
 
 interface ListedItem {
   id: string;
@@ -129,53 +130,42 @@ export default function OnSalePage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
             {items.map((item) => (
               <div
                 key={item.id}
-                className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden hover:border-gray-300 dark:hover:border-gray-700 transition-all shadow-sm hover:shadow-md"
+                className="bg-white dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700/50 overflow-hidden hover:border-primary-500/50 transition-all group"
               >
-                <div className="relative aspect-square bg-gray-100 dark:bg-gray-800 p-4 flex items-center justify-center">
+                <div className="relative aspect-square p-3 flex items-center justify-center" style={{ background: getRarityStyle(item.skin.rarity).gradient, backgroundColor: 'rgb(31 41 55 / 0.5)' }}>
                   <img
                     src={item.skin.imageUrl}
                     alt={item.skin.name}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform"
                   />
                   <button
                     onClick={() => setDetailsSkin(item.skin)}
-                    className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                    className="absolute top-1.5 right-1.5 w-6 h-6 flex items-center justify-center rounded-full bg-black/40 backdrop-blur-sm text-white/70 hover:text-white transition-colors"
                   >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   </button>
+                  <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-green-500/20 text-green-400 text-[9px] font-medium rounded backdrop-blur-sm">
+                    {t('listed')}
+                  </span>
                 </div>
-                <div className="p-4 space-y-3">
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white text-sm truncate">{item.skin.name}</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className={`text-xs font-medium ${getRarityColor(item.skin.rarity)}`}>{item.skin.rarity}</span>
-                      <span className="text-xs text-gray-400">|</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">{item.skin.exterior}</span>
-                    </div>
-                  </div>
-
+                <div className="p-2.5 space-y-1.5">
+                  <h3 className="font-medium text-gray-900 dark:text-white text-xs truncate">{item.skin.name}</h3>
+                  <p className="text-[10px] text-gray-500 truncate">{item.skin.exterior}</p>
                   <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-xs text-gray-400">{t('listPrice')}</span>
-                      <div className="text-lg font-bold text-green-500">
-                        {formatPrice(item.listPrice, currency)}
-                      </div>
-                    </div>
-                    <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium rounded">
-                      {t('listed')}
+                    <span className="text-sm font-bold text-green-500">
+                      {formatPrice(item.listPrice, currency)}
                     </span>
                   </div>
-
                   <button
                     onClick={() => handleDelist(item.id)}
-                    className="w-full py-2 text-sm font-medium text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition"
+                    className="w-full py-1.5 text-[11px] font-medium text-red-400 bg-red-500/10 rounded hover:bg-red-500/20 transition"
                   >
                     {t('delist')}
                   </button>

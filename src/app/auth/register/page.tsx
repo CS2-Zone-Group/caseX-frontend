@@ -291,8 +291,8 @@ export default function RegisterPage() {
               type="button" onClick={handleSteamLogin}
               className="w-full py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition flex items-center justify-center gap-3"
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.56 3.79 10.24 8.93 11.61l3.37-6.97C10.97 16.1 10 14.67 10 13c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4c-.21 0-.42-.02-.62-.05l-2.97 6.16C17.34 22.43 24 17.73 24 12 24 5.37 18.63 0 12 0z" />
+              <svg className="w-5 h-5" viewBox="0 0 256 259" fill="currentColor">
+                <path d="M128.715 0C60.195 0 4.28 52.71.4 119.86l68.89 28.44c5.86-4.01 12.93-6.36 20.55-6.36 1.07 0 2.13.04 3.18.13l30.73-44.54v-.63c0-26.04 21.2-47.24 47.24-47.24 26.05 0 47.25 21.2 47.25 47.27 0 26.04-21.2 47.24-47.25 47.24h-1.1l-43.85 31.28c.04.88.07 1.77.07 2.66 0 19.55-15.9 35.45-35.46 35.45-17.23 0-31.6-12.32-34.82-28.66L4.67 159.47C18.46 215.57 68.56 258.46 128.71 258.46c71.19 0 128.9-57.71 128.9-128.91C257.61 57.71 199.91 0 128.71 0" />
               </svg>
               <span>{t('form.steamRegister')}</span>
             </button>
