@@ -563,7 +563,7 @@
     "step2": "{count} ta do'stingiz ro'yxatdan o'tishi kerak",
     "step3": "Shart bajarilganda Siz bepul sovg'a olasiz!",
     "condition": "Shart",
-    "conditionBuySell": "Do'stingiz buy yoki sell qilishi kerak",
+    "conditionBuySell": "Do'stingiz sotib olish yoki sotish amalga oshirishi kerak",
     "conditionEmailVerify": "Do'stingiz emailni tasdiqlashi kerak",
     "rewardReceived": "Sovg'a olindi",
     "noRewardYet": "Hali sovg'a olinmadi"

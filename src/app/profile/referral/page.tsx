@@ -111,7 +111,7 @@ export default function ReferralPage() {
   return (
     <>
       <Navbar />
-      <div className="flex flex-col lg:flex-row gap-6 p-4 lg:p-8 max-w-6xl mx-auto">
+      <div className="flex flex-col lg:flex-row gap-6 p-4 lg:p-8 pt-20 max-w-6xl mx-auto">
         <ProfileSidebar activeTab="referral" />
 
         <div className="flex-1 space-y-6">
