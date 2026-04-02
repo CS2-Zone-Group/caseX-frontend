@@ -262,7 +262,24 @@
     "min": "Min",
     "max": "Max",
     "trades": "Trades",
-    "noTrades": "No trades"
+    "noTrades": "No trades",
+    "inspectSkin": "Inspect Skin"
+  },
+  "SkinInspectViewer": {
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "resetZoom": "Reset zoom",
+    "close": "Close",
+    "loading": "Loading skin screenshot...",
+    "notAvailable": "Inspect not available",
+    "notAvailableHint": "This skin does not have an inspect link available",
+    "loadError": "Failed to load screenshot",
+    "loadErrorHint": "The screenshot could not be loaded. Please try again later.",
+    "float": "Float",
+    "paintSeed": "Pattern",
+    "paintIndex": "Paint Index",
+    "zoom": "Zoom",
+    "reset": "Reset"
   },
   "SettingsModal": {
     "title": "Settings",
@@ -881,6 +898,7 @@
     "copied": "Copied",
     "linkCopied": "Link copied!",
     "viewInMarketplace": "View in Marketplace",
+    "inspectSkin": "Inspect Skin",
     "loginRequired": "Please log in first",
     "addedToCart": "Added to cart",
     "purchaseSuccess": "Purchase successful!",

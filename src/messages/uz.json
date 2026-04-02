@@ -262,7 +262,24 @@
     "min": "Min",
     "max": "Maks",
     "trades": "Savdolar",
-    "noTrades": "Savdo yo'q"
+    "noTrades": "Savdo yo'q",
+    "inspectSkin": "Skinni ko'rish"
+  },
+  "SkinInspectViewer": {
+    "zoomIn": "Kattalashtirish",
+    "zoomOut": "Kichiklashtirish",
+    "resetZoom": "Asl holatga qaytarish",
+    "close": "Yopish",
+    "loading": "Skin skrinshoti yuklanmoqda...",
+    "notAvailable": "Ko'rish imkoni yo'q",
+    "notAvailableHint": "Bu skin uchun ko'rish havolasi mavjud emas",
+    "loadError": "Skrinshotni yuklashda xatolik",
+    "loadErrorHint": "Skrinshotni yuklab bo'lmadi. Keyinroq qayta urinib ko'ring.",
+    "float": "Float",
+    "paintSeed": "Naqsh",
+    "paintIndex": "Bo'yoq indeksi",
+    "zoom": "Kattalashtirish",
+    "reset": "Qaytarish"
   },
   "SettingsModal": {
     "title": "Sozlamalar",
@@ -881,6 +898,7 @@
     "copied": "Nusxalandi",
     "linkCopied": "Havola nusxalandi!",
     "viewInMarketplace": "Bozorda ko'rish",
+    "inspectSkin": "Skinni ko'rish",
     "loginRequired": "Iltimos, avval tizimga kiring",
     "addedToCart": "Savatga qo'shildi",
     "purchaseSuccess": "Muvaffaqiyatli sotib olindi!",

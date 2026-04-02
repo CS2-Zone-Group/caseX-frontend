@@ -262,7 +262,24 @@
     "min": "Мин",
     "max": "Макс",
     "trades": "Сделки",
-    "noTrades": "Нет сделок"
+    "noTrades": "Нет сделок",
+    "inspectSkin": "Осмотреть скин"
+  },
+  "SkinInspectViewer": {
+    "zoomIn": "Увеличить",
+    "zoomOut": "Уменьшить",
+    "resetZoom": "Сбросить масштаб",
+    "close": "Закрыть",
+    "loading": "Загрузка скриншота скина...",
+    "notAvailable": "Осмотр недоступен",
+    "notAvailableHint": "Для этого скина нет ссылки для осмотра",
+    "loadError": "Не удалось загрузить скриншот",
+    "loadErrorHint": "Скриншот не удалось загрузить. Попробуйте позже.",
+    "float": "Float",
+    "paintSeed": "Паттерн",
+    "paintIndex": "Индекс краски",
+    "zoom": "Масштаб",
+    "reset": "Сброс"
   },
   "SettingsModal": {
     "title": "Настройки",
@@ -881,6 +898,7 @@
     "copied": "Скопировано",
     "linkCopied": "Ссылка скопирована!",
     "viewInMarketplace": "Смотреть на маркетплейсе",
+    "inspectSkin": "Осмотреть скин",
     "loginRequired": "Пожалуйста, войдите в систему",
     "addedToCart": "Добавлено в корзину",
     "purchaseSuccess": "Успешно куплено!",

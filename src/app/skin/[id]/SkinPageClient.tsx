@@ -12,6 +12,8 @@ import { getRarityStyle } from '@/lib/rarity';
 import { useTranslations } from 'next-intl';
 import { toast } from '@/store/toastStore';
 import Link from 'next/link';
+import CircularProgress from '@mui/material/CircularProgress';
+import SkinInspectViewer from '@/components/SkinInspectViewer';
 
 interface Skin {
   id: string;
@@ -40,6 +42,14 @@ export default function SkinPageClient({ skin }: { skin: Skin }) {
   const [copied, setCopied] = useState(false);
   const [cartLoading, setCartLoading] = useState(false);
   const [buyLoading, setBuyLoading] = useState(false);
+  const [inspectOpen, setInspectOpen] = useState(false);
+  const [inspectData, setInspectData] = useState<{
+    screenshotUrl: string | null;
+    floatValue?: number | null;
+    paintSeed?: number | null;
+    paintIndex?: number | null;
+  } | null>(null);
+  const [inspectLoading, setInspectLoading] = useState(false);
 
   const rarityStyle = getRarityStyle(skin.rarity);
 
@@ -85,6 +95,41 @@ export default function SkinPageClient({ skin }: { skin: Skin }) {
       toast.error(error.response?.data?.message || t('purchaseError'));
     } finally {
       setBuyLoading(false);
+    }
+  };
+
+  const handleInspect = async () => {
+    setInspectLoading(true);
+    try {
+      const { default: api } = await import('@/lib/api');
+      const res = await api.get(`/skins/${skin.id}/screenshot`);
+      const data = res.data;
+      if (data.available && data.screenshotUrl) {
+        setInspectData({
+          screenshotUrl: data.screenshotUrl,
+          floatValue: data.floatValue ?? skin.float ?? null,
+          paintSeed: data.paintSeed ?? null,
+          paintIndex: data.paintIndex ?? null,
+        });
+        setInspectOpen(true);
+      } else {
+        setInspectData({ screenshotUrl: null });
+        setInspectOpen(true);
+      }
+    } catch {
+      if (skin.marketHashName) {
+        const inspectLink = `steam://rungame/730/76561202255233023/+csgo_econ_action_preview%20M%20${skin.marketHashName}`;
+        setInspectData({
+          screenshotUrl: `https://s.csfloat.com/preview?url=${encodeURIComponent(inspectLink)}`,
+          floatValue: skin.float ?? null,
+        });
+        setInspectOpen(true);
+      } else {
+        setInspectData({ screenshotUrl: null });
+        setInspectOpen(true);
+      }
+    } finally {
+      setInspectLoading(false);
     }
   };
 
@@ -214,16 +259,19 @@ export default function SkinPageClient({ skin }: { skin: Skin }) {
                 <span>{t('viewOnSteam')}</span>
               </button>
               <button
-                className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
-                onClick={() => {
-                  window.location.href = `steam://rungame/730/76561202255233023/+csgo_econ_action_preview%20M%20${encodeURIComponent(skin.marketHashName || skin.name)}`;
-                }}
+                className="flex-1 px-4 py-2.5 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium disabled:opacity-50"
+                onClick={handleInspect}
+                disabled={inspectLoading}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-                <span>{t('inspectInGame')}</span>
+                {inspectLoading ? (
+                  <CircularProgress size={16} sx={{ color: 'white' }} />
+                ) : (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                )}
+                <span>{t('inspectSkin')}</span>
               </button>
             </div>
           </div>
@@ -399,6 +447,18 @@ export default function SkinPageClient({ skin }: { skin: Skin }) {
           </div>
         </div>
       </div>
+
+      {/* Skin Inspect Viewer */}
+      <SkinInspectViewer
+        isOpen={inspectOpen}
+        onClose={() => setInspectOpen(false)}
+        skinName={skin.name}
+        screenshotUrl={inspectData?.screenshotUrl ?? null}
+        floatValue={inspectData?.floatValue ?? skin.float ?? null}
+        exterior={skin.exterior}
+        paintSeed={inspectData?.paintSeed}
+        paintIndex={inspectData?.paintIndex}
+      />
     </div>
   );
 }
