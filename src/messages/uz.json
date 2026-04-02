@@ -343,7 +343,13 @@
       "fieldTested": "Maydon sinovdan o'tgan",
       "wellWorn": "Yaxshi eskirgan",
       "battleScarred": "Jang izlari"
-    }
+    },
+    "collection": "Kolleksiya",
+    "allCollections": "Barcha kolleksiyalar",
+    "searchCollection": "Kolleksiyalarni qidirish...",
+    "allSubCategories": "Barchasi",
+    "searchSubCategory": "Qidirish...",
+    "noResults": "Natija topilmadi"
   },
   "InventoryFilters": {
     "title": "Filtrlar",

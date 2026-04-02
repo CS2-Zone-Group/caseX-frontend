@@ -343,7 +343,13 @@
       "fieldTested": "После полевых испытаний",
       "wellWorn": "Поношенное",
       "battleScarred": "Закалённое в боях"
-    }
+    },
+    "collection": "Коллекция",
+    "allCollections": "Все коллекции",
+    "searchCollection": "Поиск коллекций...",
+    "allSubCategories": "Все",
+    "searchSubCategory": "Поиск...",
+    "noResults": "Ничего не найдено"
   },
   "InventoryFilters": {
     "title": "Фильтры",

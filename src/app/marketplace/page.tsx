@@ -57,6 +57,8 @@ function MarketplaceContent() {
     sortBy,
     rarity,
     weaponType,
+    subCategory,
+    collection,
     condition,
     priceRange,
     setSortBy,
@@ -93,6 +95,8 @@ function MarketplaceContent() {
       if (searchQuery) params.search = searchQuery;
       if (rarity) params.rarity = rarity;
       if (weaponType) params.weaponType = weaponType;
+      if (subCategory) params.subCategory = subCategory;
+      if (collection) params.collection = collection;
       if (condition) params.exterior = condition;
       if (priceRange.min > 0) params.minPrice = priceRange.min;
       if (priceRange.max > 0) params.maxPrice = priceRange.max;
@@ -124,7 +128,7 @@ function MarketplaceContent() {
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, sortBy, rarity, weaponType, condition, priceRange, category]);
+  }, [searchQuery, sortBy, rarity, weaponType, subCategory, collection, condition, priceRange, category]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

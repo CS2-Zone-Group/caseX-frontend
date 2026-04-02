@@ -343,7 +343,13 @@
       "fieldTested": "Field-Tested",
       "wellWorn": "Well-Worn",
       "battleScarred": "Battle-Scarred"
-    }
+    },
+    "collection": "Collection",
+    "allCollections": "All Collections",
+    "searchCollection": "Search collections...",
+    "allSubCategories": "All",
+    "searchSubCategory": "Search...",
+    "noResults": "No results found"
   },
   "InventoryFilters": {
     "title": "Filters",

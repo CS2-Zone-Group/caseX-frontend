@@ -1,22 +1,37 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useFilterStore } from "@/store/filterStore";
 import { useTranslations } from "next-intl";
+import api from "@/lib/api";
 
 interface FilterPanelProps {
   isVisible: boolean;
   onToggle: () => void;
 }
 
+interface FilterOptions {
+  weaponTypes: string[];
+  subCategories: Record<string, string[]>;
+  collections: string[];
+  rarities: string[];
+  exteriors: string[];
+}
+
 export default function FilterPanel({ isVisible, onToggle }: FilterPanelProps) {
   const t = useTranslations("MarketplaceFilters");
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+  const [filterOptions, setFilterOptions] = useState<FilterOptions | null>(null);
+  const [weaponSearch, setWeaponSearch] = useState("");
+  const [collectionSearch, setCollectionSearch] = useState("");
+
   const {
     searchQuery,
     sortBy,
     rarity,
     weaponType,
+    subCategory,
+    collection,
     condition,
     priceRange,
     setFilter,
@@ -25,6 +40,19 @@ export default function FilterPanel({ isVisible, onToggle }: FilterPanelProps) {
     setSortBy,
     resetFilters,
   } = useFilterStore();
+
+  // Fetch filter options from API on mount
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        const { data } = await api.get("/skins/filter-options");
+        setFilterOptions(data);
+      } catch (error) {
+        console.error("Failed to fetch filter options:", error);
+      }
+    };
+    fetchFilterOptions();
+  }, []);
 
   const toggleSection = (key: string) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -41,16 +69,40 @@ export default function FilterPanel({ isVisible, onToggle }: FilterPanelProps) {
     { label: t("rarityOptions.contraband"), value: "Contraband" },
   ];
 
-  const weaponTypes = [
-    { label: t("weaponTypes.all"), value: "" },
-    { label: t("weaponTypes.pistol"), value: "Pistol" },
-    { label: t("weaponTypes.rifle"), value: "Rifle" },
-    { label: t("weaponTypes.smg"), value: "SMG" },
-    { label: t("weaponTypes.sniper"), value: "Sniper Rifle" },
-    { label: t("weaponTypes.shotgun"), value: "Shotgun" },
-    { label: t("weaponTypes.knife"), value: "Knife" },
-    { label: t("weaponTypes.gloves"), value: "Gloves" },
+  // Static weapon type labels for i18n
+  const weaponTypeLabels: Record<string, string> = {
+    Pistol: t("weaponTypes.pistol"),
+    Rifle: t("weaponTypes.rifle"),
+    SMG: t("weaponTypes.smg"),
+    "Sniper Rifle": t("weaponTypes.sniper"),
+    Shotgun: t("weaponTypes.shotgun"),
+    Knife: t("weaponTypes.knife"),
+    Gloves: t("weaponTypes.gloves"),
+  };
+
+  // Use API data if available, otherwise fallback to static list
+  const weaponTypes = filterOptions?.weaponTypes || [
+    "Pistol", "Rifle", "SMG", "Sniper Rifle", "Shotgun", "Knife", "Gloves",
   ];
+
+  // Filter subcategories by search
+  const filteredSubCategories = useMemo(() => {
+    if (!filterOptions?.subCategories || !weaponType) return [];
+    const subs = filterOptions.subCategories[weaponType] || [];
+    if (!weaponSearch) return subs;
+    return subs.filter((s) =>
+      s.toLowerCase().includes(weaponSearch.toLowerCase())
+    );
+  }, [filterOptions?.subCategories, weaponType, weaponSearch]);
+
+  // Filter collections by search
+  const filteredCollections = useMemo(() => {
+    if (!filterOptions?.collections) return [];
+    if (!collectionSearch) return filterOptions.collections;
+    return filterOptions.collections.filter((c) =>
+      c.toLowerCase().includes(collectionSearch.toLowerCase())
+    );
+  }, [filterOptions?.collections, collectionSearch]);
 
   const exteriorOptions = [
     { label: t("exteriorOptions.all"), value: "" },
@@ -72,6 +124,8 @@ export default function FilterPanel({ isVisible, onToggle }: FilterPanelProps) {
   const activeCount = [
     rarity,
     weaponType,
+    subCategory,
+    collection,
     condition,
     priceRange.min > 0 ? true : null,
     priceRange.max > 0 ? true : null,
@@ -125,6 +179,9 @@ export default function FilterPanel({ isVisible, onToggle }: FilterPanelProps) {
 
   const selectClass =
     "w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-3 pr-8 py-2 rounded-lg border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm appearance-none bg-no-repeat bg-[length:16px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[position:right_0.5rem_center]";
+
+  const miniSearchClass =
+    "w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-3 pr-8 py-1.5 rounded-md border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent text-xs";
 
   if (!isVisible) return null;
 
@@ -212,24 +269,180 @@ export default function FilterPanel({ isVisible, onToggle }: FilterPanelProps) {
             </div>
           </FilterSection>
 
-          {/* Weapon Type */}
-          <FilterSection id="weaponType" label={t("weaponType")} badge={weaponType || null}>
+          {/* Weapon Type — DMarket-style tree with subcategories */}
+          <FilterSection
+            id="weaponType"
+            label={t("weaponType")}
+            badge={subCategory || weaponType || null}
+          >
             <div className="space-y-1">
-              {weaponTypes.map((opt) => (
+              {/* All weapons option */}
+              <button
+                onClick={() => {
+                  setFilter("weaponType", null);
+                  setWeaponSearch("");
+                }}
+                className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                  !weaponType
+                    ? "bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium"
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                }`}
+              >
+                {t("weaponTypes.all")}
+              </button>
+
+              {weaponTypes.map((wt) => {
+                const isActive = weaponType === wt;
+                const hasSubs = filterOptions?.subCategories?.[wt]?.length;
+                return (
+                  <div key={wt}>
+                    <button
+                      onClick={() => {
+                        if (isActive) {
+                          // Clicking the same weapon type again deselects it
+                          setFilter("weaponType", null);
+                          setWeaponSearch("");
+                        } else {
+                          setFilter("weaponType", wt);
+                          setWeaponSearch("");
+                        }
+                      }}
+                      className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-colors flex items-center justify-between ${
+                        isActive
+                          ? "bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium"
+                          : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                      }`}
+                    >
+                      <span>{weaponTypeLabels[wt] || wt}</span>
+                      {hasSubs ? (
+                        <svg
+                          className={`w-3 h-3 transition-transform duration-200 ${isActive ? "rotate-90" : ""}`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                      ) : null}
+                    </button>
+
+                    {/* Subcategories tree */}
+                    {isActive && hasSubs ? (
+                      <div className="ml-3 mt-1 pl-3 border-l-2 border-gray-200 dark:border-gray-700 space-y-0.5">
+                        {/* Search within subcategories */}
+                        {(filterOptions?.subCategories?.[wt]?.length || 0) > 5 && (
+                          <div className="mb-1.5">
+                            <input
+                              type="text"
+                              placeholder={t("searchSubCategory")}
+                              value={weaponSearch}
+                              onChange={(e) => setWeaponSearch(e.target.value)}
+                              className={miniSearchClass}
+                            />
+                          </div>
+                        )}
+
+                        {/* All in this weapon type (clear subcategory) */}
+                        <button
+                          onClick={() => setFilter("subCategory", null)}
+                          className={`w-full text-left px-2 py-1 rounded text-xs transition-colors ${
+                            !subCategory
+                              ? "bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium"
+                              : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          }`}
+                        >
+                          {t("allSubCategories")}
+                        </button>
+
+                        {filteredSubCategories.map((sc) => (
+                          <button
+                            key={sc}
+                            onClick={() => setFilter("subCategory", sc)}
+                            className={`w-full text-left px-2 py-1 rounded text-xs transition-colors ${
+                              subCategory === sc
+                                ? "bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium"
+                                : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                            }`}
+                          >
+                            {sc}
+                          </button>
+                        ))}
+
+                        {filteredSubCategories.length === 0 && weaponSearch && (
+                          <p className="text-xs text-gray-400 dark:text-gray-500 px-2 py-1">
+                            {t("noResults")}
+                          </p>
+                        )}
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          </FilterSection>
+
+          {/* Collection */}
+          {filterOptions?.collections && filterOptions.collections.length > 0 && (
+            <FilterSection
+              id="collection"
+              label={t("collection")}
+              badge={collection || null}
+            >
+              <div className="space-y-1">
+                {/* Search within collections */}
+                {filterOptions.collections.length > 5 && (
+                  <div className="mb-1.5">
+                    <input
+                      type="text"
+                      placeholder={t("searchCollection")}
+                      value={collectionSearch}
+                      onChange={(e) => setCollectionSearch(e.target.value)}
+                      className={miniSearchClass}
+                    />
+                  </div>
+                )}
+
+                {/* All collections option */}
                 <button
-                  key={opt.value}
-                  onClick={() => setFilter("weaponType", opt.value || null)}
+                  onClick={() => {
+                    setFilter("collection", null);
+                    setCollectionSearch("");
+                  }}
                   className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                    (weaponType || "") === opt.value
+                    !collection
                       ? "bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium"
                       : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                   }`}
                 >
-                  {opt.label}
+                  {t("allCollections")}
                 </button>
-              ))}
-            </div>
-          </FilterSection>
+
+                <div className="max-h-48 overflow-y-auto space-y-0.5 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+                  {filteredCollections.map((col) => (
+                    <button
+                      key={col}
+                      onClick={() => setFilter("collection", col)}
+                      className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-colors ${
+                        collection === col
+                          ? "bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium"
+                          : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                      }`}
+                      title={col}
+                    >
+                      <span className="line-clamp-1">{col}</span>
+                    </button>
+                  ))}
+
+                  {filteredCollections.length === 0 && collectionSearch && (
+                    <p className="text-xs text-gray-400 dark:text-gray-500 px-3 py-1.5">
+                      {t("noResults")}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </FilterSection>
+          )}
 
           {/* Exterior */}
           <FilterSection id="exterior" label={t("exterior")} badge={condition || null}>
@@ -279,7 +492,11 @@ export default function FilterPanel({ isVisible, onToggle }: FilterPanelProps) {
           {activeCount > 0 && (
             <div className="pt-3">
               <button
-                onClick={() => resetFilters()}
+                onClick={() => {
+                  resetFilters();
+                  setWeaponSearch("");
+                  setCollectionSearch("");
+                }}
                 className="w-full py-2 text-sm font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
               >
                 {t("resetFilters")}
