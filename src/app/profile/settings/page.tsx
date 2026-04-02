@@ -74,6 +74,11 @@ function ProfileSettingsContent() {
 
   const saveTradeUrl = async () => {
     if (!tradeUrl.trim()) { setTradeUrlError(t('tradeUrlRequired')); return; }
+    const tradeUrlRegex = /^https:\/\/steamcommunity\.com\/tradeoffer\/new\/\?partner=\d+&token=[\w-]+$/;
+    if (!tradeUrlRegex.test(tradeUrl.trim())) {
+      setTradeUrlError(t('tradeUrlInvalid'));
+      return;
+    }
     setTradeUrlSaving(true);
     setTradeUrlError("");
     try {
