@@ -349,7 +349,11 @@
     "searchCollection": "Search collections...",
     "allSubCategories": "All",
     "searchSubCategory": "Search...",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "paintSeed": "Pattern (Paint Seed)",
+    "paintSeedPlaceholder": "Enter pattern number",
+    "sticker": "Sticker",
+    "stickerPlaceholder": "Enter sticker name"
   },
   "InventoryFilters": {
     "title": "Filters",

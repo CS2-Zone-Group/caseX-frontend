@@ -349,7 +349,11 @@
     "searchCollection": "Kolleksiyalarni qidirish...",
     "allSubCategories": "Barchasi",
     "searchSubCategory": "Qidirish...",
-    "noResults": "Natija topilmadi"
+    "noResults": "Natija topilmadi",
+    "paintSeed": "Naqsh (Paint Seed)",
+    "paintSeedPlaceholder": "Naqsh raqamini kiriting",
+    "sticker": "Sticker",
+    "stickerPlaceholder": "Sticker nomini kiriting"
   },
   "InventoryFilters": {
     "title": "Filtrlar",

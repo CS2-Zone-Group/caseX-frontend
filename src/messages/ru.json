@@ -349,7 +349,11 @@
     "searchCollection": "Поиск коллекций...",
     "allSubCategories": "Все",
     "searchSubCategory": "Поиск...",
-    "noResults": "Ничего не найдено"
+    "noResults": "Ничего не найдено",
+    "paintSeed": "Паттерн (Paint Seed)",
+    "paintSeedPlaceholder": "Введите номер паттерна",
+    "sticker": "Стикер",
+    "stickerPlaceholder": "Введите название стикера"
   },
   "InventoryFilters": {
     "title": "Фильтры",

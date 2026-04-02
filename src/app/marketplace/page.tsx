@@ -61,6 +61,8 @@ function MarketplaceContent() {
     collection,
     condition,
     priceRange,
+    paintSeed,
+    sticker,
     setSortBy,
     resetFilters
   } = useFilterStore();
@@ -100,6 +102,8 @@ function MarketplaceContent() {
       if (condition) params.exterior = condition;
       if (priceRange.min > 0) params.minPrice = priceRange.min;
       if (priceRange.max > 0) params.maxPrice = priceRange.max;
+      if (paintSeed) params.paintSeed = paintSeed;
+      if (sticker) params.sticker = sticker;
 
       const { data } = await api.get('/skins', { params });
       let fetchedSkins: Skin[] = [];
@@ -128,7 +132,7 @@ function MarketplaceContent() {
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, sortBy, rarity, weaponType, subCategory, collection, condition, priceRange, category]);
+  }, [searchQuery, sortBy, rarity, weaponType, subCategory, collection, condition, priceRange, paintSeed, sticker, category]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

@@ -34,6 +34,8 @@ export default function FilterPanel({ isVisible, onToggle }: FilterPanelProps) {
     collection,
     condition,
     priceRange,
+    paintSeed,
+    sticker,
     setFilter,
     setPriceRange,
     setSearchQuery,
@@ -130,6 +132,8 @@ export default function FilterPanel({ isVisible, onToggle }: FilterPanelProps) {
     priceRange.min > 0 ? true : null,
     priceRange.max > 0 ? true : null,
     searchQuery ? true : null,
+    paintSeed ? true : null,
+    sticker ? true : null,
   ].filter(Boolean).length;
 
   const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
@@ -486,6 +490,49 @@ export default function FilterPanel({ isVisible, onToggle }: FilterPanelProps) {
                 className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
               />
             </div>
+          </FilterSection>
+
+          {/* Paint Seed (Pattern) */}
+          <FilterSection
+            id="paintSeed"
+            label={t("paintSeed")}
+            badge={paintSeed || null}
+          >
+            <input
+              type="number"
+              min={0}
+              max={999}
+              placeholder={t("paintSeedPlaceholder")}
+              value={paintSeed || ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                setFilter("paintSeed", val ? val : null);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.currentTarget.blur();
+                }
+              }}
+              className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+            />
+          </FilterSection>
+
+          {/* Sticker */}
+          <FilterSection
+            id="sticker"
+            label={t("sticker")}
+            badge={sticker || null}
+          >
+            <input
+              type="text"
+              placeholder={t("stickerPlaceholder")}
+              value={sticker || ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                setFilter("sticker", val ? val : null);
+              }}
+              className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+            />
           </FilterSection>
 
           {/* Reset */}
