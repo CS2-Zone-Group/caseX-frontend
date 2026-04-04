@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import ShareIcon from "@mui/icons-material/Share";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckIcon from "@mui/icons-material/Check";
-import CircularProgress from "@mui/material/CircularProgress";
+import Spinner from "@/components/Spinner";
 import { useTranslations } from "next-intl";
 import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
@@ -261,7 +261,7 @@ export default function SkinDetailsModal({
                   title={t("share")}
                 >
                   {loading ? (
-                    <CircularProgress size={20} color="inherit" />
+                    <Spinner size={20} />
                   ) : (
                     <ShareIcon className="w-5 h-5" />
                   )}
@@ -404,7 +404,7 @@ export default function SkinDetailsModal({
                       disabled={inspectLoading}
                     >
                       {inspectLoading ? (
-                        <CircularProgress size={16} sx={{ color: "white" }} />
+                        <Spinner size={16} color="white" />
                       ) : (
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

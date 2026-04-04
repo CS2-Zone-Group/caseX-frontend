@@ -15,21 +15,16 @@
     "env:status": "node scripts/switch-env.js status"
   },
   "dependencies": {
-    "@chakra-ui/react": "^3.30.0",
-    "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
-    "@mui/material-nextjs": "^7.3.6",
-    "@tailwindcss/line-clamp": "^0.4.4",
     "axios": "^1.6.5",
     "clsx": "^2.1.0",
     "next": "^15.5.14",
     "next-intl": "^3.26.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-query": "^3.39.3",
     "recharts": "^3.8.0",
     "socket.io-client": "^4.8.3",
     "zustand": "^4.5.0"

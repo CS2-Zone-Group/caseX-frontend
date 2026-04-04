@@ -1,6 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    // Tree-shake heavy packages at compile time
+    optimizePackageImports: [
+      "@mui/icons-material",
+      "@mui/material",
+      "recharts",
+      "socket.io-client",
+    ],
+  },
   images: {
     unoptimized: true,
     remotePatterns: [

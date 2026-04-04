@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import CircularProgress from "@mui/material/CircularProgress";
+import Spinner from "@/components/Spinner";
 import { useTranslations } from "next-intl";
 
 interface SkinInspectViewerProps {
@@ -213,7 +213,7 @@ export default function SkinInspectViewer({
           <>
             {!imageLoaded && !imageError && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                <CircularProgress size={40} sx={{ color: "#22d3ee" }} />
+                <Spinner size={40} color="#22d3ee" />
                 <p className="text-gray-400 text-sm">{t("loading")}</p>
               </div>
             )}
