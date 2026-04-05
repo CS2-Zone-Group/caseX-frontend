@@ -263,7 +263,11 @@
     "max": "Макс",
     "trades": "Сделки",
     "noTrades": "Нет сделок",
-    "inspectSkin": "Осмотреть скин"
+    "inspectSkin": "Осмотреть скин",
+    "musicPreview": "Предпрослушивание музыки",
+    "playMusic": "Слушать",
+    "pauseMusic": "Пауза",
+    "musicKitInfo": "Этот Music Kit содержит уникальные музыкальные треки"
   },
   "SkinInspectViewer": {
     "zoomIn": "Увеличить",

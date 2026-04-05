@@ -16,6 +16,7 @@ import { useFilterStore } from '@/store/filterStore';
 import { useRouter } from 'next/navigation';
 import Loader from '@/components/Loader';
 import { getRarityStyle } from '@/lib/rarity';
+import { useMusicPlayerStore } from '@/store/musicPlayerStore';
 
 interface InventoryItemType {
   id: string;
@@ -35,6 +36,7 @@ interface InventoryItemType {
     price?: number;
     steamPrice?: number;
     float?: number;
+    audioUrl?: string;
   };
 }
 
@@ -55,6 +57,7 @@ export default function InventoryPage() {
   const { user, fetchUserBalance } = useAuthStore();
   const { currency } = useSettingsStore();
   const t = useTranslations('InventoryPage');
+  const { setTrack, currentTrack, isPlaying } = useMusicPlayerStore();
 
   const {
     searchQuery,
@@ -557,6 +560,30 @@ export default function InventoryPage() {
                               <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                           </button>
+                          {item.skin?.weaponType === 'Music Kit' && item.skin?.audioUrl && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setTrack({ id: item.skin.id, name: item.skin.name, audioUrl: item.skin.audioUrl!, imageUrl: item.skin.imageUrl });
+                              }}
+                              className={`w-6 h-6 flex items-center justify-center rounded-full backdrop-blur-sm shadow-sm transition-colors ${
+                                currentTrack?.id === item.skin.id && isPlaying
+                                  ? 'bg-cyan-500 text-white'
+                                  : 'bg-white/80 dark:bg-gray-900/80 text-cyan-500 hover:bg-cyan-500 hover:text-white'
+                              }`}
+                            >
+                              {currentTrack?.id === item.skin.id && isPlaying ? (
+                                <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24">
+                                  <rect x="6" y="4" width="4" height="16" rx="1" />
+                                  <rect x="14" y="4" width="4" height="16" rx="1" />
+                                </svg>
+                              ) : (
+                                <svg className="w-2.5 h-2.5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7L8 5z" />
+                                </svg>
+                              )}
+                            </button>
+                          )}
                           {selectedItems.includes(item.id) && (
                             <div className="w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center text-white text-xs">
                               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

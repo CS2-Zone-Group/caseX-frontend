@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { toast } from '@/store/toastStore';
 import Loader from '@/components/Loader';
 import { getRarityStyle } from '@/lib/rarity';
+import { useMusicPlayerStore } from '@/store/musicPlayerStore';
 
 interface ListedItem {
   id: string;
@@ -29,6 +30,7 @@ interface ListedItem {
     exterior: string;
     price: number;
     imageUrl: string;
+    audioUrl?: string;
   };
 }
 
@@ -36,6 +38,7 @@ export default function OnSalePage() {
   const { user, hasHydrated } = useAuthStore();
   const { currency } = useSettingsStore();
   const t = useTranslations('OnSalePage');
+  const { setTrack, currentTrack, isPlaying } = useMusicPlayerStore();
   const [items, setItems] = useState<ListedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [detailsSkin, setDetailsSkin] = useState<any>(null);
@@ -142,15 +145,38 @@ export default function OnSalePage() {
                     alt={item.skin.name}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform"
                   />
-                  <button
-                    onClick={() => setDetailsSkin(item.skin)}
-                    className="absolute top-1.5 right-1.5 w-6 h-6 flex items-center justify-center rounded-full bg-black/40 backdrop-blur-sm text-white/70 hover:text-white transition-colors"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </button>
+                  <div className="absolute top-1.5 right-1.5 flex flex-col gap-1">
+                    <button
+                      onClick={() => setDetailsSkin(item.skin)}
+                      className="w-6 h-6 flex items-center justify-center rounded-full bg-black/40 backdrop-blur-sm text-white/70 hover:text-white transition-colors"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </button>
+                    {item.skin.weaponType === 'Music Kit' && item.skin.audioUrl && (
+                      <button
+                        onClick={() => setTrack({ id: item.skin.id, name: item.skin.name, audioUrl: item.skin.audioUrl!, imageUrl: item.skin.imageUrl })}
+                        className={`w-6 h-6 flex items-center justify-center rounded-full backdrop-blur-sm transition-colors ${
+                          currentTrack?.id === item.skin.id && isPlaying
+                            ? 'bg-cyan-500 text-white'
+                            : 'bg-black/40 text-cyan-400 hover:bg-cyan-500 hover:text-white'
+                        }`}
+                      >
+                        {currentTrack?.id === item.skin.id && isPlaying ? (
+                          <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24">
+                            <rect x="6" y="4" width="4" height="16" rx="1" />
+                            <rect x="14" y="4" width="4" height="16" rx="1" />
+                          </svg>
+                        ) : (
+                          <svg className="w-2.5 h-2.5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7L8 5z" />
+                          </svg>
+                        )}
+                      </button>
+                    )}
+                  </div>
                   <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-green-500/20 text-green-400 text-[9px] font-medium rounded backdrop-blur-sm">
                     {t('listed')}
                   </span>

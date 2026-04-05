@@ -15,11 +15,13 @@ import Navbar from '@/components/Navbar';
 import AuthGuard from '@/components/AuthGuard';
 import { getRarityStyle } from '@/lib/rarity';
 import { toast } from '@/store/toastStore';
+import { useMusicPlayerStore } from '@/store/musicPlayerStore';
 
 export default function FavoritesPage() {
   const { addToCart } = useCartStore();
   const { currency } = useSettingsStore();
   const t = useTranslations('FavoritesPage');
+  const { setTrack, currentTrack, isPlaying } = useMusicPlayerStore();
   const tCommon = useTranslations('Common');
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -295,6 +297,30 @@ export default function FavoritesPage() {
                             </svg>
                           </button>
                           <FavoriteButton skinId={skin.id} className="w-7 h-7 text-base bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm" />
+                          {skin.weaponType === 'Music Kit' && skin.audioUrl && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setTrack({ id: skin.id, name: skin.name, audioUrl: skin.audioUrl, imageUrl: skin.imageUrl });
+                              }}
+                              className={`w-7 h-7 flex items-center justify-center rounded-full backdrop-blur-sm shadow-sm transition-colors ${
+                                currentTrack?.id === skin.id && isPlaying
+                                  ? 'bg-cyan-500 text-white'
+                                  : 'bg-white/80 dark:bg-gray-900/80 text-cyan-500 hover:bg-cyan-500 hover:text-white'
+                              }`}
+                            >
+                              {currentTrack?.id === skin.id && isPlaying ? (
+                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                  <rect x="6" y="4" width="4" height="16" rx="1" />
+                                  <rect x="14" y="4" width="4" height="16" rx="1" />
+                                </svg>
+                              ) : (
+                                <svg className="w-3 h-3 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7L8 5z" />
+                                </svg>
+                              )}
+                            </button>
+                          )}
                         </div>
                       </div>
 

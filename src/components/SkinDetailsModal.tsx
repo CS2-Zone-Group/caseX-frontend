@@ -8,6 +8,7 @@ import ShareIcon from "@mui/icons-material/Share";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckIcon from "@mui/icons-material/Check";
 import Spinner from "@/components/Spinner";
+import { useMusicPlayerStore } from "@/store/musicPlayerStore";
 import { useTranslations } from "next-intl";
 import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
@@ -36,6 +37,7 @@ interface SkinDetailsModalProps {
     float?: number;
     isAvailable?: boolean;
     sellerId?: string;
+    audioUrl?: string;
   } | null;
 }
 
@@ -54,6 +56,7 @@ export default function SkinDetailsModal({
   const { user, hasHydrated, fetchUserBalance } = useAuthStore();
   const [cartLoading, setCartLoading] = useState(false);
   const [buyLoading, setBuyLoading] = useState(false);
+  const { setTrack, currentTrack, isPlaying } = useMusicPlayerStore();
   const [inspectOpen, setInspectOpen] = useState(false);
   const [inspectData, setInspectData] = useState<{
     screenshotUrl: string | null;
@@ -421,6 +424,59 @@ export default function SkinDetailsModal({
                   <h2 id="modal-title" className="text-xl font-bold text-gray-900 dark:text-white">
                     {skin.name}
                   </h2>
+
+                  {/* Music Kit Preview */}
+                  {skin.weaponType === 'Music Kit' && skin.audioUrl && (
+                    <div className="bg-gradient-to-r from-cyan-900/30 to-blue-900/20 border border-cyan-700/40 rounded-xl p-4">
+                      <p className="text-xs text-cyan-400 font-medium uppercase tracking-wide mb-3">
+                        {t("musicPreview")}
+                      </p>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() =>
+                            setTrack({
+                              id: skin.id,
+                              name: skin.name,
+                              audioUrl: skin.audioUrl!,
+                              imageUrl: skin.imageUrl,
+                            })
+                          }
+                          className="w-10 h-10 rounded-full bg-cyan-500 hover:bg-cyan-400 transition-colors flex items-center justify-center shadow flex-shrink-0"
+                          aria-label={currentTrack?.id === skin.id && isPlaying ? t("pauseMusic") : t("playMusic")}
+                        >
+                          {currentTrack?.id === skin.id && isPlaying ? (
+                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                              <rect x="6" y="4" width="4" height="16" rx="1" />
+                              <rect x="14" y="4" width="4" height="16" rx="1" />
+                            </svg>
+                          ) : (
+                            <svg className="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7L8 5z" />
+                            </svg>
+                          )}
+                        </button>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-white truncate">{skin.name}</p>
+                          <p className="text-xs text-gray-400 mt-0.5">{t("musicKitInfo")}</p>
+                        </div>
+                        {currentTrack?.id === skin.id && isPlaying && (
+                          <div className="flex items-end gap-0.5 h-4 flex-shrink-0">
+                            {[0, 0.2, 0.4].map((delay) => (
+                              <div
+                                key={delay}
+                                className="w-1 bg-cyan-400 rounded-full animate-pulse"
+                                style={{
+                                  height: '100%',
+                                  animationDelay: `${delay}s`,
+                                  animationDuration: '0.8s',
+                                }}
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Properties Grid */}
                   <div className="bg-gray-50 dark:bg-gray-800/80 rounded-xl divide-y divide-gray-200 dark:divide-gray-700/50">

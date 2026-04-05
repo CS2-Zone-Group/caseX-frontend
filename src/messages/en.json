@@ -263,7 +263,11 @@
     "max": "Max",
     "trades": "Trades",
     "noTrades": "No trades",
-    "inspectSkin": "Inspect Skin"
+    "inspectSkin": "Inspect Skin",
+    "musicPreview": "Music Preview",
+    "playMusic": "Play",
+    "pauseMusic": "Pause",
+    "musicKitInfo": "This Music Kit includes unique music tracks"
   },
   "SkinInspectViewer": {
     "zoomIn": "Zoom in",

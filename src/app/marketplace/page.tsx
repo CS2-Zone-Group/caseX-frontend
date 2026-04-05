@@ -18,6 +18,7 @@ import { toast } from '@/store/toastStore';
 import Loader from '@/components/Loader';
 import { getRarityStyle } from '@/lib/rarity';
 import { useMarketplaceSocket, ItemListedPayload, ItemSoldPayload, ItemUnlistedPayload } from '@/lib/socket';
+import { useMusicPlayerStore } from '@/store/musicPlayerStore';
 
 interface Skin {
   id: string;
@@ -33,6 +34,7 @@ interface Skin {
   inventoryId?: string;
   sellerId?: string;
   sellerName?: string;
+  audioUrl?: string;
 }
 
 function MarketplaceContent() {
@@ -41,6 +43,7 @@ function MarketplaceContent() {
   const { addToCart } = useCartStore();
   const { currency } = useSettingsStore();
   const t = useTranslations('MarketplacePage');
+  const { setTrack, currentTrack, isPlaying } = useMusicPlayerStore();
 
   const [skins, setSkins] = useState<Skin[]>([]);
   const [loading, setLoading] = useState(true);
@@ -430,6 +433,31 @@ function MarketplaceContent() {
                         <div onClick={(e) => e.stopPropagation()}>
                           <FavoriteButton skinId={skin.id} className="w-7 h-7 text-base bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm" />
                         </div>
+                        {skin.weaponType === 'Music Kit' && skin.audioUrl && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setTrack({ id: skin.id, name: skin.name, audioUrl: skin.audioUrl!, imageUrl: skin.imageUrl });
+                            }}
+                            className={`w-7 h-7 flex items-center justify-center rounded-full backdrop-blur-sm shadow-sm transition-colors ${
+                              currentTrack?.id === skin.id && isPlaying
+                                ? 'bg-cyan-500 text-white'
+                                : 'bg-white/80 dark:bg-gray-900/80 text-cyan-500 hover:bg-cyan-500 hover:text-white'
+                            }`}
+                            title={currentTrack?.id === skin.id && isPlaying ? 'Pause' : 'Play music'}
+                          >
+                            {currentTrack?.id === skin.id && isPlaying ? (
+                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                <rect x="6" y="4" width="4" height="16" rx="1" />
+                                <rect x="14" y="4" width="4" height="16" rx="1" />
+                              </svg>
+                            ) : (
+                              <svg className="w-3 h-3 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7L8 5z" />
+                              </svg>
+                            )}
+                          </button>
+                        )}
                       </div>
                     </div>
 

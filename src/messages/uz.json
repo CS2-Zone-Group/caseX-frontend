@@ -263,7 +263,11 @@
     "max": "Maks",
     "trades": "Savdolar",
     "noTrades": "Savdo yo'q",
-    "inspectSkin": "Skinni ko'rish"
+    "inspectSkin": "Skinni ko'rish",
+    "musicPreview": "Musiqa oldindan eshitish",
+    "playMusic": "Eshitish",
+    "pauseMusic": "To'xtatish",
+    "musicKitInfo": "Bu Music Kit maxsus musiqa treklarini o'z ichiga oladi"
   },
   "SkinInspectViewer": {
     "zoomIn": "Kattalashtirish",

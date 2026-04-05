@@ -10,6 +10,7 @@ import api from "@/lib/api";
 import ChatSupport from "@/components/ChatSupport";
 import Loader from "@/components/Loader";
 import ToastContainer from "@/components/ToastContainer";
+import MusicKitPlayer from "@/components/MusicKitPlayer";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
 export default function ClientLayout({
@@ -180,6 +181,7 @@ export default function ClientLayout({
     <LanguageProvider>
       <NextIntlClientProvider locale={locale} messages={messages}>
         {children}
+        <MusicKitPlayer />
         <ChatSupport />
         <ToastContainer />
       </NextIntlClientProvider>
