@@ -267,7 +267,9 @@
     "musicPreview": "Предпрослушивание музыки",
     "playMusic": "Слушать",
     "pauseMusic": "Пауза",
-    "musicKitInfo": "Этот Music Kit содержит уникальные музыкальные треки"
+    "musicKitInfo": "Этот Music Kit содержит уникальные музыкальные треки",
+    "similarItems": "ПОХОЖИЕ ПРЕДМЕТЫ",
+    "viewAll": "Смотреть все"
   },
   "SkinInspectViewer": {
     "zoomIn": "Увеличить",

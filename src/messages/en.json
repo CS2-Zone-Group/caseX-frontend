@@ -267,7 +267,9 @@
     "musicPreview": "Music Preview",
     "playMusic": "Play",
     "pauseMusic": "Pause",
-    "musicKitInfo": "This Music Kit includes unique music tracks"
+    "musicKitInfo": "This Music Kit includes unique music tracks",
+    "similarItems": "SIMILAR ITEMS",
+    "viewAll": "View All"
   },
   "SkinInspectViewer": {
     "zoomIn": "Zoom in",

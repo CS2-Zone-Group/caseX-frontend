@@ -65,6 +65,7 @@ export default function SkinDetailsModal({
     paintIndex?: number | null;
   } | null>(null);
   const [inspectLoading, setInspectLoading] = useState(false);
+  const [similarItems, setSimilarItems] = useState<any[]>([]);
 
   const handleAddToCart = async () => {
     if (!skin) return;
@@ -206,6 +207,15 @@ export default function SkinDetailsModal({
       document.body.style.overflow = "unset";
     };
   }, [isOpen, onClose, activeTab]);
+
+  useEffect(() => {
+    if (!isOpen || !skin?.id) { setSimilarItems([]); return; }
+    import('@/lib/api').then(({ default: api }) =>
+      api.get(`/skins/${skin.id}/similar?limit=8`)
+        .then(res => setSimilarItems(Array.isArray(res.data) ? res.data : []))
+        .catch(() => setSimilarItems([]))
+    );
+  }, [isOpen, skin?.id]);
 
   if (!isOpen || !skin) return null;
 
@@ -573,6 +583,54 @@ export default function SkinDetailsModal({
                       <p className="text-sm text-gray-900 dark:text-white">{skin.description}</p>
                     </div>
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* Similar Items */}
+            {activeTab === "details" && similarItems.length > 0 && (
+              <div className="mt-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+                    {t("similarItems")}
+                  </h3>
+                  <a
+                    href={`/marketplace?weaponType=${encodeURIComponent(skin.weaponType)}`}
+                    className="text-xs font-medium text-green-500 hover:text-green-400 flex items-center gap-1"
+                  >
+                    {t("viewAll")}
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </a>
+                </div>
+                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
+                  {similarItems.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        // Replace current modal skin via parent — just open a new modal
+                        // For now navigate to marketplace with the item selected
+                      }}
+                      className="flex-shrink-0 w-[110px] bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/50 rounded-lg overflow-hidden hover:border-green-500/50 transition-all group"
+                    >
+                      <div className="relative bg-gray-100 dark:bg-gray-700/50 p-2 aspect-square flex items-center justify-center">
+                        <img
+                          src={item.imageUrl}
+                          alt={item.name}
+                          className="w-full h-full object-contain group-hover:scale-105 transition-transform"
+                          onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = '0'; }}
+                        />
+                        <span className="absolute top-1 left-1 text-[10px] font-bold text-green-400">
+                          {formatPrice(Number(item.price), currency)}
+                        </span>
+                      </div>
+                      <div className="px-1.5 py-1">
+                        <p className="text-[10px] text-gray-900 dark:text-white truncate">{item.name}</p>
+                        <p className="text-[9px] text-gray-400 truncate">{item.exterior}</p>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </div>
             )}
